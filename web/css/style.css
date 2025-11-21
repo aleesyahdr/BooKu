@@ -1,54 +1,294 @@
-/*
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
-*/
-/* 
-    Created on : Nov 16, 2025, 4:36:58 AM
-    Author     : user
-*/
 
-/* style.css */
 body {
-    font-family: Arial, sans-serif;
-    background-color: #ffffff;
-    color: #000000;
     margin: 0;
     padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #ffffff;
 }
 
-header {
-    background-color: #004d40;
-    color: #ffffff;
-    padding: 20px;
+/* Header Layout */
+.top-header {
+    display: flex;
+    justify-content: space-between; 
+    align-items: center;            
+    background-color: #004d40;      /* dark emerald green */
+    padding: 30px 30px;
+    color: white;
+}
+
+/* Logo */
+.logo h1 {
+    margin: 0;
+    font-size: 30px;
+}
+
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 20px; 
+}
+
+
+.header-nav a {
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+    margin: 0 10px;
+}
+
+.header-nav a:hover {
+    color: pink;
+}
+
+/* Profile Icon + Dropdown */
+.profile-menu {
+    position: relative;
+    z-index: 1000;
+}
+
+.profile-icon {
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    border-radius: 50%;
+}
+
+.dropdown {
+    display: none;
+    position: absolute;
+    right: 0;
+    background-color: white;
+    color: #004d40;
+    min-width: 120px;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.dropdown a {
+    display: block;
+    padding: 10px;
+    text-decoration: none;
+    color: #004d40;
+}
+
+.dropdown a:hover {
+    background-color: #f2f2f2;
+}
+
+.profile-menu:hover .dropdown {
+    display: block;
+}
+
+
+.dropdown {
+    display: none;
+    position: absolute;
+    right: 0;
+    background-color: white;
+    border: 1px solid #dcdcdc;
+    min-width: 120px;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.dropdown a {
+    display: block;
+    text-decoration: none;
+    color: #004d40;
+    padding: 10px;
+}
+
+.dropdown a:hover {
+    background-color: #f2f2f2;
+}
+
+.profile-menu:hover .dropdown {
+    display: block;
+}
+
+
+.navbar {
+    background-color: #e0f2f1;
+    padding: 10px 0;
     text-align: center;
 }
 
-nav {
-    text-align: center;
-    margin: 20px 0;
-}
-
-nav a {
+.navbar a {
     text-decoration: none;
     color: #004d40;
     font-weight: bold;
-    margin: 0 15px;
+    margin: 0 20px;
 }
 
-nav a:hover {
-    color: #000000;
+.navbar a:hover {
+    color: black;
 }
 
-button {
+/* Slider Section */
+.slider-box {
+    position: relative;
+    width: 100%;
+    height: 60vh; 
+    overflow: hidden;
+}
+
+.slides {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.slider-img {
+    width: 100%;
+    height: 60vh;
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+    z-index: 1;
+}
+
+.slider-img.active {
+    opacity: 1;
+    z-index: 2;
+}
+
+
+.hero-btn {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     background-color: #004d40;
-    color: #ffffff;
+    color: white;
     border: none;
-    padding: 10px 20px;
+    padding: 15px 30px;
+    font-size: 18px;
+    font-weight: bold;
     cursor: pointer;
+    border-radius: 5px;
+    z-index: 2;
+}
+
+.slide-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0,0,0,0.3);
+    color: white;
+    border: none;
+    font-size: 30px;
+    padding: 10px;
+    cursor: pointer;
+    z-index: 2;     
+    border-radius: 50%;
+}
+
+.slide-btn.left {
+    left: 10px;
+}
+.slide-btn.right {
+    right: 10px;
+}
+
+/* Popular Books Section */
+/* Scroll Wrapper */
+.scroll-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+/* Horizontal scroll */
+.popular-container {
+    display: flex;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    gap: 20px;
+    padding: 10px 0;
+    width: 100%;
+    white-space: nowrap;
+}
+
+.book-card {
+    min-width: 150px; /* keeps them in ONE row */
+    text-align: center;
+}
+
+/* Arrows */
+.scroll-btn {
+    position: absolute;
+    background: rgba(0,0,0,0.4);
+    color: white;
+    border: none;
+    font-size: 28px;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 50%;
+    z-index: 10;
+}
+
+.scroll-btn.left {
+    left: 10px;
+}
+
+.scroll-btn.right {
+    right: 10px;
+}
+
+.show-more {
+    text-align: center;
+    margin-top: 20px;
+    width: 100%;
+}
+
+
+
+.book-card {
+    width: 150px;
+    text-align: center;
+}
+
+.book-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+/* Fix Popular Books Title */
+.popular-section h2 {
+    text-align: center;
+    color: #004d40; 
+    margin-bottom: 20px;
+    margin-top: 40px;
+}
+
+.scroll-wrapper {
+    padding: 0 40px; 
+}
+
+.popular-container {
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.show-more {
+    margin-top: 20px;
+}
+
+.show-more-btn {
+    background-color: #004d40;
+    padding: 10px 20px;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
     font-weight: bold;
 }
 
-button:hover {
-    background-color: #000000;
+.show-more-btn:hover {
+    background-color: black;
 }
