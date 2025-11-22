@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>BooKu - Order History</title>
+        <link rel="stylesheet" href="../css/style.css">
+    </head>
+    
+    <body>
+       <!-- Top Header -->
+        <header class="top-header">
+            <!-- Left side: Shop name -->
+            <div class="logo">
+                <h1>BooKu</h1>
+            </div>
+
+            <!-- Right side: Menu + Profile -->
+            <div class="header-right">
+                <!-- Menu Links -->
+                <nav class="header-nav">
+                    <a href="../index.html">Home</a>
+                    <a href="books.html">Books</a>
+                    <a href="contact.html">Contact</a>
+                    <a href="about.html">About</a>
+                </nav>
+
+                <!-- Profile Icon + Dropdown -->
+                <div class="profile-menu">
+                    <img src="../img/profile.jpg" class="profile-icon" alt="Profile">
+                    <div class="dropdown">
+                        <a href="profile.html">Profile</a>
+                        <a href="orderHistory.html">Order History</a>
+                        <a href="login.html">Login</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Order History Container -->
+        <div class="order-history-container">
+            <h1 class="page-title">Order History</h1>
+            
+            <!-- Order Card 1 -->
+            <div class="order-card">
+                <div class="order-header">
+                    <div class="order-info">
+                        <span class="order-id">Order #12345</span>
+                        <span class="order-date">Placed on: March 15, 2024</span>
+                    </div>
+                    <div class="order-status delivered">Delivered</div>
+                </div>
+                
+                <div class="order-items">
+                    <div class="order-item">
+                        <img src="../img/book1.jpg" alt="Book" class="order-item-image">
+                        <div class="order-item-details">
+                            <h3 class="order-item-title">Book 1</h3>
+                            <p class="order-item-author">by Author 1</p>
+                            <p class="order-item-qty">Quantity: 1</p>
+                        </div>
+                        <div class="order-item-price">RM XX.XX</div>
+                    </div>
+                    
+                    <div class="order-item">
+                        <img src="../img/book2.jpg" alt="Book" class="order-item-image">
+                        <div class="order-item-details">
+                            <h3 class="order-item-title">Book 2</h3>
+                            <p class="order-item-author">by Author 2</p>
+                            <p class="order-item-qty">Quantity: 1</p>
+                        </div>
+                        <div class="order-item-price">RM XX.XX</div>
+                    </div>
+                </div>
+                
+                <div class="order-footer">
+                    <div class="order-total">
+                        <span>Total:</span>
+                        <span class="total-amount">RM XX.XX</span>
+                    </div>
+                    <div class="order-actions">
+                        <button class="order-btn view-details">View Details</button>
+                        <button class="order-btn reorder">Reorder</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Card 2 -->
+            <div class="order-card">
+                <div class="order-header">
+                    <div class="order-info">
+                        <span class="order-id">Order #12344</span>
+                        <span class="order-date">Placed on: March 10, 2024</span>
+                    </div>
+                    <div class="order-status processing">Processing</div>
+                </div>
+                
+                <div class="order-items">
+                    <div class="order-item">
+                        <img src="../img/book3.jpg" alt="Book" class="order-item-image">
+                        <div class="order-item-details">
+                            <h3 class="order-item-title">Book 3</h3>
+                            <p class="order-item-author">by Author 3</p>
+                            <p class="order-item-qty">Quantity: 2</p>
+                        </div>
+                        <div class="order-item-price">RM XX.XX</div>
+                    </div>
+                </div>
+                
+                <div class="order-footer">
+                    <div class="order-total">
+                        <span>Total:</span>
+                        <span class="total-amount">RM XX.XX</span>
+                    </div>
+                    <div class="order-actions">
+                        <button class="order-btn view-details">View Details</button>
+                        <button class="order-btn track">Track Order</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Card 3 -->
+            <div class="order-card">
+                <div class="order-header">
+                    <div class="order-info">
+                        <span class="order-id">Order #12343</span>
+                        <span class="order-date">Placed on: February 28, 2024</span>
+                    </div>
+                    <div class="order-status cancelled">Cancelled</div>
+                </div>
+                
+                <div class="order-items">
+                    <div class="order-item">
+                        <img src="../img/book4.jpg" alt="Book" class="order-item-image">
+                        <div class="order-item-details">
+                            <h3 class="order-item-title">Book 4</h3>
+                            <p class="order-item-author">by Author 4</p>
+                            <p class="order-item-qty">Quantity: 1</p>
+                        </div>
+                        <div class="order-item-price">RM XX.XX</div>
+                    </div>
+                </div>
+                
+                <div class="order-footer">
+                    <div class="order-total">
+                        <span>Total:</span>
+                        <span class="total-amount">RM XX.XX</span>
+                    </div>
+                    <div class="order-actions">
+                        <button class="order-btn view-details">View Details</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

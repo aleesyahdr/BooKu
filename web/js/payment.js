@@ -11,7 +11,7 @@ const cancelBtn = document.getElementById('cancel-btn');
 paymentForm.addEventListener('submit', function(e) {
     e.preventDefault(); // Prevent actual form submission
     alert("Order successful! Thank you for your order.");
-    window.location.href = "orderhistory.html"; // Redirect to order history
+    window.location.href = "orderHistory.html"; // Redirect to order history
 });
 
 // Cancel Payment

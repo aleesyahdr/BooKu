@@ -24,6 +24,7 @@ document.getElementById('logoutBtn').addEventListener('click', function() {
     }
 
 });
+
 // Close modal when clicking outside of it
 window.onclick = function(event) {
     const modal = document.getElementById('success-modal');
@@ -51,3 +52,4 @@ document.getElementById('changePictureBtn').adEventListener('click', function() 
     
     fileInput.click();
 });
+
