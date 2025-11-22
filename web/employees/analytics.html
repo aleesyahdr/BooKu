@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics - Bookstore</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #ffffff;
+            color: #000000;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: #004d40;
+            color: #ffffff;
+            padding: 20px;
+            position: fixed;
+            height: 100vh;
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        .sidebar.hidden {
+            transform: translateX(-250px);
+        }
+
+        .sidebar h2 {
+            margin-bottom: 30px;
+            font-size: 24px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+        }
+
+        .sidebar li {
+            margin-bottom: 15px;
+        }
+
+        .sidebar a {
+            color: #ffffff;
+            text-decoration: none;
+            display: block;
+            padding: 12px 15px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            font-weight: bold;
+        }
+
+        .sidebar a:hover, .sidebar a.active {
+            background-color: #000000;
+        }
+
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+            flex: 1;
+            height: 100vh;
+            overflow: hidden;
+            transition: margin-left 0.3s ease;
+        }
+
+        .main-content.expanded {
+            margin-left: 0;
+        }
+
+        .toggle-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background-color: #004d40;
+            color: #ffffff;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 1001;
+            font-size: 18px;
+            transition: left 0.3s ease;
+            font-weight: bold;
+        }
+
+        .toggle-btn.shifted {
+            left: 270px;
+        }
+
+        .toggle-btn:hover {
+            background-color: #000000;
+        }
+
+        .content-wrapper {
+            height: calc(100vh - 40px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background-color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .header h1 {
+            color: #004d40;
+            font-size: 24px;
+        }
+
+        .btn-print {
+            background-color: #004d40;
+            color: #ffffff;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+            font-weight: bold;
+        }
+
+        .btn-print:hover {
+            background-color: #000000;
+        }
+
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .stat-card h3 {
+            color: #6b7280;
+            font-size: 12px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .stat-card .value {
+            color: #004d40;
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-card .change {
+            color: #10b981;
+            font-size: 12px;
+        }
+
+        .bottom-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            flex: 1;
+            min-height: 0;
+        }
+
+        .chart-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chart-container h2 {
+            color: #004d40;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .chart {
+            flex: 1;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            gap: 10px;
+            padding: 10px 0;
+            min-height: 0;
+        }
+
+        .bar-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .bar {
+            width: 100%;
+            background: linear-gradient(to top, #004d40, #00695c);
+            border-radius: 5px 5px 0 0;
+            transition: all 0.3s;
+        }
+
+        .bar:hover {
+            opacity: 0.8;
+        }
+
+        .bar-label {
+            margin-top: 8px;
+            color: #6b7280;
+            font-size: 12px;
+            text-align: center;
+        }
+
+        .table-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .table-container h2 {
+            color: #004d40;
+            margin-bottom: 15px;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .table-wrapper {
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background-color: #004d40;
+            color: #ffffff;
+        }
+
+        th, td {
+            padding: 10px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 14px;
+        }
+
+        tbody tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        @media print {
+            .sidebar, .btn-print {
+                display: none;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .header {
+                box-shadow: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="toggle-btn shifted" id="toggleBtn" onclick="toggleSidebar()">☰</button>
+    
+    <div class="container">
+        <div class="sidebar" id="sidebar">
+            <h2>Bookstore Admin</h2>
+            <ul>
+                <li><a href="dashboard.html">Dashboard</a></li>
+                <li><a href="books.html">Manage Book</a></li>
+                <li><a href="orders.html">Manage Order</a></li>
+                <li><a href="analytics.html" class="active">Analytics</a></li>
+            </ul>
+        </div>
+
+        <div class="main-content" id="mainContent">
+            <div class="content-wrapper">
+            <div class="header">
+                <h1>Analytics Overview</h1>
+                <button class="btn-print" onclick="window.print()">Print</button>
+            </div>
+
+            <div class="analytics-grid">
+                <div class="stat-card">
+                    <h3>Total Revenue</h3>
+                    <div class="value">$12,847</div>
+                    <div class="change">↑ 12.5%</div>
+                </div>
+
+                <div class="stat-card">
+                    <h3>Total Orders</h3>
+                    <div class="value">342</div>
+                    <div class="change">↑ 8.3%</div>
+                </div>
+
+                <div class="stat-card">
+                    <h3>Books Sold</h3>
+                    <div class="value">428</div>
+                    <div class="change">↑ 15.7%</div>
+                </div>
+
+                <div class="stat-card">
+                    <h3>Avg Order Value</h3>
+                    <div class="value">$37.58</div>
+                    <div class="change">↑ 3.2%</div>
+                </div>
+            </div>
+
+            <div class="bottom-section">
+
+            <div class="bottom-section">
+                <div class="chart-container">
+                    <h2>Monthly Sales</h2>
+                    <div class="chart">
+                        <div class="bar-container">
+                            <div class="bar" style="height: 60%;"></div>
+                            <div class="bar-label">Jan</div>
+                        </div>
+                        <div class="bar-container">
+                            <div class="bar" style="height: 70%;"></div>
+                            <div class="bar-label">Feb</div>
+                        </div>
+                        <div class="bar-container">
+                            <div class="bar" style="height: 55%;"></div>
+                            <div class="bar-label">Mar</div>
+                        </div>
+                        <div class="bar-container">
+                            <div class="bar" style="height: 80%;"></div>
+                            <div class="bar-label">Apr</div>
+                        </div>
+                        <div class="bar-container">
+                            <div class="bar" style="height: 65%;"></div>
+                            <div class="bar-label">May</div>
+                        </div>
+                        <div class="bar-container">
+                            <div class="bar" style="height: 90%;"></div>
+                            <div class="bar-label">Jun</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <h2>Top Selling Books</h2>
+                    <div class="table-wrapper">
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Rank</th>
+                                    <th>Book Name</th>
+                                    <th>Author</th>
+                                    <th>Units Sold</th>
+                                    <th>Revenue</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>The Great Gatsby</td>
+                                    <td>F. Scott Fitzgerald</td>
+                                    <td>68</td>
+                                    <td>$1,767.32</td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>To Kill a Mockingbird</td>
+                                    <td>Harper Lee</td>
+                                    <td>54</td>
+                                    <td>$999.00</td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>1984</td>
+                                    <td>George Orwell</td>
+                                    <td>49</td>
+                                    <td>$1,078.00</td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td>Pride and Prejudice</td>
+                                    <td>Jane Austen</td>
+                                    <td>42</td>
+                                    <td>$661.50</td>
+                                </tr>
+                                <tr>
+                                    <td>5</td>
+                                    <td>The Catcher in the Rye</td>
+                                    <td>J.D. Salinger</td>
+                                    <td>38</td>
+                                    <td>$759.62</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('mainContent');
+            const toggleBtn = document.getElementById('toggleBtn');
+            
+            sidebar.classList.toggle('hidden');
+            mainContent.classList.toggle('expanded');
+            toggleBtn.classList.toggle('shifted');
+        }
+    </script>
+</body>
+</html>

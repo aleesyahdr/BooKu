@@ -294,6 +294,342 @@ body {
 }
 
 
+
+
+
+/*/////////////////////////////////////////////////////////////////////////////////////////////*/
+/* BOOKS PAGE LAYOUT */
+.books-container {
+    display: flex;
+    padding: 20px;
+    gap: 30px;
+}
+
+/* Left Category Menu */
+/*.category-menu {
+    width: 200px;
+    background: #f2f2f2;
+    padding: 20px;
+    border-radius: 10px;
+    height: fit-content;
+}*/
+
+.category-menu {
+    width: 200px;
+    background: #f2f2f2;
+    padding: 20px;
+    border-radius: 10px;
+    min-height: 100vh;
+    overflow-y: auto;
+}
+
+.category-menu h3 {
+    margin-bottom: 10px;
+}
+
+.category-menu a {
+    display: block;
+    margin: 8px 0;
+    text-decoration: none;
+    color: #004d40;
+    font-weight: bold;
+}
+
+.category-menu a:hover {
+    color: black;
+}
+
+/* Right Books Section */
+.books-list {
+    width: 100%;
+}
+
+.books-list h2 {
+    margin-bottom: 20px;
+    color: #004d40;
+}
+.book-link {
+    text-decoration: none;
+    color: inherit;
+}
+
+.book-link:hover .book-item {
+    transform: translateY(-5px);
+}
+
+/* GRID FIX → 4 BOOKS PER ROW */
+.books-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 BOOKS PER ROW */
+    gap: 25px;
+}
+
+/* Book Card */
+.book-item {
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+    border: 1px solid #ddd;
+}
+
+.book-item img {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+.price {
+    font-weight: bold;
+    margin: 10px 0;
+}
+
+.book-item .cart-btn {
+    display: block;        /* keeps it block */
+    margin: 10px auto 0;   /* top 10px, horizontally centered */
+    background-color: #004d40;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.book-item .cart-btn:hover {
+    background-color: black;
+}
+
+/*search bar*/ 
+.search-box {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.search-box input {
+    flex: 1;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.search-box button {
+    padding: 10px 20px;
+    border: none;
+    background: #333;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+
+
+
+/*//////////////////////////////////////////////////////////////*/
+/* Book Details Page Styles */
+.details-container {
+    display: flex;
+    gap: 40px;
+    padding: 40px;
+    max-width: 1100px;
+    margin: 5px auto;
+    flex-wrap: wrap; /* wrap on smaller screens */
+    background-color: #f2f2f2;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    align-items: center; /* vertical center */
+    position: relative; /* for back button */
+}
+
+.back-btn {
+    display: inline-block;
+    margin: 20px 40px 10px; /* space above container */
+    padding: 8px 15px;
+    background-color: black;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    transition: 0.3s;
+}
+
+.back-btn:hover {
+    background-color: #004d40;
+    transform: translateX(-2px);
+}
+
+
+.details-container img {
+    width: 350px;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.details-info {
+    flex: 1;
+    min-width: 300px;
+}
+
+.details-info h1 {
+    margin-bottom: 10px;
+}
+
+.details-info .price {
+    font-size: 22px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.details-info .author,
+.details-info .category {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 5px;
+}
+
+.details-info .description {
+    margin: 15px 0;
+    line-height: 1.6;
+}
+
+.quantity-box {
+    margin: 20px 0;
+}
+
+.quantity-box input {
+    width: 60px;
+    padding: 5px;
+    font-size: 16px;
+}
+
+.cart-btn {
+    padding: 10px 20px;
+    background: #004d40;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    display: block;
+    margin-top: 10px;
+    transition: 0.3s;
+}
+
+.cart-btn:hover {
+    background-color: black;
+    transform: translateY(-2px);
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .details-container {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .details-info {
+        margin-top: 20px;
+    }
+
+    .back-btn {
+        position: relative;
+        top: 0;
+        left: 0;
+        margin-bottom: 20px;
+    }
+}
+
+
+/*//////////////////////////////////////////////////////////*/
+/* LOGIN PAGE STYLES */
+body.login-page {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #004d40; /* emerald green */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.login-wrapper {
+    text-align: center;
+    width: 100%;
+}
+
+.site-title {
+    font-size: 40px;
+    color: white;
+    margin-bottom: 40px;
+}
+
+.login-container {
+    max-width: 400px;
+    margin: auto;
+    padding: 40px;
+    background-color: #f2f2f2;  /* light grey for the box */
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.login-container h2 {
+    color: #004d40;
+    margin-bottom: 30px;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.login-form label {
+    text-align: left;
+    font-weight: bold;
+    color: #333;
+}
+
+.login-form input {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.login-form button {
+    background-color: #004d40;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.login-form button:hover {
+    background-color: black;
+}
+
+.register-link {
+    margin-top: 15px;
+    font-size: 14px;
+}
+
+.register-link a {
+    color: #004d40;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.register-link a:hover {
+    text-decoration: underline;
+}
+
+
+
 /*cart styles*/
 .cart-container {
     max-width: 1200px;
