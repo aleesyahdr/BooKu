@@ -245,6 +245,15 @@ body {
     width: 100%;
 }
 
+.book-card a {
+    text-decoration: none; /* remove underline */
+    color: inherit; /* keep the original text color */
+    display: block; /* ensures the whole card is clickable */
+}
+
+.book-card a:hover {
+    opacity: 0.9; /* optional: slight hover effect */
+}
 
 
 .book-card {
@@ -898,4 +907,84 @@ body.login-page {
 
 .form-row .form-input {
     width: 100%;
+}
+
+.cancel-order-btn {
+     width: 100%;
+    background-color: transparent;
+    color: #004d40;
+    border: 2px solid #004d40;
+    padding: 12px;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: all 0.3s;
+}
+
+.cancel-order-btn:hover {
+    background-color: #004d40;
+    color: white;
+}
+
+/*///////////////////////////////////////////////////////////////////////*/
+/*ni payment.html tau*/
+.payment-container {
+    width: 400px;
+    margin: 60px auto;
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.payment-container h2 {
+    margin-bottom: 20px;
+}
+
+.upload-box {
+    margin: 20px 0;
+    text-align: left;
+}
+
+.upload-box label {
+    font-weight: bold;
+}
+
+.upload-box input {
+    width: 100%;
+    margin-top: 10px;
+    padding: 8px;
+}
+
+.submit-btn {
+    margin-top: 20px;
+    padding: 10px;
+    width: 100%;
+    background: #059669; /* emerald green */
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.submit-btn:hover {
+    background: #047857;
+}
+.cancel-btn {
+    margin-top: 10px; /* space below submit button */
+    padding: 10px;
+    width: 100%;
+    background: white;       /* white background */
+    color: grey;             /* grey text */
+    border: 2px solid grey;  /* grey outline */
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.cancel-btn:hover {
+    background: #f0f0f0; /* slightly darker white/grey on hover */
 }
