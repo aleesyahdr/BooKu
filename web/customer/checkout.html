@@ -8,30 +8,25 @@
     <body>
        <!-- Top Header -->
         <header class="top-header">
-            <!-- Left side: Shop name -->
-            <div class="logo">
-                <h1>BooKu</h1>
-            </div>
+        <div class="logo"><h1>BooKu</h1></div>
 
-            <!-- Right side: Menu + Profile -->
-            <div class="header-right">
-                <!-- Menu Links -->
-                <nav class="header-nav">
-                    <a href="customer/books.html">Books</a>
-                    <a href="customer/contact.html">Contact</a>
-                    <a href="customer/about.html">About</a>
-                </nav>
+        <div class="header-right">
+            <nav class="header-nav">
+                <a href="../index.html">Home</a>
+                <a href="books.html">Books</a>
+                <a href="contact.html">Contact</a>
+                <a href="about.html">About</a>
+            </nav>
 
-                <!-- Profile Icon + Dropdown -->
-                <div class="profile-menu">
-                    <img src="img/profile.jpg" class="profile-icon" alt="Profile">
-                    <div class="dropdown">
-                        <a href="customer/profile.html">Profile</a>
-                        <a href="customer/login.html">Login</a>
-                    </div>
+            <div class="profile-menu">
+                <img src="../img/profile.jpg" class="profile-icon" alt="Profile">
+                <div class="dropdown">
+                    <a href="profile.html">Profile</a>
+                    <a href="login.html">Login</a>
                 </div>
             </div>
-        </header>
+        </div>
+    </header>
         
         <!-- Cart Container -->
         <div class="cart-container">
@@ -115,10 +110,17 @@
                         <span>Total:</span>
                         <span id="total">RM 136.88</span>
                     </div>
-                    <button class="checkout-btn" onclick="placeOrder()">Place Order</button>
-                    <button class="continue-shopping" onclick="continueShopping()">Continue Shopping</button>
+                    <button class="checkout-btn" onclick="window.location.href='payment.html'">Make payment</button>
+                    <button class="cancel-order-btn" onclick="cancelOrder()">Cancel Order</button>
                 </div>
             </div>
         </div>
+        <script>
+        function cancelOrder() {
+            alert("Order cancelled");
+            window.location.href = "../index.html"; // adjust path if needed
+        }
+</script>
+
     </body>
 </html>
