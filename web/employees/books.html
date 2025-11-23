@@ -235,67 +235,30 @@ and open the template in the editor.
             background-color: #00352d;
         }
 
-        /* Book List */
-        .book-list {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .book-item {
-            background: white;
-            padding: 15px 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-
-        .book-item:hover {
-            transform: scale(1.02);
-        }
-
-        .book-title {
-            font-size: 20px;
-            font-weight: bold;
-            color: #004d40;
-        }
-
-        .book-desc {
-            color: #555;
-            margin-top: 5px;
-        }
-
-        .price {
-            margin-top: 8px;
-            font-weight: bold;
-            color: black;
-        }
-        
-        .book-slider {
-            display: flex;
+                /* Book Grid - 4 columns */
+        .book-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
             gap: 20px;
-            overflow-x: auto;
+            max-height: 800px;
+            overflow-y: auto;
             padding: 15px 0;
-            scroll-snap-type: x mandatory;
         }
 
-        .book-slider::-webkit-scrollbar {
-            height: 8px;
+        .book-grid::-webkit-scrollbar {
+            width: 8px;
         }
 
-        .book-slider::-webkit-scrollbar-thumb {
+        .book-grid::-webkit-scrollbar-thumb {
             background: #0b3f34;
             border-radius: 10px;
         }
 
         .book-card {
-            flex: 0 0 220px;
             background: #ffffff;
             padding: 15px;
             border-radius: 10px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            scroll-snap-align: start;
             cursor: pointer;
             transition: 0.2s ease;
         }
@@ -312,10 +275,16 @@ and open the template in the editor.
             margin-bottom: 12px;
         }
 
+        .book-card h3 {
+            margin: 8px 0;
+            color: #004d40;
+            font-size: 16px;
+        }
+
         .book-card .author {
             font-size: 14px;
             color: #666;
-            margin-top: -5px;
+            margin: 5px 0;
         }
 
         .book-card .price {
@@ -355,8 +324,7 @@ and open the template in the editor.
         </div>
     </div>
 
-    <!-- Main Content -->
-    <div class="main-content" id="mainContent">
+       <div class="main-content" id="mainContent">
 
         <div class="header">
             <h1>Books</h1>
@@ -379,8 +347,8 @@ and open the template in the editor.
             <button class="add-btn" onclick="window.location.href='addBook.html'">+ Add Book</button>
         </div>
 
-        <!-- BOOK LIST -->
-        <div class="book-slider">
+        <!-- BOOK GRID -->
+        <div class="book-grid">
             <div class="book-card" onclick="window.location.href='manageBook.html'">
                 <img src="https://covers.openlibrary.org/b/id/10523365-L.jpg" alt="Book">
                 <h3>The Silent Observer</h3>
