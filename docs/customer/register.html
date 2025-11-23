@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>BooKu - Register</title>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="../css/style.css">
+    </head>
+    
+    <body>
+      
+
+        <!-- Register Container -->
+        <div class="register-container">
+            <div class="register-box">
+                <h1 class="register-title">Create Your BooKu Account</h1>
+                <p class="register-subtitle">Join us and start your reading journey today!</p>
+
+                <form id="register-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">First Name</label>
+                            <input type="text" id="firstname" required class="form-input" placeholder="Enter your first name">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Last Name</label>
+                            <input type="text" id="lastname" required class="form-input" placeholder="Enter your last name">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Username</label>
+                        <input type="text" id="username" required class="form-input" placeholder="Choose a username">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" id="email" required class="form-input" placeholder="Enter your email">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Password</label>
+                        <input type="password" id="password" required class="form-input" placeholder="Create a password">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Confirm Password</label>
+                        <input type="password" id="confirm-password" required class="form-input" placeholder="Confirm your password">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Phone Number</label>
+                        <input type="tel" id="phone" required class="form-input" placeholder="+60123456789">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Address</label>
+                        <textarea id="address" rows="3" required class="form-input" placeholder="Enter your address"></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">City</label>
+                            <input type="text" id="city" required class="form-input" placeholder="City">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Postcode</label>
+                            <input type="text" id="postcode" required class="form-input" placeholder="Postcode">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">State</label>
+                        <select id="state" required class="form-input">
+                            <option value="">Select State</option>
+                            <option value="Johor">Johor</option>
+                            <option value="Kedah">Kedah</option>
+                            <option value="Kelantan">Kelantan</option>
+                            <option value="Melaka">Melaka</option>
+                            <option value="Negeri Sembilan">Negeri Sembilan</option>
+                            <option value="Pahang">Pahang</option>
+                            <option value="Penang">Penang</option>
+                            <option value="Perak">Perak</option>
+                            <option value="Perlis">Perlis</option>
+                            <option value="Sabah">Sabah</option>
+                            <option value="Sarawak">Sarawak</option>
+                            <option value="Selangor">Selangor</option>
+                            <option value="Terengganu">Terengganu</option>
+                            <option value="Kuala Lumpur">Kuala Lumpur</option>
+                            <option value="Labuan">Labuan</option>
+                            <option value="Putrajaya">Putrajaya</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Date of Birth</label>
+                        <input type="date" id="birthday" required class="form-input">
+                    </div>
+
+                    <button type="button" class="register-btn" onclick="registerAccount()">Create Account</button>
+
+                    <div class="login-link">
+                        <p>Already have an account? <a href="login.html">Login here</a></p>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Success Modal -->
+        <div id="success-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-icon success-icon">&#10003;</div>
+                <h2 class="modal-title">Success!</h2>
+                <p class="modal-message">Your account has been created successfully!</p>
+                <button class="modal-btn" onclick="redirectToLogin()">Go to Login</button>
+            </div>
+        </div>
+
+        <script src="../js/register.js"></script>
+    </body>
+</html>
