@@ -1,3 +1,5 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -29,9 +31,9 @@
             <div class="profile-menu">
                 <img src="img/profile.jpg" class="profile-icon" alt="Profile">
                 <div class="dropdown">
-                    <a href="customer/profile.html">Profile</a>
-                    <a href="customer/orderHistory.html">Order History</a>
-                    <a href="customer/login.html">Login</a>
+                    <a href="customer/profile.jsp">Profile</a>
+                    <a href="customer/orderHistory.jsp">Order History</a>
+                    <a href="customer/login.jsp">Login</a>
                 </div>
             </div>
         </div>
