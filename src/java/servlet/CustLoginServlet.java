@@ -70,32 +70,36 @@ public class CustLoginServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException 
     {
+        System.out.println("DEBUG - doPost called!");
+
         String username = request.getParameter("username");
         String password = request.getParameter("password");
-        
+
+        System.out.println("DEBUG - Username received: " + username);
+        System.out.println("DEBUG - Password received: " + password);
+
         Customer cust = new Customer();
         cust.setCust_username(username);
         cust.setCust_password(password);
-        
+
         CustLoginDao custLoginDao = new CustLoginDao();
-        
+
         String userValidate = custLoginDao.authenticateUser(cust);
-        
+
         if(userValidate.equals("SUCCESS"))
         {
             // Store logged-in user in session
             HttpSession session = request.getSession();
             session.setAttribute("username", username);
-
-            // Redirect to index.jsp (PREVENTS 404 & resubmission)
+            // Redirect to index.jsp
             response.sendRedirect(request.getContextPath() + "/index.jsp");
-
         } 
         else 
         {
             // Login failed
             request.setAttribute("errorMessage", "Invalid username or password");
-            request.getRequestDispatcher("login.jsp").forward(request, response);
+            // BETTER: Use full path from context root
+            request.getRequestDispatcher("/customer/login.jsp").forward(request, response);
         }
     }
 

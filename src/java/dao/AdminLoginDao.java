@@ -3,45 +3,63 @@ package dao;
 import util.DBConnection;
 import model.Admin;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.ResultSet; 
 
 public class AdminLoginDao 
 {  
-    public String authenticateUser (Admin admin)
+    public String authenticateUser(Admin admin)
     {
         String username = admin.getAdmin_username();
         String password = admin.getAdmin_password();
-        
+
+        System.out.println("DEBUG - Attempting login with username: " + username);
+        System.out.println("DEBUG - Password length: " + password.length());
+
         Connection con = null;
-        Statement statement = null;
+        PreparedStatement statement = null;
         ResultSet resultSet = null;
-        String usernameDB = "";
-        String passwordDB = "";
-        
+
         try 
         {
             con = DBConnection.createConnection();
-            statement = con.createStatement();
-            resultSet = statement.executeQuery("select username,password from users");
-            
-            while (resultSet.next())
+            System.out.println("DEBUG - Database connection established");
+
+            String query = "SELECT ADMIN_USERNAME, ADMIN_PASSWORD FROM ADMIN WHERE ADMIN_USERNAME = ? AND ADMIN_PASSWORD = ?";
+            statement = con.prepareStatement(query);
+            statement.setString(1, username);
+            statement.setString(2, password);
+
+            resultSet = statement.executeQuery();
+
+            if (resultSet.next())
             {
-                usernameDB = resultSet.getString ("username");
-                passwordDB = resultSet.getString ("password");
-                
-                if (username.equals(usernameDB) && password.equals(passwordDB))
-                {
-                    return "SUCCESS";
-                }
+                System.out.println("DEBUG - Login SUCCESS!");
+                return "SUCCESS";
+            }
+            else
+            {
+                System.out.println("DEBUG - No matching user found");
             }
         }
         catch (SQLException e)
         {
+            System.out.println("DEBUG - SQL Exception occurred:");
             e.printStackTrace();
         }
-        
+        finally
+        {
+            try {
+                if (resultSet != null) resultSet.close();
+                if (statement != null) statement.close();
+                if (con != null) con.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
         return "Invalid user credentials";
     }
 }
