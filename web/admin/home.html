@@ -20,7 +20,7 @@ and open the template in the editor.
     /* Sidebar same theme */
     .sidebar {
         width: 250px;
-        background-color: #004d40;
+        background-color: black;
         color: #ffffff;
         padding: 20px 20px 0 20px;
         position: fixed;
@@ -40,6 +40,7 @@ and open the template in the editor.
 
     .sidebar h2 {
         margin-bottom: 30px;
+        color:#4caf50;
     }
 
     /* Sidebar Navigation */
@@ -70,7 +71,7 @@ and open the template in the editor.
 
     .sidebar a:hover,
     .sidebar a.active {
-        background-color: #000000;
+        background-color: #004d40;
     }
 
     /* Sidebar Footer */
@@ -155,7 +156,7 @@ and open the template in the editor.
         position: fixed;
         top: 20px;
         left: 270px;
-        background-color: #004d40;
+        background-color: black;
         color: white;
         border: none;
         padding: 10px 15px;
@@ -213,25 +214,7 @@ and open the template in the editor.
             color: #000000;
         }
 
-        /* Toggle Button */
-        .toggle-btn {
-            position: fixed;
-            top: 20px;
-            left: 270px;
-            background-color: #004d40;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            font-size: 22px;
-            cursor: pointer;
-            border-radius: 5px;
-            z-index: 2001;
-            transition: left 0.3s ease;
-        }
 
-        .toggle-btn.shifted {
-            left: 20px;
-        }
     </style>
 </head>
 <body>
@@ -247,13 +230,14 @@ and open the template in the editor.
             <a href="books.html">Manage Book</a>
             <a href="orders.html">Manage Order</a>
             <a href="analytics.html">Analytics</a>
+            <a href="accounts.html">Accounts</a>
         </div>
 
         <div class="sidebar-footer">
             <div class="profile-section" onclick="window.location.href='profile.html'">
                 <div class="profile-icon">👤</div>
                 <div class="profile-info">
-                    <div class="profile-name">User</div>
+                    <div class="profile-name">Admin User</div>
                 </div>
             </div>
 

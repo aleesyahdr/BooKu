@@ -1,0 +1,144 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>BooKu - Dashboard</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- Top Header -->
+    <header class="top-header">
+        <!-- Left side: Shop name -->
+        <div class="logo">
+            <h1>BooKu</h1>
+        </div>
+
+        <!-- Right side: Menu + Profile -->
+        <div class="header-right">
+            <!-- Menu Links -->
+            <nav class="header-nav">
+                <a href="index.html">Home</a>
+                <a href="customer/books.html">Books</a>
+                <a href="customer/contact.html">Contact</a>
+                <a href="customer/about.html">About</a>
+            </nav>
+
+            <!-- Profile Icon + Dropdown -->
+            <div class="profile-menu">
+                <img src="img/profile.jpg" class="profile-icon" alt="Profile">
+                <div class="dropdown">
+                    <a href="customer/profile.jsp">Profile</a>
+                    <a href="customer/orderHistory.jsp">Order History</a>
+                    <a href="customer/login.jsp">Login</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Bar -->
+
+    <!-- Main Content -->
+    <main>
+
+        <!-- Image Slider (UI only) -->
+        <section class="slider-section">
+            <div class="slider-box">
+                <div class="slides">
+                    <img src="img/banner2.png" alt="Banner 2" class="slider-img active">
+                    <img src="img/banner1.jpg" alt="Banner 2" class="slider-img">
+                </div>
+                <!-- Slider arrows -->
+                <button class="slide-btn left">&#10094;</button>
+                <button class="slide-btn right">&#10095;</button>
+            </div>
+        </section>
+
+
+
+        <!-- Popular Books -->
+        <section class="popular-section">
+            <h2>Popular Books</h2>
+
+            <div class="scroll-wrapper">
+
+                <!-- Left arrow -->
+                <button class="scroll-btn left">&#10094;</button>
+
+                <!-- Scrollable row -->
+                <div class="popular-container">
+                    <div class="book-card">
+                        <a href="customer/bookDetails.html"> <!-- link to book details -->
+                            <img src="img/book1.jpg" alt="Book 1">
+                            <p>Book Title 1</p>
+                        </a>
+                    </div>
+
+                    <div class="book-card">
+                        <a href="customer/bookDetails.html"> <!-- link to book details -->
+                            <img src="img/book2.jpg" alt="Book 2">
+                            <p>Book Title 2</p>
+                        </a>
+                    </div>
+
+                    <div class="book-card">
+                        <a href="customer/bookDetails.html"> <!-- link to book details -->
+                            <img src="img/book3.jpg" alt="Book 3">
+                            <p>Book Title 3</p>
+                        </a>
+                    </div>
+
+                    <div class="book-card">
+                        <a href="customer/bookDetails.html"> <!-- link to book details -->
+                            <img src="img/book4.jpg" alt="Book 4">
+                            <p>Book Title 4</p>
+                        </a>
+                    </div>
+
+                    <div class="book-card">
+                        <a href="customer/bookDetails.html"> <!-- link to book details -->
+                            <img src="img/book5.jpg" alt="Book 5">
+                            <p>Book Title 5</p>
+                        </a>
+                    </div>
+
+                    <div class="book-card">
+                        <a href="customer/bookDetails.html"> <!-- link to book details -->
+                            <img src="img/book6.jpg" alt="Book 6">
+                            <p>Book Title 6</p>
+                        </a>
+                    </div>
+
+                    <div class="book-card">
+                        <a href="customer/bookDetails.html"> <!-- link to book details -->
+                            <img src="img/book7.jpg" alt="Book 7">
+                            <p>Book Title 7</p>
+                        </a>
+                    </div>
+
+                    <div class="book-card">
+                        <a href="customer/bookDetails.html"> <!-- link to book details -->
+                            <img src="img/book8.jpg" alt="Book 8">
+                            <p>Book Title 8</p>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Right arrow -->
+                <button class="scroll-btn right">&#10095;</button>
+
+            </div>
+        </section>
+            <div class="show-more">
+                <a href="customer/books.html" class="show-more-btn">Show More</a>
+            </div>
+    </main>
+    <script src="js/slider.js"></script>
+    <script src="js/popular-scroll.js"></script>
+
+</body>
+</html>
+

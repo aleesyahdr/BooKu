@@ -6,7 +6,7 @@
 
 // login.js
 
-/*document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function() {
     const loginForm = document.querySelector(".login-form");
 
     loginForm.addEventListener("submit", function(e) {
@@ -14,7 +14,7 @@
         // Here you can add validation if needed
 
         // Redirect to index.html
-        window.location.href = "../index.jsp"; // adjust path if needed
+        window.location.href = "../index.html"; // adjust path if needed
     });
-});*/
+});
 

@@ -21,7 +21,7 @@ and open the template in the editor.
     /* Sidebar same theme */
     .sidebar {
         width: 250px;
-        background-color: #004d40;
+        background-color: black;
         color: #ffffff;
         padding: 20px 20px 0 20px;
         position: fixed;
@@ -41,6 +41,7 @@ and open the template in the editor.
 
     .sidebar h2 {
         margin-bottom: 30px;
+        color:#4caf50;
     }
 
     /* Sidebar Navigation */
@@ -71,7 +72,7 @@ and open the template in the editor.
 
     .sidebar a:hover,
     .sidebar a.active {
-        background-color: #000000;
+        background-color: #004d40;
     }
 
     /* Sidebar Footer */
@@ -156,7 +157,7 @@ and open the template in the editor.
         position: fixed;
         top: 20px;
         left: 270px;
-        background-color: #004d40;
+        background-color: black;
         color: white;
         border: none;
         padding: 10px 15px;
@@ -235,7 +236,7 @@ and open the template in the editor.
             background-color: #00352d;
         }
 
-                /* Book Grid - 4 columns */
+        /* Book Grid - 4 columns */
         .book-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -308,13 +309,14 @@ and open the template in the editor.
             <a href="books.html"class="active">Manage Book</a>
             <a href="orders.html">Manage Order</a>
             <a href="analytics.html">Analytics</a>
+            <a href="accounts.html">Accounts</a>
         </div>
 
         <div class="sidebar-footer">
             <div class="profile-section" onclick="window.location.href='profile.html'">
                 <div class="profile-icon">👤</div>
                 <div class="profile-info">
-                    <div class="profile-name">User</div>
+                    <div class="profile-name">Admin User</div>
                 </div>
             </div>
 
@@ -324,7 +326,7 @@ and open the template in the editor.
         </div>
     </div>
 
-       <div class="main-content" id="mainContent">
+   <div class="main-content" id="mainContent">
 
         <div class="header">
             <h1>Books</h1>
