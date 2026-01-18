@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+<head>
+    <title>BooKu - Books</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body>
+
+    <header class="top-header">
+        <div class="logo"><h1>BooKu</h1></div>
+
+        <div class="header-right">
+            <nav class="header-nav">
+                <a href="../index.html">Home</a>
+                <a href="books.html">Books</a>
+                <a href="contact.html">Contact</a>
+                <a href="about.html">About</a>
+            </nav>
+
+            <div class="profile-menu">
+                <img src="../img/profile.jpg" class="profile-icon" alt="Profile">
+                <div class="dropdown">
+                    <a href="profile.html">Profile</a>
+                    <a href="orderHistory.html">Order History</a>
+                    <a href="login.html">Login</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+   <div class="books-container">
+
+    <!-- LEFT: Categories -->
+    <div class="category-menu">
+        <h3>Categories</h3>
+        <a href="#">-</a>
+        <a href="#">Fiction</a>
+        <a href="#">Non-fiction</a>
+        <a href="#">Educational</a>
+        <a href="#">Cooking</a>
+    </div>
+
+    <!-- RIGHT: Books section -->
+    <section class="books-list">
+
+        <div class="search-box">
+            <input type="text" placeholder="Search books...">
+            <button>Search</button>
+        </div>
+        <h2>All Books</h2>
+
+        <div class="books-grid">
+            <!-- Book 1 -->
+        <div class="book-item">
+            <a href="bookDetails.html">
+                <img src="../img/book1.jpg" alt="Book 1">
+            </a>
+            <h3>Book Title 1</h3>
+            <p class="price">RM29.90</p>
+            <button class="cart-btn" onclick="window.location.href='cart.html'">Add to Cart</button>
+        </div>
+
+        <!-- Book 2 -->
+        <div class="book-item">
+            <a href="bookDetails.html">
+                <img src="../img/book2.jpg" alt="Book 2">
+            </a>
+            <h3>Book Title 2</h3>
+            <p class="price">RM35.00</p>
+            <button class="cart-btn" onclick="window.location.href='cart.html'">Add to Cart</button>
+        </div>
+
+        <!-- Book 3 -->
+        <div class="book-item">
+            <a href="bookDetails.html">
+                <img src="../img/book3.jpg" alt="Book 3">
+            </a>
+            <h3>Book Title 3</h3>
+            <p class="price">RM22.50</p>
+            <button class="cart-btn" onclick="window.location.href='cart.html'">Add to Cart</button>
+        </div>
+
+        <!-- Book 4 -->
+        <div class="book-item">
+            <a href="bookDetails.html">
+                <img src="../img/book4.jpg" alt="Book 4">
+            </a>
+            <h3>Book Title 4</h3>
+            <p class="price">RM19.90</p>
+            <button class="cart-btn" onclick="window.location.href='cart.html'">Add to Cart</button>
+        </div>
+
+        <!-- Book 5 -->
+        <div class="book-item">
+            <a href="bookDetails.html">
+                <img src="../img/book5.jpg" alt="Book 5">
+            </a>
+            <h3>Book Title 5</h3>
+            <p class="price">RM17.90</p>
+            <button class="cart-btn" onclick="window.location.href='cart.html'">Add to Cart</button>
+        </div>
+
+        <!-- Book 6 -->
+        <div class="book-item">
+            <a href="bookDetails.html">
+                <img src="../img/book6.jpg" alt="Book 6">
+            </a>
+            <h3>Book Title 6</h3>
+            <p class="price">RM90.90</p>
+            <button class="cart-btn" onclick="window.location.href='cart.html'">Add to Cart</button>
+        </div> 
+        </div>
+
+    </section>
+
+</div>
+
+
+</body>
+</html>
+
+
