@@ -21,10 +21,11 @@
         <div class="header-right">
             <!-- Menu Links -->
             <nav class="header-nav">
-                <a href="index.html">Home</a>
-                <a href="customer/books.html">Books</a>
-                <a href="customer/contact.html">Contact</a>
-                <a href="customer/about.html">About</a>
+                <a href="index.jsp">Home</a>
+                <a href="customer/books.jsp">Books</a>
+                <a href="customer/cart.jsp">Cart</a>
+                <a href="customer/contact.jsp">Contact</a>
+                <a href="customer/about.jsp">About</a>
             </nav>
 
             <!-- Profile Icon + Dropdown -->
