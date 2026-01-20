@@ -5,12 +5,14 @@ import java.util.List;
 import java.util.ArrayList;
 import java.sql.*;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import model.Book;
 import util.DBConnection;
 
+@WebServlet(name = "BooksServlet", urlPatterns = {"/BooksServlet"})
 public class BooksServlet extends HttpServlet {
     
     @Override
@@ -72,11 +74,11 @@ public class BooksServlet extends HttpServlet {
                         rs.getString("BOOK_DESCRIPTION"),
                         rs.getDate("BOOK_PUBLISHDATE"),
                         rs.getDouble("BOOK_PRICE"),
-                        rs.getString("BOOK_CATEGORY"),  // NEW
-                        rs.getString("BOOK_IMG")        // NEW
+                        rs.getString("BOOK_CATEGORY"),
+                        rs.getString("BOOK_IMG"),
+                        rs.getBoolean("BOOK_AVAILABLE")  // ADD THIS LINE!
                     );
                     books.add(book);
-                    System.out.println("Added book: " + book.getBook_name() + " [" + book.getBook_category() + "]");
                 }
                 
                 System.out.println("Total books found: " + books.size());

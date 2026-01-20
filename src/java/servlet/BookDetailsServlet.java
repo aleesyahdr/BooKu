@@ -39,7 +39,8 @@ public class BookDetailsServlet extends HttpServlet {
                             rs.getDate("BOOK_PUBLISHDATE"),
                             rs.getDouble("BOOK_PRICE"),
                             rs.getString("BOOK_CATEGORY"),
-                            rs.getString("BOOK_IMG") 
+                            rs.getString("BOOK_IMG"),
+                            rs.getBoolean("BOOK_AVAILABLE") 
                         );
                         System.out.println("Found book: " + book.getBook_name());
                     } else {

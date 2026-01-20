@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="3.1" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
+    <!-- Servlet Declarations -->
     <servlet>
         <servlet-name>AdminLoginServlet</servlet-name>
         <servlet-class>servlet.AdminLoginServlet</servlet-class>
@@ -11,10 +12,6 @@
     <servlet>
         <servlet-name>EmpLoginServlet</servlet-name>
         <servlet-class>servlet.EmpLoginServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>CartServlet</servlet-name>
-        <servlet-class>servlet.CartServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>IndexServlet</servlet-name>
@@ -29,8 +26,33 @@
         <servlet-class>servlet.BookDetailsServlet</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>ShoppingCartServlet</servlet-name>
+        <servlet-class>servlet.ShoppingCartServlet</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>PaymentServlet</servlet-name>
         <servlet-class>servlet.PaymentServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>CheckBookServlet</servlet-name>
+        <servlet-class>servlet.CheckBookServlet</servlet-class>
+    </servlet>
+    <!-- Servlet Mappings -->
+    <servlet>
+        <servlet-name>RegisterServlet</servlet-name>
+        <servlet-class>servlet.RegisterServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>OrderHistoryServlet</servlet-name>
+        <servlet-class>servlet.OrderHistoryServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>CheckoutServlet</servlet-name>
+        <servlet-class>servlet.CheckoutServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ProfileServlet</servlet-name>
+        <servlet-class>servlet.ProfileServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>AdminLoginServlet</servlet-name>
@@ -38,15 +60,12 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>CustLoginServlet</servlet-name>
-        <url-pattern>/customer/CustLoginServlet</url-pattern>
+        <url-pattern>/CustLoginServlet</url-pattern>
+        <!-- FIXED: Removed /customer/ -->
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>EmpLoginServlet</servlet-name>
         <url-pattern>/employees/EmpLoginServlet</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>CartServlet</servlet-name>
-        <url-pattern>/CartServlet</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>IndexServlet</servlet-name>
@@ -61,25 +80,43 @@
         <url-pattern>/BookDetailsServlet</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
+        <servlet-name>ShoppingCartServlet</servlet-name>
+        <url-pattern>/ShoppingCartServlet</url-pattern>
+        <!-- FIXED: Capital C -->
+    </servlet-mapping>
+    <servlet-mapping>
         <servlet-name>PaymentServlet</servlet-name>
         <url-pattern>/PaymentServlet</url-pattern>
     </servlet-mapping>
-    <servlet>
-    <servlet-name>CheckBookServlet</servlet-name>
-    <servlet-class>servlet.CheckBookServlet</servlet-class>
-</servlet>
-<servlet-mapping>
-    <servlet-name>CheckBookServlet</servlet-name>
-    <url-pattern>/CheckBookServlet</url-pattern>
-</servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CheckBookServlet</servlet-name>
+        <url-pattern>/CheckBookServlet</url-pattern>
+    </servlet-mapping>
+    <!-- Session Configuration -->
+    <servlet-mapping>
+        <servlet-name>RegisterServlet</servlet-name>
+        <url-pattern>/RegisterServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>OrderHistoryServlet</servlet-name>
+        <url-pattern>/OrderHistoryServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CheckoutServlet</servlet-name>
+        <url-pattern>/CheckoutServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ProfileServlet</servlet-name>
+        <url-pattern>/ProfileServlet</url-pattern>
+    </servlet-mapping>
     <session-config>
-        <session-timeout>
-            30
-        </session-timeout>
+        <session-timeout>30</session-timeout>
     </session-config>
+    <!-- Welcome File List -->
     <welcome-file-list>
         <welcome-file>IndexServlet</welcome-file>
     </welcome-file-list>
+    <!-- Database Resource -->
     <resource-ref>
         <description>BooKu Database</description>
         <res-ref-name>jdbc/myDatasource</res-ref-name>
