@@ -1,128 +1,129 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ page import="java.util.List" %>
+<%@ page import="model.Cart" %>
+
+<%
+    // Check if user is logged in
+    Integer custId = (Integer) session.getAttribute("custId");
+    String username = (String) session.getAttribute("username");
+    
+    if (custId == null || username == null) {
+        response.sendRedirect(request.getContextPath() + "/customer/login.jsp");
+        return;
+    }
+    
+    // Get checkout data with null checks
+    List<Cart> cartItems = (List<Cart>) request.getAttribute("cartItems");
+    
+    // Handle null values properly
+    double subtotal = 0.0;
+    double shipping = 0.0;
+    double tax = 0.0;
+    double total = 0.0;
+    
+    Object subtotalObj = request.getAttribute("subtotal");
+    Object shippingObj = request.getAttribute("shipping");
+    Object taxObj = request.getAttribute("tax");
+    Object totalObj = request.getAttribute("total");
+    
+    if (subtotalObj != null) subtotal = (Double) subtotalObj;
+    if (shippingObj != null) shipping = (Double) shippingObj;
+    if (taxObj != null) tax = (Double) taxObj;
+    if (totalObj != null) total = (Double) totalObj;
+    
+    System.out.println("Checkout JSP - Subtotal: " + subtotal + ", Tax: " + tax + ", Shipping: " + shipping + ", Total: " + total);
+%>
+
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>BooKu - Cart</title>
-        <link rel="stylesheet" href="../css/style.css">
-    </head>
-    
-    <body>
-       <!-- Top Header -->
-        <header class="top-header">
+<head>
+    <title>BooKu - Checkout</title>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
+</head>
+<body>
+    <header class="top-header">
         <div class="logo"><h1>BooKu</h1></div>
-
         <div class="header-right">
             <nav class="header-nav">
-                <a href="../index.html">Home</a>
-                <a href="books.html">Books</a>
-                <a href="contact.html">Contact</a>
-                <a href="about.html">About</a>
+                <a href="${pageContext.request.contextPath}/IndexServlet">Home</a>
+                <a href="${pageContext.request.contextPath}/BooksServlet">Books</a>
             </nav>
-
             <div class="profile-menu">
-                <img src="../img/profile.jpg" class="profile-icon" alt="Profile">
+                <img src="${pageContext.request.contextPath}/img/profile.jpg" class="profile-icon" alt="Profile">
                 <div class="dropdown">
-                    <a href="profile.html">Profile</a>
-                    <a href="orderHistory.html">Order History</a>
-                    <a href="login.html">Login</a>
+                    <div class="user-info">Welcome, <%= username %>!</div>
+                    <a href="${pageContext.request.contextPath}/ShoppingCartServlet">My Cart</a>
+                    <a href="${pageContext.request.contextPath}/CustLoginServlet?action=logout">Logout</a>
                 </div>
             </div>
         </div>
     </header>
+    
+    <div class="checkout-container">
+        <h1 class="page-title">Checkout</h1>
         
-        <!-- Cart Container -->
-        <div class="cart-container">
-            <div class="cart-content">
-                <!-- Shipping Address Section -->
-                <div class="cart-items">
-                    <h2 class="shipping-title">Shipping Address</h2>
-                    <form id="shipping-form">
-                        <div class="form-group">
-                            <label class="form-label">Full Name</label>
-                            <input type="text" id="fullname" required class="form-input">
+        <div class="checkout-content">
+            <!-- Left Side: Order Summary -->
+            <div class="order-summary-section">
+                <h2>Order Summary</h2>
+                
+                <div class="checkout-items">
+                    <%
+                        if (cartItems != null && !cartItems.isEmpty()) {
+                            for (Cart item : cartItems) {
+                    %>
+                    <div class="checkout-item">
+                        <div class="item-details">
+                            <h4><%= item.getBookName() %></h4>
+                            <p>by <%= item.getBookAuthor() %></p>
+                            <p>Quantity: <%= item.getQuantity() %></p>
                         </div>
-
-                        <div class="form-group">
-                            <label class="form-label">Phone Number</label>
-                            <input type="tel" id="phone" required class="form-input">
+                        <div class="item-price">
+                            RM <%= String.format("%.2f", item.getSubtotal()) %>
                         </div>
-
-                        <div class="form-group">
-                            <label class="form-label">Address Line 1</label>
-                            <input type="text" id="address1" required class="form-input">
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">Address Line 2</label>
-                            <input type="text" id="address2" class="form-input">
-                        </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label class="form-label">City</label>
-                                <input type="text" id="city" required class="form-input">
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Postcode</label>
-                                <input type="text" id="postcode" required class="form-input">
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">State</label>
-                            <select id="state" required class="form-input">
-                                <option value="">Select State</option>
-                                <option value="Johor">Johor</option>
-                                <option value="Kedah">Kedah</option>
-                                <option value="Kelantan">Kelantan</option>
-                                <option value="Melaka">Melaka</option>
-                                <option value="Negeri Sembilan">Negeri Sembilan</option>
-                                <option value="Pahang">Pahang</option>
-                                <option value="Penang">Penang</option>
-                                <option value="Perak">Perak</option>
-                                <option value="Perlis">Perlis</option>
-                                <option value="Sabah">Sabah</option>
-                                <option value="Sarawak">Sarawak</option>
-                                <option value="Selangor">Selangor</option>
-                                <option value="Terengganu">Terengganu</option>
-                                <option value="Kuala Lumpur">Kuala Lumpur</option>
-                                <option value="Labuan">Labuan</option>
-                                <option value="Putrajaya">Putrajaya</option>
-                            </select>
-                        </div>
-                    </form>
+                    </div>
+                    <%
+                            }
+                        }
+                    %>
                 </div>
-
-                <!-- Cart Summary Section -->
-                <div class="cart-summary">
-                    <h2 class="summary-title">Order Summary</h2>
-                    <div class="summary-row">
-                        <span>Subtotal (<span id="item-count">3</span> items):</span>
-                        <span id="subtotal">RM 119.70</span>
+                
+                <div class="order-totals">
+                    <div class="total-row">
+                        <span>Subtotal:</span>
+                        <span>RM <%= String.format("%.2f", subtotal) %></span>
                     </div>
-                    <div class="summary-row">
+                    <div class="total-row">
                         <span>Shipping:</span>
-                        <span id="shipping">RM 10.00</span>
+                        <span>RM <%= String.format("%.2f", shipping) %></span>
                     </div>
-                    <div class="summary-row">
+                    <div class="total-row">
                         <span>Tax (6%):</span>
-                        <span id="tax">RM 7.18</span>
+                        <span>RM <%= String.format("%.2f", tax) %></span>
                     </div>
-                    <div class="summary-row total">
-                        <span>Total:</span>
-                        <span id="total">RM 136.88</span>
+                    <div class="total-row grand-total">
+                        <span><strong>Total:</strong></span>
+                        <span><strong>RM <%= String.format("%.2f", total) %></strong></span>
                     </div>
-                    <button class="checkout-btn" onclick="window.location.href='payment.html'">Make payment</button>
-                    <button class="cancel-order-btn" onclick="cancelOrder()">Cancel Order</button>
                 </div>
             </div>
+            
+            <!-- Right Side: Payment Button -->
+            <div class="payment-section">
+                <h2>Ready to Complete Purchase?</h2>
+                <p>Total Amount: <strong>RM <%= String.format("%.2f", total) %></strong></p>
+                
+                <form action="${pageContext.request.contextPath}/PaymentServlet" method="GET">
+                    <input type="hidden" name="totalAmount" value="<%= total %>">
+                    <button type="submit" class="proceed-payment-btn">Proceed to Payment</button>
+                </form>
+                
+                <button class="back-cart-btn" onclick="location.href='${pageContext.request.contextPath}/ShoppingCartServlet'">
+                    Back to Cart
+                </button>
+            </div>
         </div>
-        
-        <script>
-            function cancelOrder() {
-                alert("Order cancelled");
-                window.location.href = "../index.html";
-            }
-        </script>
-
-    </body>
+    </div>
+</body>
 </html>

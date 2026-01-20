@@ -1,15 +1,15 @@
-<%-- 
-    Document   : paymentSuccess
-    Created on : Jan 20, 2026, 2:07:07 AM
-    Author     : user
---%>
-
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%
+    Integer orderId = (Integer) request.getAttribute("orderId");
+    Double totalAmount = (Double) request.getAttribute("totalAmount");
+    
+    if (orderId == null) orderId = 0;
+    if (totalAmount == null) totalAmount = 0.0;
+%>
 
 <!DOCTYPE html>
 <html>
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>BooKu - Payment Success</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
     <style>
@@ -89,15 +89,14 @@
             
             <div class="order-details">
                 <p><strong>Order Confirmation:</strong></p>
-                <p>Order ID: #<%= System.currentTimeMillis() %></p>
+                <p>Order ID: #<%= orderId %></p>
                 <p>Date: <%= new java.util.Date() %></p>
-                <p>Total Amount: RM ${totalAmount}</p>
+                <p>Total Amount: RM <%= String.format("%.2f", totalAmount) %></p>
             </div>
+           
             
-            <p>A confirmation email has been sent to your registered email address.</p>
-            
-            <a href="../IndexServlet" class="success-btn">Back to Home</a>
-            <a href="orderHistory.jsp" class="success-btn">View Order History</a>
+            <a href="${pageContext.request.contextPath}/IndexServlet" class="success-btn">Back to Home</a>
+            <a href="${pageContext.request.contextPath}/OrderHistoryServlet" class="success-btn">View Order History</a>
         </div>
     </div>
 </body>

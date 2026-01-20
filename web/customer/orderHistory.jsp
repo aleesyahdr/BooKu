@@ -1,154 +1,182 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="java.util.List" %>
+<%@ page import="java.util.Map" %>
+<%@ page import="model.Order" %>
+<%
+    Integer custId = (Integer) session.getAttribute("custId");
+    String username = (String) session.getAttribute("username");
+    
+    if (custId == null || username == null) {
+        session.setAttribute("redirectAfterLogin", request.getRequestURI());
+        response.sendRedirect(request.getContextPath() + "/customer/login.jsp");
+        return;
+    }
+%>
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>BooKu - Order History</title>
-        <link rel="stylesheet" href="../css/style.css">
-    </head>
-    
-    <body>
-       <!-- Top Header -->
-        <header class="top-header">
-            <!-- Left side: Shop name -->
-            <div class="logo">
-                <h1>BooKu</h1>
-            </div>
-
-            <!-- Right side: Menu + Profile -->
-            <div class="header-right">
-                <!-- Menu Links -->
-                <nav class="header-nav">
-                    <a href="../index.html">Home</a>
-                    <a href="books.html">Books</a>
-                    <a href="contact.html">Contact</a>
-                    <a href="about.html">About</a>
-                </nav>
-
-                <!-- Profile Icon + Dropdown -->
-                <div class="profile-menu">
-                    <img src="../img/profile.jpg" class="profile-icon" alt="Profile">
-                    <div class="dropdown">
-                        <a href="profile.html">Profile</a>
-                        <a href="orderHistory.html">Order History</a>
-                        <a href="login.html">Login</a>
-                    </div>
-                </div>
-            </div>
-        </header>
+<head>
+    <title>BooKu - Order History</title>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
+    <style>        
         
-        <!-- Order History Container -->
-        <div class="order-history-container">
-            <h1 class="page-title">Order History</h1>
-            
-            <!-- Order Card 1 -->
-            <div class="order-card">
-                <div class="order-header">
-                    <div class="order-info">
-                        <span class="order-id">Order #12345</span>
-                        <span class="order-date">Placed on: March 15, 2024</span>
-                    </div>
-                    <div class="order-status delivered">Delivered</div>
-                </div>
-                
-                <div class="order-items">
-                    <div class="order-item">
-                        <img src="../img/book1.jpg" alt="Book" class="order-item-image">
-                        <div class="order-item-details">
-                            <h3 class="order-item-title">Book 1</h3>
-                            <p class="order-item-author">by Author 1</p>
-                            <p class="order-item-qty">Quantity: 1</p>
-                        </div>
-                        <div class="order-item-price">RM XX.XX</div>
-                    </div>
-                    
-                    <div class="order-item">
-                        <img src="../img/book2.jpg" alt="Book" class="order-item-image">
-                        <div class="order-item-details">
-                            <h3 class="order-item-title">Book 2</h3>
-                            <p class="order-item-author">by Author 2</p>
-                            <p class="order-item-qty">Quantity: 1</p>
-                        </div>
-                        <div class="order-item-price">RM XX.XX</div>
-                    </div>
-                </div>
-                
-                <div class="order-footer">
-                    <div class="order-total">
-                        <span>Total:</span>
-                        <span class="total-amount">RM XX.XX</span>
-                    </div>
-                    <div class="order-actions">
-                        <button class="order-btn view-details">View Details</button>
-                        <button class="order-btn reorder">Reorder</button>
-                    </div>
-                </div>
-            </div>
+        /* Order Items */
+.order-items {
+    padding: 15px 20px;
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+}
 
-            <!-- Order Card 2 -->
-            <div class="order-card">
-                <div class="order-header">
-                    <div class="order-info">
-                        <span class="order-id">Order #12344</span>
-                        <span class="order-date">Placed on: March 10, 2024</span>
-                    </div>
-                    <div class="order-status processing">Processing</div>
-                </div>
-                
-                <div class="order-items">
-                    <div class="order-item">
-                        <img src="../img/book3.jpg" alt="Book" class="order-item-image">
-                        <div class="order-item-details">
-                            <h3 class="order-item-title">Book 3</h3>
-                            <p class="order-item-author">by Author 3</p>
-                            <p class="order-item-qty">Quantity: 2</p>
-                        </div>
-                        <div class="order-item-price">RM XX.XX</div>
-                    </div>
-                </div>
-                
-                <div class="order-footer">
-                    <div class="order-total">
-                        <span>Total:</span>
-                        <span class="total-amount">RM XX.XX</span>
-                    </div>
-                    <div class="order-actions">
-                        <button class="order-btn view-details">View Details</button>
-                        <button class="order-btn track">Track Order</button>
-                    </div>
-                </div>
-            </div>
+.order-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 10px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
 
-            <!-- Order Card 3 -->
-            <div class="order-card">
-                <div class="order-header">
-                    <div class="order-info">
-                        <span class="order-id">Order #12343</span>
-                        <span class="order-date">Placed on: February 28, 2024</span>
-                    </div>
-                    <div class="order-status cancelled">Cancelled</div>
-                </div>
-                
-                <div class="order-items">
-                    <div class="order-item">
-                        <img src="../img/book4.jpg" alt="Book" class="order-item-image">
-                        <div class="order-item-details">
-                            <h3 class="order-item-title">Book 4</h3>
-                            <p class="order-item-author">by Author 4</p>
-                            <p class="order-item-qty">Quantity: 1</p>
-                        </div>
-                        <div class="order-item-price">RM XX.XX</div>
-                    </div>
-                </div>
-                
-                <div class="order-footer">
-                    <div class="order-total">
-                        <span>Total:</span>
-                        <span class="total-amount">RM XX.XX</span>
-                    </div>
-                    <div class="order-actions">
-                        <button class="order-btn view-details">View Details</button>
-                    </div>
+.order-item:last-child {
+    border-bottom: none;
+}
+
+.order-item-img {
+    width: 60px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+.order-item-details h4 {
+    margin: 0 0 5px 0;
+    font-size: 14px;
+    color: #333;
+}
+
+.order-item-details .item-price {
+    color: #004d40;
+    font-weight: 600;
+    margin: 3px 0;
+    font-size: 13px;
+}
+
+.order-item-details .item-qty {
+    color: #666;
+    font-size: 12px;
+    margin: 3px 0;
+}
+
+.order-status.pending {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.order-status.processing {
+    background-color: #cce5ff;
+    color: #004085;
+}
+
+.order-status.shipped {
+    background-color: #d1ecf1;
+    color: #0c5460;
+}
+
+.order-status.completed {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.order-status.cancelled {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+</style>
+</head>
+<body>
+    <!-- Top Header -->
+    <header class="top-header">
+        <div class="logo"><h1>BooKu</h1></div>
+        <div class="header-right">
+            <nav class="header-nav">
+                <a href="${pageContext.request.contextPath}/IndexServlet">Home</a>
+                <a href="${pageContext.request.contextPath}/BooksServlet">Books</a>
+                <a href="${pageContext.request.contextPath}/customer/contact.jsp">Contact</a>
+                <a href="${pageContext.request.contextPath}/customer/about.jsp">About</a>
+            </nav>
+            <div class="profile-menu">
+                <img src="${pageContext.request.contextPath}/img/profile.jpg" class="profile-icon" alt="Profile">
+                <div class="dropdown">
+                    <div class="user-info">Welcome, <%= username %>!</div>
+                    <a href="${pageContext.request.contextPath}/ProfileServlet">Profile</a>
+                    <a href="${pageContext.request.contextPath}/OrderHistoryServlet">Order History</a>
+                    <a href="${pageContext.request.contextPath}/ShoppingCartServlet">My Cart</a>
+                    <a href="${pageContext.request.contextPath}/CustLoginServlet?action=logout">Logout</a>
                 </div>
             </div>
         </div>
-    </body>
+    </header>
+    
+    <!-- Order History Container -->
+    <div class="order-history-container">
+        <h1 class="page-title">Order History</h1>
+        
+        <%
+            List<Order> orders = (List<Order>) request.getAttribute("orders");
+            Map<Integer, List<Map<String, Object>>> orderItemsMap = 
+                (Map<Integer, List<Map<String, Object>>>) request.getAttribute("orderItemsMap");
+            
+            if (orders != null && !orders.isEmpty()) {
+                for (Order order : orders) {
+                    List<Map<String, Object>> items = orderItemsMap.get(order.getOrder_id());
+        %>
+        <!-- Order Card -->
+        <div class="order-card">
+            <div class="order-header">
+                <div class="order-info">
+                    <span class="order-id">Order #<%= order.getOrder_id() %></span>
+                    <span class="order-date">Placed on: <%= order.getOrder_date() %></span>
+                </div>
+                <div class="order-status <%= order.getOrder_status().toLowerCase() %>"><%= order.getOrder_status() %></div>
+            </div>
+            
+            <!-- Order Items - Books with Images -->
+            <div class="order-items">
+                <% if (items != null && !items.isEmpty()) { 
+                    for (Map<String, Object> item : items) { %>
+                <div class="order-item">
+                    <a href="${pageContext.request.contextPath}/BookDetailsServlet?book_id=<%= item.get("bookId") %>">
+                        <img src="${pageContext.request.contextPath}/img/<%= item.get("bookImg") %>" 
+                             alt="<%= item.get("bookName") %>" class="order-item-img">
+                    </a>
+                    <div class="order-item-details">
+                        <h4><%= item.get("bookName") %></h4>
+                        <p class="item-price">RM <%= String.format("%.2f", item.get("bookPrice")) %></p>
+                        <p class="item-qty">Qty: <%= item.get("quantity") %></p>
+                    </div>
+                </div>
+                <%  } 
+                   } else { %>
+                <p>No items found</p>
+                <% } %>
+            </div>
+            
+            <div class="order-footer">
+                <div class="order-total">
+                    <span>Total:</span>
+                    <span class="total-amount">RM <%= String.format("%.2f", order.getOrder_total()) %></span>
+                </div>
+            </div>
+        </div>
+        <%
+                }
+            } else {
+        %>
+        <div class="empty-orders">
+            <h2>No Orders Yet</h2>
+            <p>You haven't placed any orders yet.</p>
+            <button class="continue-shopping" onclick="location.href='${pageContext.request.contextPath}/BooksServlet'">Start Shopping</button>
+        </div>
+        <%
+            }
+        %>
+    </div>
+</body>
 </html>

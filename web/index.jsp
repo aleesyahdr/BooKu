@@ -1,10 +1,3 @@
-
-<%-- 
-    Document   : paymentSuccess
-    Created on : Jan 20, 2026, 2:07:07 AM
-    Author     : user
---%>
-
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page import="java.util.List" %>
@@ -40,19 +33,29 @@
             <div class="profile-menu">
                 <img src="${pageContext.request.contextPath}/img/profile.jpg" class="profile-icon" alt="Profile">
                 <div class="dropdown">
-                    <a href="${pageContext.request.contextPath}/customer/profile.jsp">Profile</a>
-                    <a href="${pageContext.request.contextPath}/customer/orderHistory.jsp">Order History</a>
-                    <% if (session.getAttribute("username") != null) { %>
-                        <a href="${pageContext.request.contextPath}/customer/CustLoginServlet?action=logout">Logout</a>
+                    <%
+                        // Check if user is logged in
+                        String username = (String) session.getAttribute("username");
+                        Integer custId = (Integer) session.getAttribute("custId");
+                        boolean isLoggedIn = (username != null && custId != null);
+                    %>
+                    
+                    <% if (isLoggedIn) { %>
+                        <!-- User is logged in -->
+                        <div class="user-info">Welcome, <%= username %>!</div>
+                        <a href="${pageContext.request.contextPath}/ProfileServlet">Profile</a>
+                        <a href="${pageContext.request.contextPath}/OrderHistoryServlet">Order History</a>
+                        <a href="${pageContext.request.contextPath}/ShoppingCartServlet">My Cart</a>
+                        <a href="${pageContext.request.contextPath}/CustLoginServlet?action=logout">Logout</a>
                     <% } else { %>
+                        <!-- User is NOT logged in -->
                         <a href="${pageContext.request.contextPath}/customer/login.jsp">Login</a>
+                        <a href="${pageContext.request.contextPath}/customer/register.jsp">Register</a>
                     <% } %>
                 </div>
             </div>
         </div>
     </header>
-
-    <!-- Navigation Bar -->
 
     <!-- Main Content -->
     <main>
@@ -62,7 +65,7 @@
             <div class="slider-box">
                 <div class="slides">
                     <img src="${pageContext.request.contextPath}/img/banner2.png" alt="Banner 2" class="slider-img active">
-                    <img src="${pageContext.request.contextPath}/img/banner1.jpg" alt="Banner 2" class="slider-img">
+                    <img src="${pageContext.request.contextPath}/img/banner1.jpg" alt="Banner 1" class="slider-img">
                 </div>
                 <!-- Slider arrows -->
                 <button class="slide-btn left">&#10094;</button>
@@ -88,7 +91,7 @@
                     %>
                     <div class="book-card">
                         <a href="${pageContext.request.contextPath}/BookDetailsServlet?book_id=<%= book.getBook_id() %>">
-                            <img src="${pageContext.request.contextPath}/img/book<%= book.getBook_id() %>.jpg" alt="<%= book.getBook_name() %>">
+                            <img src="${pageContext.request.contextPath}/img/<%= book.getBook_img() %>" alt="<%= book.getBook_name() %>">
                             <p><%= book.getBook_name() %></p>
                         </a>
                     </div>

@@ -23,7 +23,19 @@ public class IndexServlet extends HttpServlet {
         
         if (conn != null) {
             try {
-                String query = "SELECT * FROM BOOK FETCH FIRST 8 ROWS ONLY";
+                String query =
+                    "SELECT " +
+                    "  b.BOOK_ID, b.BOOK_NAME, b.BOOK_AUTHOR, b.BOOK_DESCRIPTION, " +
+                    "  b.BOOK_PUBLISHDATE, b.BOOK_PRICE, b.BOOK_CATEGORY, b.BOOK_IMG, b.BOOK_AVAILABLE, " +
+                    "  COALESCE(SUM(od.ORDER_QUANTITY), 0) AS TOTAL_SOLD " +
+                    "FROM BOOK b " +
+                    "LEFT JOIN ORDERDETAILS od ON b.BOOK_ID = od.BOOK_ID " +
+                    "GROUP BY " +
+                    "  b.BOOK_ID, b.BOOK_NAME, b.BOOK_AUTHOR, b.BOOK_DESCRIPTION, " +
+                    "  b.BOOK_PUBLISHDATE, b.BOOK_PRICE, b.BOOK_CATEGORY, b.BOOK_IMG, b.BOOK_AVAILABLE " +
+                    "ORDER BY TOTAL_SOLD DESC " +
+                    "FETCH FIRST 8 ROWS ONLY";
+
                 Statement stmt = conn.createStatement();
                 ResultSet rs = stmt.executeQuery(query);
                 
@@ -36,7 +48,8 @@ public class IndexServlet extends HttpServlet {
                         rs.getDate("BOOK_PUBLISHDATE"),
                         rs.getDouble("BOOK_PRICE"),
                         rs.getString("BOOK_CATEGORY"),
-                        rs.getString("BOOK_IMG") 
+                        rs.getString("BOOK_IMG"),
+                        rs.getBoolean("BOOK_AVAILABLE") 
                     );
                     books.add(book);
                     System.out.println("Added book: " + book.getBook_name());

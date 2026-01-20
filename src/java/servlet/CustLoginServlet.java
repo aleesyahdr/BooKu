@@ -1,109 +1,95 @@
 package servlet;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;  // ← ADD THIS IMPORT
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import model.Customer;
 import dao.CustLoginDao;
-import javax.servlet.http.HttpSession;
 
-/**
- *
- * @author USER
- */
-
+@WebServlet(name = "CustLoginServlet", urlPatterns = {"/CustLoginServlet"})  // ← ADD THIS ANNOTATION
 public class CustLoginServlet extends HttpServlet {
-
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet CustLoginServlet</title>");            
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet CustLoginServlet at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
-
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
-    }
-
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
+    
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException 
-    {
+            throws ServletException, IOException {
+        
         String username = request.getParameter("username");
         String password = request.getParameter("password");
-
+        
+        System.out.println("CustLoginServlet: Attempting login for username: " + username);
+        
         Customer cust = new Customer();
         cust.setCust_username(username);
         cust.setCust_password(password);
-
+        
         CustLoginDao custLoginDao = new CustLoginDao();
-
-        // UPDATE: Get customer ID too
+        
+        // Get customer ID from DAO
         int custId = custLoginDao.authenticateUserAndGetId(cust);
-
-        if(custId > 0)
-        {
+        
+        if (custId != -1) {  // Changed from > 0 to match your DAO's return value
+            // Login successful
+            System.out.println("Login successful for: " + username + " (ID: " + custId + ")");
+            
+            // Create session and store user info
             HttpSession session = request.getSession();
+            session.setAttribute("custId", custId);
             session.setAttribute("username", username);
-            session.setAttribute("cust_Id", custId); // STORE CUST_ID
-
-            response.sendRedirect(request.getContextPath() + "/index.jsp");
-        } 
-        else 
-        {
+            session.setMaxInactiveInterval(30 * 60); // 30 minutes
+            
+            System.out.println("Session created: custId=" + custId + ", username=" + username);
+            
+            // Check if there's a redirect URL stored
+            String redirectUrl = (String) session.getAttribute("redirectAfterLogin");
+            
+            if (redirectUrl != null && !redirectUrl.isEmpty()) {
+                // Remove the redirect URL from session
+                session.removeAttribute("redirectAfterLogin");
+                System.out.println("Redirecting to original page: " + redirectUrl);
+                response.sendRedirect(redirectUrl);
+            } else {
+                // No redirect URL, go to home page
+                System.out.println("Redirecting to index page");
+                response.sendRedirect(request.getContextPath() + "/IndexServlet");
+            }
+            
+        } else {
+            // Login failed
+            System.out.println("Login failed: Invalid credentials for " + username);
             request.setAttribute("errorMessage", "Invalid username or password");
             request.getRequestDispatcher("/customer/login.jsp").forward(request, response);
         }
     }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
+    
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        
+        String action = request.getParameter("action");
+        
+        if ("logout".equals(action)) {
+            // Logout
+            HttpSession session = request.getSession(false);
+            if (session != null) {
+                String username = (String) session.getAttribute("username");
+                System.out.println("Logging out user: " + username);
+                session.invalidate(); // Destroy the session
+            }
+            
+            System.out.println("Redirecting to login page after logout");
+            response.sendRedirect(request.getContextPath() + "/customer/login.jsp");
+        } else {
+            // If no action, redirect to login page
+            response.sendRedirect(request.getContextPath() + "/customer/login.jsp");
+        }
+    }
+    
     @Override
     public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
+        return "Customer Login Servlet";
+    }
 }

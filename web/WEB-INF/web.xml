@@ -52,6 +52,11 @@
     </servlet>
 
     <servlet>
+        <servlet-name>ShoppingCartServlet</servlet-name>
+        <servlet-class>servlet.ShoppingCartServlet</servlet-class>
+    </servlet>
+
+    <servlet>
         <servlet-name>PaymentServlet</servlet-name>
         <servlet-class>servlet.PaymentServlet</servlet-class>
     </servlet>
@@ -59,6 +64,26 @@
     <servlet>
         <servlet-name>CheckBookServlet</servlet-name>
         <servlet-class>servlet.CheckBookServlet</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>RegisterServlet</servlet-name>
+        <servlet-class>servlet.RegisterServlet</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>OrderHistoryServlet</servlet-name>
+        <servlet-class>servlet.OrderHistoryServlet</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>CheckoutServlet</servlet-name>
+        <servlet-class>servlet.CheckoutServlet</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>ProfileServlet</servlet-name>
+        <servlet-class>servlet.ProfileServlet</servlet-class>
     </servlet>
 
     <!-- Employee Servlets -->
@@ -92,7 +117,6 @@
         <servlet-class>servlet.AnalyticsServlet</servlet-class>
     </servlet>
 
-
     <!-- ========================================
          SERVLET MAPPINGS
          ======================================== -->
@@ -105,7 +129,7 @@
 
     <servlet-mapping>
         <servlet-name>CustLoginServlet</servlet-name>
-        <url-pattern>/customer/CustLoginServlet</url-pattern>
+        <url-pattern>/CustLoginServlet</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
@@ -140,6 +164,11 @@
     </servlet-mapping>
 
     <servlet-mapping>
+        <servlet-name>ShoppingCartServlet</servlet-name>
+        <url-pattern>/ShoppingCartServlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
         <servlet-name>PaymentServlet</servlet-name>
         <url-pattern>/PaymentServlet</url-pattern>
     </servlet-mapping>
@@ -147,6 +176,26 @@
     <servlet-mapping>
         <servlet-name>CheckBookServlet</servlet-name>
         <url-pattern>/CheckBookServlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>RegisterServlet</servlet-name>
+        <url-pattern>/RegisterServlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>OrderHistoryServlet</servlet-name>
+        <url-pattern>/OrderHistoryServlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>CheckoutServlet</servlet-name>
+        <url-pattern>/CheckoutServlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>ProfileServlet</servlet-name>
+        <url-pattern>/ProfileServlet</url-pattern>
     </servlet-mapping>
 
     <!-- Employee Mappings -->
@@ -180,7 +229,6 @@
         <url-pattern>/AnalyticsServlet</url-pattern>
     </servlet-mapping>
 
-
     <!-- ========================================
          SESSION & WELCOME FILES
          ======================================== -->
@@ -189,11 +237,9 @@
         <session-timeout>30</session-timeout>
     </session-config>
 
-    <!-- Best practice: welcome file is a JSP, not a servlet -->
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>
-
 
     <!-- ========================================
          DATABASE RESOURCE

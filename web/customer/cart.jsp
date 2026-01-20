@@ -1,46 +1,62 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
+<%
+    // Check if user is logged in
+    Integer custId = (Integer) session.getAttribute("custId");
+    String username = (String) session.getAttribute("username");
+    
+    if (custId == null || username == null) {
+        // User is not logged in, redirect to login page
+        // Store current page URL for redirect after login
+        session.setAttribute("redirectAfterLogin", request.getRequestURI());
+        response.sendRedirect(request.getContextPath() + "/customer/login.jsp");
+        return; // Stop processing the page
+    }
+%>
 <!DOCTYPE html>
 <html>
     <head>
         <title>BooKu - Cart</title>
-        <link rel="stylesheet" href="../css/style.css">
+       <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
     </head>
     
     <body>
        <!-- Top Header -->
+        <!-- Top Header -->
         <header class="top-header">
-        <div class="logo"><h1>BooKu</h1></div>
+            <div class="logo"><h1>BooKu</h1></div>
 
-        <div class="header-right">
-            <nav class="header-nav">
-                <a href="../index.jsp">Home</a>
-                <a href="books.jsp">Books</a>
-                <a href="cart.jsp">Cart</a>
-                <a href="contact.jsp">Contact</a>
-                <a href="about.jsp">About</a>
-            </nav>
+            <div class="header-right">
+                <nav class="header-nav">
+                    <a href="${pageContext.request.contextPath}/IndexServlet">Home</a>
+                    <a href="${pageContext.request.contextPath}/BooksServlet">Books</a>
+                    <a href="${pageContext.request.contextPath}/customer/contact.jsp">Contact</a>
+                    <a href="${pageContext.request.contextPath}/customer/about.jsp">About</a>
+                </nav>
 
-            <div class="profile-menu">
-                <img src="../img/profile.jpg" class="profile-icon" alt="Profile">
-                <div class="dropdown">
-                    <a href="profile.jsp">Profile</a>
-                    <a href="orderHistory.jsp">Order History</a>
-                    <c:choose>
-                        <c:when test="${not empty sessionScope.username}">
-                            <a href="logout.jsp">Logout</a>
-                        </c:when>
-                        <c:otherwise>
-                            <a href="login.jsp">Login</a>
-                        </c:otherwise>
-                    </c:choose>
+                <div class="profile-menu">
+                    <img src="${pageContext.request.contextPath}/img/profile.jpg" class="profile-icon" alt="Profile">
+                    <div class="dropdown">
+                        <c:choose>
+                            <c:when test="${not empty sessionScope.username}">
+                                <div class="user-info">Welcome, ${sessionScope.username}!</div>
+                                <a href="${pageContext.request.contextPath}/ProfileServlet">Profile</a>
+                                <a href="${pageContext.request.contextPath}/OrderHistoryServlet">Order History</a>
+                                <a href="${pageContext.request.contextPath}/ShoppingCartServlet">My Cart</a>
+                                <a href="${pageContext.request.contextPath}/CustLoginServlet?action=logout">Logout</a>
+                            </c:when>
+                            <c:otherwise>
+                                <a href="${pageContext.request.contextPath}/customer/login.jsp">Login</a>
+                                <a href="${pageContext.request.contextPath}/customer/register.jsp">Register</a>
+                            </c:otherwise>
+                        </c:choose>
+                    </div>
                 </div>
             </div>
-        </div>
-    </header>
-
-        <!-- Cart Container -->
+        </header>
+<!-- Cart Container -->
         <div class="cart-container">
             <h1 class="page-title">Shopping Cart</h1>
             
@@ -49,7 +65,7 @@
                     <div class="empty-cart">
                         <h2>Your cart is empty</h2>
                         <p>Add some books to get started!</p>
-                        <button class="continue-shopping" onclick="location.href='books.jsp'">Browse Books</button>
+                        <button class="continue-shopping" onclick="location.href='${pageContext.request.contextPath}/BooksServlet'">Browse Books</button>
                     </div>
                 </c:when>
                 <c:otherwise>
@@ -65,8 +81,8 @@
                                 <c:set var="itemCount" value="${itemCount + item.quantity}" />
                                 
                                 <div class="cart-item">
-                                    <img src="../img/book${item.bookId}.jpg" alt="${item.bookName}" class="item-image" 
-                                         onerror="this.src='../img/default-book.jpg'">
+                                    <img src="${pageContext.request.contextPath}/img/book${item.bookId}.jpg" alt="${item.bookName}" class="item-image" 
+                                         onerror="this.src='${pageContext.request.contextPath}/img/default-book.jpg'">
                                     <div class="item-details">
                                         <h3>${item.bookName}</h3>
                                         <p class="item-author">by ${item.bookAuthor}</p>
@@ -113,14 +129,19 @@
                                 <span id="total">RM <fmt:formatNumber value="${total}" pattern="#,##0.00"/></span>
                             </div>
 
-                            <button class="checkout-btn" onclick="location.href='checkout.jsp'">Proceed to Checkout</button>
-                            <button class="continue-shopping" onclick="location.href='books.jsp'">Continue Shopping</button>
+                            <button class="checkout-btn" onclick="location.href='${pageContext.request.contextPath}/CheckoutServlet'">Proceed to Checkout</button>
+                            <button class="continue-shopping" onclick="location.href='${pageContext.request.contextPath}/BooksServlet'">Continue Shopping</button>
                         </div>
                     </div>
                 </c:otherwise>
             </c:choose>
         </div>
         
-        <script src="js/cart.js"></script>
+        <script src="${pageContext.request.contextPath}/js/cart.js"></script>
     </body>
 </html>
+
+
+
+
+
