@@ -350,15 +350,15 @@ and open the template in the editor.
         <h2>Booku</h2>
 
         <div class="sidebar-nav">
-            <a href="home.html">Dashboard</a>
-            <a href="books.html"class="active">Manage Book</a>
-            <a href="orders.html">Manage Order</a>
-            <a href="analytics.html">Analytics</a>
-            <a href="accounts.html">Accounts</a>
+            <a href="${pageContext.request.contextPath}/admin/home.jsp">Dashboard</a>
+            <a href="${pageContext.request.contextPath}/manageUserServlet">Manage Users</a>
+            <a href="${pageContext.request.contextPath}/admin/books.jsp" class="active">Manage Book</a>
+            <a href="${pageContext.request.contextPath}/admin/orders.jsp">Manage Order</a>
+            <a href="${pageContext.request.contextPath}/admin/analytics.jsp">Analytics</a>
         </div>
 
         <div class="sidebar-footer">
-            <div class="profile-section" onclick="window.location.href='profile.html'">
+            <div class="profile-section" onclick="window.location.href='${pageContext.request.contextPath}/admin/profile.jsp'">
                 <div class="profile-icon">👤</div>
                 <div class="profile-info">
                     <div class="profile-name">Admin User</div>

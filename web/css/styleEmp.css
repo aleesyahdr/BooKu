@@ -1312,16 +1312,20 @@ textarea.form-input {
 /* ============================================
    PRINT STYLES
    ============================================ */
-@media print {
-    .sidebar, .btn-print {
+@media print 
+{
+    .sidebar, .btn-print 
+    {
         display: none;
     }
 
-    .main-content {
+    .main-content 
+    {
         margin-left: 0;
     }
 
-    .header {
+    .header 
+    {
         box-shadow: none;
     }
-}
+

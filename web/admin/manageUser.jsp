@@ -19,12 +19,11 @@
         <h2>BooKu Admin</h2>
         
         <div class="sidebar-nav">
-            <a href="home.jsp">Dashboard</a>
-            <a href="${pageContext.request.contextPath}/manageUserServlet" class="active">Manage Users</a>
-            <a href="manageBooks.jsp">Manage Books</a>
-            <a href="manageOrders.jsp">Manage Orders</a>
-            <a href="analytics.jsp">Analytics</a>
-            <a href="accounts.jsp">Accounts</a>
+            <a href="${pageContext.request.contextPath}/admin/home.jsp">Dashboard</a>
+            <a href="${pageContext.request.contextPath}/manageUserServlet"class="active">Manage Users</a>
+            <a href="${pageContext.request.contextPath}/admin/books.jsp">Manage Book</a>
+            <a href="${pageContext.request.contextPath}/admin/orders.jsp">Manage Order</a>
+            <a href="${pageContext.request.contextPath}/admin/analytics.jsp">Analytics</a>
         </div>
         
         <div class="sidebar-footer">
@@ -34,7 +33,7 @@
                     <div class="profile-name">Admin</div>
                 </div>
             </div>
-            <button class="logout-btn" onclick="location.href='../admin/logout.jsp'">
+            <button class="logout-btn" onclick="location.href='${pageContext.request.contextPath}/admin/logout.jsp'">
                 <span>🚪</span> Logout
             </button>
         </div>
