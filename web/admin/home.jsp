@@ -19,7 +19,7 @@
             <a href="${pageContext.request.contextPath}/manageUserServlet">Manage Users</a>
             <a href="${pageContext.request.contextPath}/AdminBookServlet">Manage Book</a>
             <a href="${pageContext.request.contextPath}/admin/orders.jsp">Manage Order</a>
-            <a href="${pageContext.request.contextPath}/admin/analytics.jsp">Analytics</a>
+            <a href="${pageContext.request.contextPath}/AdminAnalyticsServlet">Analytics</a>
         </div>
 
         <div class="sidebar-footer">

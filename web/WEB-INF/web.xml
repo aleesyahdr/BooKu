@@ -86,6 +86,14 @@
         <servlet-name>AdminManageBookServlet</servlet-name>
         <servlet-class>servlet.AdminManageBookServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>AdminAnalyticsServlet</servlet-name>
+        <servlet-class>servlet.AdminAnalyticsServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>EmpAnalyticsServlet</servlet-name>
+        <servlet-class>servlet.EmpAnalyticsServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>AdminLoginServlet</servlet-name>
         <url-pattern>/admin/AdminLoginServlet</url-pattern>
@@ -166,6 +174,14 @@
     <servlet-mapping>
         <servlet-name>AdminManageBookServlet</servlet-name>
         <url-pattern>/AdminManageBookServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AdminAnalyticsServlet</servlet-name>
+        <url-pattern>/AdminAnalyticsServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>EmpAnalyticsServlet</servlet-name>
+        <url-pattern>/EmpAnalyticsServlet</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>30</session-timeout>

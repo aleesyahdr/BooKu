@@ -3,7 +3,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Bookstore</title>
-<link rel="stylesheet" href="../css/styleEmp.css">
+    <link rel="stylesheet" href="../css/styleEmp.css">
 
 </head>
 <body>
@@ -18,7 +18,7 @@
             <a href="${pageContext.request.contextPath}/employees/home.jsp" class="active">Dashboard</a>
             <a href="${pageContext.request.contextPath}/employees/EmpBookServlet">Manage Books</a>
             <a href="${pageContext.request.contextPath}/employees/orders.jsp">Manage Orders</a>
-            <a href="${pageContext.request.contextPath}/employees/analytics.jsp">Analytics</a>
+            <a href="${pageContext.request.contextPath}/EmpAnalyticsServlet">Analytics</a>
         </div>
 
         <div class="sidebar-footer">
