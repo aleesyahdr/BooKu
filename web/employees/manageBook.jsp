@@ -22,22 +22,27 @@
     <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
         <h2>Booku</h2>
+
         <div class="sidebar-nav">
-            <a href="home.html">Dashboard</a>
-            <a href="EmpBookServlet" class="active">Manage Book</a>
-            <a href="orders.html">Manage Order</a>
-            <a href="analytics.html">Analytics</a>
+            <a href="${pageContext.request.contextPath}/EmpHomeServlet" class="active">Dashboard</a>
+            <a href="${pageContext.request.contextPath}/ManageBookServlet">Manage Book</a>
+            <a href="${pageContext.request.contextPath}/EmpOrderServlet">Manage Order</a>
+            <a href="${pageContext.request.contextPath}/AnalyticsServlet">Analytics</a>
         </div>
+
         <div class="sidebar-footer">
-            <div class="profile-section" onclick="window.location.href='profile.html'">
+            <div class="profile-section" onclick="window.location.href='${pageContext.request.contextPath}/EmpProfileServlet'">
                 <div class="profile-icon">👤</div>
                 <div class="profile-info">
-                    <div class="profile-name">User</div>
+                    <div class="profile-name">
+                        <%= session.getAttribute("empFirstName") != null ? session.getAttribute("empFirstName") : "Employee" %>
+                    </div>
                 </div>
             </div>
-            <button class="logout-btn" id="logoutBtn">
+
+            <a href="${pageContext.request.contextPath}/EmpLoginServlet?action=logout" class="logout-btn" style="text-decoration: none; text-align: center; display: block;">
                 <span>Logout</span>
-            </button>
+            </a>
         </div>
     </div>
     
@@ -150,7 +155,7 @@
     </div>
     
     <!-- External JS -->
-    <script src="../js/main.js"></script>
+    <script src="${pageContext.request.contextPath}/js/main.js"></script>
     <script>
         function confirmDelete() {
             if (confirm('Are you sure you want to delete this book? This action cannot be undone.')) {

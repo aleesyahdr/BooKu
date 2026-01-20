@@ -1,22 +1,11 @@
 package servlet;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.sql.*;
+import java.util.*;
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.*;
 import util.DBConnection;
-
 
 public class EmpOrderServlet extends HttpServlet {
     
@@ -24,129 +13,108 @@ public class EmpOrderServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
-        HttpSession session = request.getSession();
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("empUsername") == null) {
+            response.sendRedirect(request.getContextPath() + "/employees/index.jsp");
+            return;
+        }
+        
         List<Map<String, Object>> orderList = new ArrayList<>();
         
-        Connection conn = null;
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
+        // SIMPLEST QUERY FIRST - NO JOINS
+        // This will tell us if the problem is the JOINs or something else
+        String sql = "SELECT ORDER_ID, ORDER_TOTAL, ORDER_STATUS, CUST_ID " +
+                     "FROM \"ORDERS\" " +
+                     "WHERE IS_DELETED = 0 " +
+                     "ORDER BY ORDER_DATE DESC";
         
-        try {
-            conn = DBConnection.createConnection();
+        try (Connection conn = DBConnection.createConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
             
-            // Join ORDERS with CUSTOMER and ORDERDETAILS to get complete info
-            String sql = "SELECT o.ORDER_ID, o.ORDER_DATE, o.ORDER_TIME, o.ORDER_TOTAL, " +
-                        "c.CUST_FIRSTNAME, c.CUST_LASTNAME, " +
-                        "COUNT(od.BOOK_ID) as TOTAL_BOOKS " +
-                        "FROM ORDERS o " +
-                        "JOIN CUSTOMER c ON o.CUST_ID = c.CUST_ID " +
-                        "LEFT JOIN ORDERDETAILS od ON o.ORDER_ID = od.ORDER_ID " +
-                        "GROUP BY o.ORDER_ID, o.ORDER_DATE, o.ORDER_TIME, o.ORDER_TOTAL, " +
-                        "c.CUST_FIRSTNAME, c.CUST_LASTNAME " +
-                        "ORDER BY o.ORDER_DATE DESC, o.ORDER_TIME DESC";
-            
-            pstmt = conn.prepareStatement(sql);
-            rs = pstmt.executeQuery();
+            System.out.println("=== Executing simple query ===");
+            int count = 0;
             
             while (rs.next()) {
+                count++;
                 Map<String, Object> order = new HashMap<>();
-                order.put("orderId", rs.getInt("ORDER_ID"));
-                order.put("orderDate", rs.getDate("ORDER_DATE"));
-                order.put("orderTime", rs.getTime("ORDER_TIME"));
+                int orderId = rs.getInt("ORDER_ID");
+                int custId = rs.getInt("CUST_ID");
+                
+                order.put("orderId", orderId);
+                order.put("customerName", "Loading..."); // We'll fix this next
+                order.put("bookTitle", "Loading..."); // We'll fix this next
                 order.put("orderTotal", rs.getDouble("ORDER_TOTAL"));
-                order.put("customerName", rs.getString("CUST_FIRSTNAME") + " " + rs.getString("CUST_LASTNAME"));
-                order.put("totalBooks", rs.getInt("TOTAL_BOOKS"));
-                // Status default - you can add ORDER_STATUS column to database later
-                order.put("status", "Pending");
+                order.put("status", rs.getString("ORDER_STATUS"));
+                
+                // Now get customer name separately
+                try (PreparedStatement custStmt = conn.prepareStatement(
+                        "SELECT CUST_FIRSTNAME, CUST_LASTNAME FROM CUSTOMER WHERE CUST_ID = ?")) {
+                    custStmt.setInt(1, custId);
+                    ResultSet custRs = custStmt.executeQuery();
+                    if (custRs.next()) {
+                        String firstName = custRs.getString("CUST_FIRSTNAME");
+                        String lastName = custRs.getString("CUST_LASTNAME");
+                        order.put("customerName", firstName + " " + lastName);
+                    } else {
+                        order.put("customerName", "Unknown Customer");
+                    }
+                }
+                
+                // Get first book from order
+                try (PreparedStatement bookStmt = conn.prepareStatement(
+                        "SELECT b.BOOK_NAME FROM ORDERDETAILS od " +
+                        "JOIN BOOK b ON od.BOOK_ID = b.BOOK_ID " +
+                        "WHERE od.ORDER_ID = ? " +
+                        "FETCH FIRST 1 ROW ONLY")) {
+                    bookStmt.setInt(1, orderId);
+                    ResultSet bookRs = bookStmt.executeQuery();
+                    if (bookRs.next()) {
+                        order.put("bookTitle", bookRs.getString("BOOK_NAME"));
+                    } else {
+                        order.put("bookTitle", "No book found");
+                    }
+                }
                 
                 orderList.add(order);
+                System.out.println("Added order: " + orderId);
             }
             
+            System.out.println("Total orders found: " + count);
             request.setAttribute("orderList", orderList);
             
         } catch (SQLException e) {
+            System.err.println("SQL Error: " + e.getMessage());
             e.printStackTrace();
-            session.setAttribute("message", "Error loading orders: " + e.getMessage());
-            session.setAttribute("messageType", "error");
-        } finally {
-            try {
-                if (rs != null) rs.close();
-                if (pstmt != null) pstmt.close();
-                if (conn != null) conn.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            request.setAttribute("errorMessage", "Database error: " + e.getMessage());
         }
         
-        request.getRequestDispatcher("employee/orders.jsp").forward(request, response);
+        request.getRequestDispatcher("/employees/orders.jsp").forward(request, response);
     }
     
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
-        HttpSession session = request.getSession();
         String action = request.getParameter("action");
         String orderId = request.getParameter("orderId");
         
-        if ("delete".equals(action)) {
-            deleteOrder(orderId, session);
+        if ("delete".equals(action) && orderId != null) {
+            try (Connection conn = DBConnection.createConnection()) {
+                String sql = "UPDATE \"ORDERS\" SET IS_DELETED = 1 WHERE ORDER_ID = ?";
+                PreparedStatement ps = conn.prepareStatement(sql);
+                ps.setInt(1, Integer.parseInt(orderId));
+                ps.executeUpdate();
+                
+                request.getSession().setAttribute("message", "Order deleted successfully.");
+                request.getSession().setAttribute("messageType", "success");
+            } catch (Exception e) {
+                e.printStackTrace();
+                request.getSession().setAttribute("message", "Error deleting order.");
+                request.getSession().setAttribute("messageType", "error");
+            }
         }
         
         response.sendRedirect("EmpOrderServlet");
-    }
-    
-    private void deleteOrder(String orderId, HttpSession session) {
-        Connection conn = null;
-        PreparedStatement pstmt1 = null;
-        PreparedStatement pstmt2 = null;
-        
-        try {
-            conn = DBConnection.createConnection();
-            conn.setAutoCommit(false);
-            
-            // First delete order details
-            String sql1 = "DELETE FROM ORDERDETAILS WHERE ORDER_ID = ?";
-            pstmt1 = conn.prepareStatement(sql1);
-            pstmt1.setInt(1, Integer.parseInt(orderId));
-            pstmt1.executeUpdate();
-            
-            // Then delete order
-            String sql2 = "DELETE FROM ORDERS WHERE ORDER_ID = ?";
-            pstmt2 = conn.prepareStatement(sql2);
-            pstmt2.setInt(1, Integer.parseInt(orderId));
-            int rowsDeleted = pstmt2.executeUpdate();
-            
-            conn.commit();
-            
-            if (rowsDeleted > 0) {
-                session.setAttribute("message", "Order deleted successfully!");
-                session.setAttribute("messageType", "success");
-            } else {
-                session.setAttribute("message", "Failed to delete order!");
-                session.setAttribute("messageType", "error");
-            }
-            
-        } catch (SQLException e) {
-            try {
-                if (conn != null) conn.rollback();
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-            }
-            e.printStackTrace();
-            session.setAttribute("message", "Database error: " + e.getMessage());
-            session.setAttribute("messageType", "error");
-        } finally {
-            try {
-                if (pstmt1 != null) pstmt1.close();
-                if (pstmt2 != null) pstmt2.close();
-                if (conn != null) {
-                    conn.setAutoCommit(true);
-                    conn.close();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
     }
 }

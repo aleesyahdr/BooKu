@@ -6,37 +6,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Books – Booku</title>
+    <title>Books â Booku</title>
     <link rel="stylesheet" href="../css/styleEmp.css">
 </head>
 <body>
 
     <!-- Toggle Button -->
-    <button class="toggle-btn" id="toggleBtn" onclick="toggleSidebar()">☰</button>
+    <button class="toggle-btn" id="toggleBtn" onclick="toggleSidebar()">â°</button>
 
     <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
+   <div class="sidebar" id="sidebar">
         <h2>Booku</h2>
 
         <div class="sidebar-nav">
-            <!-- kalau ada HomeServlet nanti tukar -->
-            <a href="home.jsp">Dashboard</a>
-            <a href="EmpBookServlet" class="active">Manage Book</a>
-            <a href="EmpOrderServlet">Manage Order</a>
-            <a href="AnalyticsServlet">Analytics</a>
+            <a href="${pageContext.request.contextPath}/EmpHomeServlet" class="active">Dashboard</a>
+            <a href="${pageContext.request.contextPath}/ManageBookServlet">Manage Book</a>
+            <a href="${pageContext.request.contextPath}/EmpOrderServlet">Manage Order</a>
+            <a href="${pageContext.request.contextPath}/AnalyticsServlet">Analytics</a>
         </div>
 
         <div class="sidebar-footer">
-            <div class="profile-section" onclick="window.location.href='profile.jsp'">
+            <div class="profile-section" onclick="window.location.href='${pageContext.request.contextPath}/EmpProfileServlet'">
                 <div class="profile-icon">👤</div>
                 <div class="profile-info">
-                    <div class="profile-name">User</div>
+                    <div class="profile-name">
+                        <%= session.getAttribute("empFirstName") != null ? session.getAttribute("empFirstName") : "Employee" %>
+                    </div>
                 </div>
             </div>
 
-            <button class="logout-btn" id="logoutBtn" type="button">
+            <a href="${pageContext.request.contextPath}/EmpLoginServlet?action=logout" class="logout-btn" style="text-decoration: none; text-align: center; display: block;">
                 <span>Logout</span>
-            </button>
+            </a>
         </div>
     </div>
 
@@ -86,7 +87,7 @@
                 <option value="Educational">Educational</option>
             </select>
 
-            <!-- ✅ FIXED -->
+            <!-- â FIXED -->
             <button class="add-btn" type="button" onclick="window.location.href='EmpAddBookServlet'">
                 + Add Book
             </button>
@@ -127,7 +128,7 @@
 
     </div>
 
-    <script src="../js/main.js"></script>
+    <script src="${pageContext.request.contextPath}/js/main.js"></script>
     <script>
         // Search functionality
         document.getElementById('searchBar').addEventListener('input', function() {

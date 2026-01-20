@@ -4,37 +4,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Book – Booku</title>
+    <title>Add Book â Booku</title>
     <link rel="stylesheet" href="../css/styleEmp.css">
 </head>
 <body>
 
     <!-- Toggle Button -->
-    <button class="toggle-btn" id="toggleBtn" onclick="toggleSidebar()">☰</button>
+    <button class="toggle-btn" id="toggleBtn" onclick="toggleSidebar()">â°</button>
 
     <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
         <h2>Booku</h2>
 
         <div class="sidebar-nav">
-            <!-- kalau ada HomeServlet nanti tukar sini -->
-            <a href="home.jsp">Dashboard</a>
-            <a href="EmpBookServlet" class="active">Manage Book</a>
-            <a href="EmpOrderServlet">Manage Order</a>
-            <a href="AnalyticsServlet">Analytics</a>
+            <a href="${pageContext.request.contextPath}/EmpHomeServlet" class="active">Dashboard</a>
+            <a href="${pageContext.request.contextPath}/ManageBookServlet">Manage Book</a>
+            <a href="${pageContext.request.contextPath}/EmpOrderServlet">Manage Order</a>
+            <a href="${pageContext.request.contextPath}/AnalyticsServlet">Analytics</a>
         </div>
 
         <div class="sidebar-footer">
-            <div class="profile-section" onclick="window.location.href='profile.jsp'">
+            <div class="profile-section" onclick="window.location.href='${pageContext.request.contextPath}/EmpProfileServlet'">
                 <div class="profile-icon">👤</div>
                 <div class="profile-info">
-                    <div class="profile-name">User</div>
+                    <div class="profile-name">
+                        <%= session.getAttribute("empFirstName") != null ? session.getAttribute("empFirstName") : "Employee" %>
+                    </div>
                 </div>
             </div>
 
-            <button class="logout-btn" id="logoutBtn" type="button">
+            <a href="${pageContext.request.contextPath}/EmpLoginServlet?action=logout" class="logout-btn" style="text-decoration: none; text-align: center; display: block;">
                 <span>Logout</span>
-            </button>
+            </a>
         </div>
     </div>
 
@@ -47,19 +48,19 @@
 
         <div class="add-book-container">
 
-            <!-- ✅ START FORM (bookImg sekarang memang akan submit) -->
+            <!-- â START FORM (bookImg sekarang memang akan submit) -->
             <form action="EmpAddBookServlet" method="post" id="addBookForm" class="add-book-form">
 
                 <div class="image-upload-section">
                     <div class="image-preview-container" id="imagePreviewContainer">
                         <img src="" alt="Book Cover Preview" class="image-preview" id="imagePreview">
                         <div class="upload-placeholder" id="uploadPlaceholder">
-                            <div style="font-size: 48px;">📚</div>
+                            <div style="font-size: 48px;">ð</div>
                             <p>Upload Book Cover</p>
                         </div>
                     </div>
 
-                    <!-- ✅ ini sekarang DALAM form -->
+                    <!-- â ini sekarang DALAM form -->
                     <input type="text" id="bookImg" name="bookImg"
                            placeholder="e.g., book1.jpg"
                            style="margin-top: 10px; width: 100%; padding: 8px;" required>
@@ -127,10 +128,10 @@
 
                 </div>
             </form>
-            <!-- ✅ END FORM -->
+            <!-- â END FORM -->
 
         </div>
 
     </div>
 
-    <script src="../js/main
+    <script src="${pageContext.request.contextPath}/js/main.js"></script>
