@@ -1,3 +1,10 @@
+
+<%-- 
+    Document   : paymentSuccess
+    Created on : Jan 20, 2026, 2:07:07 AM
+    Author     : user
+--%>
+
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
@@ -5,7 +12,7 @@
 <html>
     <head>
         <title>BooKu - Login</title>
-        <link rel="stylesheet" href="../css/style.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
     </head>
     
     <body class="login-page">
