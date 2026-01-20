@@ -19,6 +19,20 @@
     <servlet>
         <servlet-name>manageUserServlet</servlet-name>
         <servlet-class>servlet.manageUserServlet</servlet-class>
+        <servlet-name>IndexServlet</servlet-name>
+        <servlet-class>servlet.IndexServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>BooksServlet</servlet-name>
+        <servlet-class>servlet.BooksServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>BookDetailsServlet</servlet-name>
+        <servlet-class>servlet.BookDetailsServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>PaymentServlet</servlet-name>
+        <servlet-class>servlet.PaymentServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>AdminLoginServlet</servlet-name>
@@ -40,13 +54,36 @@
         <servlet-name>manageUserServlet</servlet-name>
         <url-pattern>/manageUserServlet</url-pattern>
     </servlet-mapping>
+        <servlet-name>IndexServlet</servlet-name>
+        <url-pattern>/IndexServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>BooksServlet</servlet-name>
+        <url-pattern>/BooksServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>BookDetailsServlet</servlet-name>
+        <url-pattern>/BookDetailsServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>PaymentServlet</servlet-name>
+        <url-pattern>/PaymentServlet</url-pattern>
+    </servlet-mapping>
+    <servlet>
+    <servlet-name>CheckBookServlet</servlet-name>
+    <servlet-class>servlet.CheckBookServlet</servlet-class>
+</servlet>
+<servlet-mapping>
+    <servlet-name>CheckBookServlet</servlet-name>
+    <url-pattern>/CheckBookServlet</url-pattern>
+</servlet-mapping>
     <session-config>
         <session-timeout>
             30
         </session-timeout>
     </session-config>
     <welcome-file-list>
-        <welcome-file>index.jsp</welcome-file>
+        <welcome-file>IndexServlet</welcome-file>
     </welcome-file-list>
     <resource-ref>
         <description>BooKu Database</description>

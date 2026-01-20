@@ -1,128 +1,113 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="java.util.List" %>
+<%@ page import="model.Book" %>
 <!DOCTYPE html>
-<!--
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
--->
 <html>
 <head>
     <title>BooKu - Books</title>
-    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
 </head>
-
 <body>
-
     <header class="top-header">
         <div class="logo"><h1>BooKu</h1></div>
-
         <div class="header-right">
+            <!-- Menu Links -->
             <nav class="header-nav">
-                <a href="../index.html">Home</a>
-                <a href="books.html">Books</a>
-                <a href="contact.html">Contact</a>
-                <a href="about.html">About</a>
+                <a href="${pageContext.request.contextPath}/IndexServlet">Home</a>
+                <a href="${pageContext.request.contextPath}/BooksServlet">Books</a>
+                <a href="${pageContext.request.contextPath}/customer/contact.jsp">Contact</a>
+                <a href="${pageContext.request.contextPath}/customer/about.jsp">About</a>
             </nav>
 
+            <!-- Profile Icon + Dropdown -->
             <div class="profile-menu">
-                <img src="../img/profile.jpg" class="profile-icon" alt="Profile">
+                <img src="${pageContext.request.contextPath}/img/profile.jpg" class="profile-icon" alt="Profile">
                 <div class="dropdown">
-                    <a href="profile.html">Profile</a>
-                    <a href="orderHistory.html">Order History</a>
-                    <a href="login.html">Login</a>
+                    <a href="${pageContext.request.contextPath}/customer/profile.jsp">Profile</a>
+                    <a href="${pageContext.request.contextPath}/customer/orderHistory.jsp">Order History</a>
+                    <% if (session.getAttribute("username") != null) { %>
+                        <a href="${pageContext.request.contextPath}/customer/CustLoginServlet?action=logout">Logout</a>
+                    <% } else { %>
+                        <a href="${pageContext.request.contextPath}/customer/login.jsp">Login</a>
+                    <% } %>
                 </div>
             </div>
         </div>
     </header>
-
-   <div class="books-container">
-
-    <!-- LEFT: Categories -->
-    <div class="category-menu">
-        <h3>Categories</h3>
-        <a href="#">-</a>
-        <a href="#">Fiction</a>
-        <a href="#">Non-fiction</a>
-        <a href="#">Educational</a>
-        <a href="#">Cooking</a>
+    
+    <div class="books-container">
+        <!-- LEFT: Categories -->
+        <div class="category-menu">
+            <h3>Categories</h3>
+            <%
+                String selectedCategory = (String) request.getAttribute("selectedCategory");
+                String searchQuery = (String) request.getAttribute("searchQuery");
+                if (selectedCategory == null) selectedCategory = "All";
+                if (searchQuery == null) searchQuery = "";
+            %>
+            <a href="BooksServlet?category=All" class="<%= selectedCategory.equals("All") ? "active" : "" %>">All</a>
+            <a href="BooksServlet?category=Fiction" class="<%= selectedCategory.equals("Fiction") ? "active" : "" %>">Fiction</a>
+            <a href="BooksServlet?category=Non-fiction" class="<%= selectedCategory.equals("Non-fiction") ? "active" : "" %>">Non-fiction</a>
+            <a href="BooksServlet?category=Educational" class="<%= selectedCategory.equals("Educational") ? "active" : "" %>">Educational</a>
+            <a href="BooksServlet?category=Cooking" class="<%= selectedCategory.equals("Cooking") ? "active" : "" %>">Cooking</a>
+            <a href="BooksServlet?category=Fantasy" class="<%= selectedCategory.equals("Fantasy") ? "active" : "" %>">Fantasy</a>
+            <a href="BooksServlet?category=Science Fiction" class="<%= selectedCategory.equals("Science Fiction") ? "active" : "" %>">Science Fiction</a>
+            <a href="BooksServlet?category=Classic" class="<%= selectedCategory.equals("Classic") ? "active" : "" %>">Classic</a>
+            <a href="BooksServlet?category=Romance" class="<%= selectedCategory.equals("Romance") ? "active" : "" %>">Romance</a>
+        </div>
+        
+        <!-- RIGHT: Books section -->
+        <section class="books-list">
+            <!-- SEARCH FORM -->
+            <form action="BooksServlet" method="get" class="search-box">
+                <input type="text" name="search" placeholder="Search books..." value="<%= searchQuery %>">
+                <input type="hidden" name="category" value="<%= selectedCategory %>">
+                <button type="submit">Search</button>
+            </form>
+            
+            <h2>
+                <% if (!searchQuery.isEmpty()) { %>
+                    Search Results for "<%= searchQuery %>"
+                <% } else if (selectedCategory.equals("All")) { %>
+                    All Books
+                <% } else { %>
+                    <%= selectedCategory %> Books
+                <% } %>
+            </h2>
+            
+            <div class="books-grid">
+                <%
+                    List<Book> books = (List<Book>) request.getAttribute("books");
+                    if (books != null && books.size() > 0) {
+                        for (Book book : books) {
+                %>
+                <!-- Book Item -->
+                <div class="book-item">
+                    <a href="BookDetailsServlet?book_id=<%= book.getBook_id() %>">
+                        <img src="${pageContext.request.contextPath}/img/<%= book.getBook_img() %>" alt="<%= book.getBook_name() %>">
+                    </a>
+                    <h3><%= book.getBook_name() %></h3>
+                    <p class="author">by <%= book.getBook_author() %></p>
+                    <p class="category"><span class="badge"><%= book.getBook_category() %></span></p>
+                    <p class="price">RM<%= String.format("%.2f", book.getBook_price()) %></p>
+                    <button class="cart-btn" onclick="window.location.href='cart.html'">Add to Cart</button>
+                </div>
+                <%
+                        }
+                    } else {
+                %>
+                <p>
+                    <% if (!searchQuery.isEmpty()) { %>
+                        No books found matching "<%= searchQuery %>"
+                    <% } else { %>
+                        No books available in this category
+                    <% } %>
+                </p>
+                <%
+                    }
+                %>
+            </div>
+        </section>
     </div>
-
-    <!-- RIGHT: Books section -->
-    <section class="books-list">
-
-        <div class="search-box">
-            <input type="text" placeholder="Search books...">
-            <button>Search</button>
-        </div>
-        <h2>All Books</h2>
-
-        <div class="books-grid">
-            <!-- Book 1 -->
-        <div class="book-item">
-            <a href="bookDetails.html">
-                <img src="../img/book1.jpg" alt="Book 1">
-            </a>
-            <h3>Book Title 1</h3>
-            <p class="price">RM29.90</p>
-            <button class="cart-btn" onclick="window.location.href='cart.html'">Add to Cart</button>
-        </div>
-
-        <!-- Book 2 -->
-        <div class="book-item">
-            <a href="bookDetails.html">
-                <img src="../img/book2.jpg" alt="Book 2">
-            </a>
-            <h3>Book Title 2</h3>
-            <p class="price">RM35.00</p>
-            <button class="cart-btn" onclick="window.location.href='cart.html'">Add to Cart</button>
-        </div>
-
-        <!-- Book 3 -->
-        <div class="book-item">
-            <a href="bookDetails.html">
-                <img src="../img/book3.jpg" alt="Book 3">
-            </a>
-            <h3>Book Title 3</h3>
-            <p class="price">RM22.50</p>
-            <button class="cart-btn" onclick="window.location.href='cart.html'">Add to Cart</button>
-        </div>
-
-        <!-- Book 4 -->
-        <div class="book-item">
-            <a href="bookDetails.html">
-                <img src="../img/book4.jpg" alt="Book 4">
-            </a>
-            <h3>Book Title 4</h3>
-            <p class="price">RM19.90</p>
-            <button class="cart-btn" onclick="window.location.href='cart.html'">Add to Cart</button>
-        </div>
-
-        <!-- Book 5 -->
-        <div class="book-item">
-            <a href="bookDetails.html">
-                <img src="../img/book5.jpg" alt="Book 5">
-            </a>
-            <h3>Book Title 5</h3>
-            <p class="price">RM17.90</p>
-            <button class="cart-btn" onclick="window.location.href='cart.html'">Add to Cart</button>
-        </div>
-
-        <!-- Book 6 -->
-        <div class="book-item">
-            <a href="bookDetails.html">
-                <img src="../img/book6.jpg" alt="Book 6">
-            </a>
-            <h3>Book Title 6</h3>
-            <p class="price">RM90.90</p>
-            <button class="cart-btn" onclick="window.location.href='cart.html'">Add to Cart</button>
-        </div> 
-        </div>
-
-    </section>
-
-</div>
-
-
 </body>
 </html>
-
-
