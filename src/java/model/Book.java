@@ -10,8 +10,10 @@ public class Book
     private String book_description;
     private Date book_publishDate;
     private double book_price;
+    private String book_category;
+    private String book_img;  
 
-    public Book(int book_id, String book_name, String book_author, String book_description, Date book_publishDate, double book_price) 
+    public Book(int book_id, String book_name, String book_author, String book_description, Date book_publishDate, double book_price,String book_category, String book_img) 
     {
         this.book_id = book_id;
         this.book_name = book_name;
@@ -19,6 +21,8 @@ public class Book
         this.book_description = book_description;
         this.book_publishDate = book_publishDate;
         this.book_price = book_price;
+        this.book_category = book_category;
+        this.book_img = book_img;
     }
 
     public int getBook_id() {
@@ -68,4 +72,20 @@ public class Book
     public void setBook_price(double book_price) {
         this.book_price = book_price;
     } 
+    
+    public String getBook_category() {
+        return book_category;
+    }
+    
+    public void setBook_category(String book_category) {
+        this.book_category = book_category;
+    }
+    
+    public String getBook_img() {
+        return book_img;
+    }
+    
+    public void setBook_img(String book_img) {
+        this.book_img = book_img;
+    }
 }
