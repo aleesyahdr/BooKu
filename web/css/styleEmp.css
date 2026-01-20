@@ -294,6 +294,8 @@ body {
 .btn-sm {
     padding: 8px 16px;
     font-size: 0.9em;
+}
+
 /* ============================================
    SIDEBAR STYLES (SHARED ACROSS ALL PAGES)
    ============================================ */
@@ -1328,4 +1330,5 @@ textarea.form-input {
     {
         box-shadow: none;
     }
+}
 
