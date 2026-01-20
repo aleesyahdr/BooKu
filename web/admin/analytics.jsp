@@ -1,501 +1,117 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Analytics - Bookstore</title>
     <style>
-        body {
-        margin: 0;
-        font-family: Arial, sans-serif;
-        background-color: #ffffff;
-    }
+        body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background-color: #f8f9fa; }
+        .sidebar { width: 250px; background-color: #000; color: #fff; padding: 20px; position: fixed; height: 100vh; transition: 0.3s; z-index: 1000; }
+        .sidebar.hidden { transform: translateX(-100%); }
+        .sidebar h2 { color: #4caf50; margin-bottom: 30px; }
+        .sidebar a { color: white; text-decoration: none; padding: 12px; display: block; border-radius: 5px; margin-bottom: 5px; }
+        .sidebar a:hover, .sidebar a.active { background-color: #004d40; }
+        
+        .main-content { margin-left: 290px; padding: 30px; transition: 0.3s; }
+        .main-content.expanded { margin-left: 50px; }
+        
+        .header { background: #fff; padding: 20px; border-radius: 8px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .btn-print { background: #004d40; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        
+        .analytics-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 30px; }
+        .stat-card { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border-left: 4px solid #4caf50; }
+        .stat-card h3 { color: #888; font-size: 12px; text-transform: uppercase; margin: 0 0 10px 0; }
+        .stat-card .value { color: #333; font-size: 24px; font-weight: bold; }
 
-    /* Sidebar same theme */
-    .sidebar {
-        width: 250px;
-        background-color: black;
-        color: #ffffff;
-        padding: 20px 20px 0 20px;
-        position: fixed;
-        height: 100vh;
-        top: 0;
-        left: 0;
-        transition: transform 0.3s ease;
-        z-index: 1000;
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-    }
-
-    .sidebar.hidden {
-        transform: translateX(-100%);
-    }
-
-    .sidebar h2 {
-        margin-bottom: 30px;
-        color:#4caf50;
-    }
-
-    /* Sidebar Navigation */
-    .sidebar-nav {
-        flex: 1;
-        overflow-y: auto;
-        margin-bottom: 15px;
-    }
-
-    .sidebar-nav::-webkit-scrollbar {
-        width: 5px;
-    }
-
-    .sidebar-nav::-webkit-scrollbar-thumb {
-        background: rgba(255, 255, 255, 0.3);
-        border-radius: 10px;
-    }
-
-    .sidebar a {
-        color: white;
-        text-decoration: none;
-        padding: 12px;
-        display: block;
-        border-radius: 5px;
-        margin-bottom: 10px;
-        font-weight: bold;
-    }
-
-    .sidebar a:hover,
-    .sidebar a.active {
-        background-color: #004d40;
-    }
-
-    /* Sidebar Footer */
-    .sidebar-footer {
-        padding: 15px 0 15px 0;
-        border-top: 1px solid rgba(255, 255, 255, 0.2);
-    }
-
-    .profile-section {
-        display: flex;
-        align-items: center;
-        padding: 10px;
-        margin-bottom: 10px;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background-color 0.3s;
-    }
-
-    .profile-section:hover {
-        background-color: rgba(0, 0, 0, 0.3);
-    }
-
-    .profile-icon {
-        width: 35px;
-        height: 35px;
-        border-radius: 50%;
-        background-color: #ffffff;
-        color: #004d40;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 18px;
-        font-weight: bold;
-        margin-right: 12px;
-    }
-
-    .profile-info {
-        flex: 1;
-    }
-
-    .profile-name {
-        font-size: 14px;
-        font-weight: bold;
-    }
-
-    .logout-btn {
-        background-color: #d32f2f;
-        color: white;
-        border: none;
-        padding: 10px;
-        width: 100%;
-        border-radius: 5px;
-        font-size: 14px;
-        font-weight: bold;
-        cursor: pointer;
-        transition: background-color 0.3s;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        margin-bottom: 20px;
-    }
-
-    .logout-btn:hover {
-        background-color: #b71c1c;
-    }
-
-    /* Main Content */
-    .main-content {
-        margin-left: 290px;
-        padding: 30px 40px;
-        flex: 1;
-        transition: margin-left 0.3s ease;
-    }
-
-    .main-content.expanded {
-        margin-left: 80px;
-    }
-
-    /* Toggle Button */
-    .toggle-btn {
-        position: fixed;
-        top: 20px;
-        left: 270px;
-        background-color:black;
-        color: white;
-        border: none;
-        padding: 10px 15px;
-        font-size: 22px;
-        cursor: pointer;
-        border-radius: 5px;
-        z-index: 2001;
-        transition: left 0.3s ease;
-    }
-
-    .toggle-btn.shifted {
-        left: 20px;
-    }
-
-    /* Page Header */
-    .header {
-        background: white;
-        padding: 20px 30px;
-        border-radius: 10px;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        margin-bottom: 25px;
-    }
-
-    .header h1 {
-        color: #004d40;
-        margin: 0;
-        font-size: 28px;
-    }
-
-        .btn-print {
-            background-color: #004d40;
-            color: #ffffff;
-            padding: 12px 25px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s;
-            font-weight: bold;
-        }
-
-        .btn-print:hover {
-            background-color: #000000;
-        }
-
-        .analytics-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .stat-card {
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-
-        .stat-card h3 {
-            color: #6b7280;
-            font-size: 12px;
-            margin-bottom: 8px;
-            text-transform: uppercase;
-        }
-
-        .stat-card .value {
-            color: #004d40;
-            font-size: 28px;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        .stat-card .change {
-            color: #10b981;
-            font-size: 12px;
-        }
-
-        .bottom-section {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            flex: 1;
-            min-height: 0;
-        }
-
-        .chart-container {
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-
-        .chart-container h2 {
-            color: #004d40;
-            margin-bottom: 15px;
-            font-size: 18px;
-        }
-
-        .chart {
-            flex: 1;
-            display: flex;
-            align-items: flex-end;
-            justify-content: space-around;
-            gap: 10px;
-            padding: 10px 0;
-            min-height: 0;
-        }
-
-        .bar-container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .bar {
-            width: 100%;
-            background: linear-gradient(to top, #004d40, #00695c);
-            border-radius: 5px 5px 0 0;
-            transition: all 0.3s;
-        }
-
-        .bar:hover {
-            opacity: 0.8;
-        }
-
-        .bar-label {
-            margin-top: 8px;
-            color: #6b7280;
-            font-size: 12px;
-            text-align: center;
-        }
-
-        .table-container {
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-
-        .table-container h2 {
-            color: #004d40;
-            margin-bottom: 15px;
-            font-size: 18px;
-            flex-shrink: 0;
-        }
-
-        .table-wrapper {
-            overflow-y: auto;
-            flex: 1;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        thead {
-            background-color: #004d40;
-            color: #ffffff;
-        }
-
-        th, td {
-            padding: 10px 15px;
-            text-align: left;
-            border-bottom: 1px solid #e5e7eb;
-            font-size: 14px;
-        }
-
-        tbody tr:hover {
-            background-color: #f5f5f5;
-        }
-
-        @media print {
-            .sidebar, .btn-print {
-                display: none;
-            }
-
-            .main-content {
-                margin-left: 0;
-            }
-
-            .header {
-                box-shadow: none;
-            }
-        }
+        .bottom-section { display: grid; grid-template-columns: 1fr 1.5fr; gap: 20px; }
+        .card-box { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th { text-align: left; padding: 12px; border-bottom: 2px solid #eee; color: #004d40; }
+        td { padding: 12px; border-bottom: 1px solid #eee; font-size: 14px; }
+        
+        .toggle-btn { position: fixed; top: 20px; left: 270px; background: #000; color: #fff; border: none; padding: 10px 15px; cursor: pointer; z-index: 2001; border-radius: 4px; transition: 0.3s; }
+        .toggle-btn.shifted { left: 20px; }
     </style>
 </head>
 <body>
+
     <button class="toggle-btn" id="toggleBtn" onclick="toggleSidebar()">☰</button>
 
-    <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
         <h2>Booku</h2>
-
-        <div class="sidebar-nav">
-            <a href="${pageContext.request.contextPath}/admin/home.jsp">Dashboard</a>
-            <a href="${pageContext.request.contextPath}/manageUserServlet">Manage Users</a>
-            <a href="${pageContext.request.contextPath}/admin/books.jsp">Manage Book</a>
-            <a href="${pageContext.request.contextPath}/admin/orders.jsp">Manage Order</a>
-            <a href="${pageContext.request.contextPath}/admin/analytics.jsp" class="active">Analytics</a>
-        </div>
-
-        <div class="sidebar-footer">
-            <div class="profile-section" onclick="window.location.href='${pageContext.request.contextPath}/admin/profile.jsp'">
-                <div class="profile-icon">👤</div>
-                <div class="profile-info">
-                    <div class="profile-name">Admin User</div>
-                </div>
-            </div>
-
-            <button class="logout-btn" id="logoutBtn">
-                <span>Logout</span>
-            </button>
-        </div>
+        <a href="${pageContext.request.contextPath}/admin/home.jsp">Dashboard</a>
+        <a href="${pageContext.request.contextPath}/manageUserServlet">Manage Users</a>
+        <a href="${pageContext.request.contextPath}/AdminBookServlet">Manage Book</a>
+        <a href="${pageContext.request.contextPath}/admin/orders.jsp">Manage Order</a>
+        <a href="${pageContext.request.contextPath}/AdminAnalyticsServlet" class="active">Analytics</a>
     </div>
 
-        <div class="main-content" id="mainContent">
-            <div class="content-wrapper">
-            <div class="header">
-                <h1>Analytics Overview</h1>
-                <button class="btn-print" onclick="window.print()">Print</button>
+    <div class="main-content" id="mainContent">
+        <div class="header">
+            <h1>Analytics Overview</h1>
+            <button class="btn-print" onclick="window.print()">Print Report</button>
+        </div>
+
+        <div class="analytics-grid">
+            <div class="stat-card">
+                <h3>Total Revenue</h3>
+                <div class="value">RM <fmt:formatNumber value="${stats.totalRevenue}" pattern="#,##0.00"/></div>
+            </div>
+            <div class="stat-card">
+                <h3>Total Orders</h3>
+                <div class="value">${stats.totalOrders}</div>
+            </div>
+            <div class="stat-card">
+                <h3>Books Sold</h3>
+                <div class="value">${stats.booksSold}</div>
+            </div>
+            <div class="stat-card">
+                <h3>Avg Order Value</h3>
+                <div class="value">RM <fmt:formatNumber value="${stats.avgOrder}" pattern="#,##0.00"/></div>
+            </div>
+        </div>
+
+        <div class="bottom-section">
+            <div class="card-box">
+                <h2>Monthly Target</h2>
+                <p>Visual representation of sales volume.</p>
+                <div style="height: 200px; display: flex; align-items: flex-end; justify-content: space-around; border-bottom: 2px solid #eee;">
+                    <div style="width: 30px; height: 70%; background: #4caf50; border-radius: 4px 4px 0 0;"></div>
+                    <div style="width: 30px; height: 40%; background: #004d40; border-radius: 4px 4px 0 0;"></div>
+                    <div style="width: 30px; height: 90%; background: #4caf50; border-radius: 4px 4px 0 0;"></div>
+                </div>
             </div>
 
-            <div class="analytics-grid">
-                <div class="stat-card">
-                    <h3>Total Revenue</h3>
-                    <div class="value">$12,847</div>
-                    <div class="change">↑ 12.5%</div>
-                </div>
-
-                <div class="stat-card">
-                    <h3>Total Orders</h3>
-                    <div class="value">342</div>
-                    <div class="change">↑ 8.3%</div>
-                </div>
-
-                <div class="stat-card">
-                    <h3>Books Sold</h3>
-                    <div class="value">428</div>
-                    <div class="change">↑ 15.7%</div>
-                </div>
-
-                <div class="stat-card">
-                    <h3>Avg Order Value</h3>
-                    <div class="value">$37.58</div>
-                    <div class="change">↑ 3.2%</div>
-                </div>
-            </div>
-
-            <div class="bottom-section">
-
-            <div class="bottom-section">
-                <div class="chart-container">
-                    <h2>Monthly Sales</h2>
-                    <div class="chart">
-                        <div class="bar-container">
-                            <div class="bar" style="height: 60%;"></div>
-                            <div class="bar-label">Jan</div>
-                        </div>
-                        <div class="bar-container">
-                            <div class="bar" style="height: 70%;"></div>
-                            <div class="bar-label">Feb</div>
-                        </div>
-                        <div class="bar-container">
-                            <div class="bar" style="height: 55%;"></div>
-                            <div class="bar-label">Mar</div>
-                        </div>
-                        <div class="bar-container">
-                            <div class="bar" style="height: 80%;"></div>
-                            <div class="bar-label">Apr</div>
-                        </div>
-                        <div class="bar-container">
-                            <div class="bar" style="height: 65%;"></div>
-                            <div class="bar-label">May</div>
-                        </div>
-                        <div class="bar-container">
-                            <div class="bar" style="height: 90%;"></div>
-                            <div class="bar-label">Jun</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="table-container">
-                    <h2>Top Selling Books</h2>
-                    <div class="table-wrapper">
-                    <div class="table-wrapper">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Rank</th>
-                                    <th>Book Name</th>
-                                    <th>Author</th>
-                                    <th>Units Sold</th>
-                                    <th>Revenue</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>1</td>
-                                    <td>The Great Gatsby</td>
-                                    <td>F. Scott Fitzgerald</td>
-                                    <td>68</td>
-                                    <td>$1,767.32</td>
-                                </tr>
-                                <tr>
-                                    <td>2</td>
-                                    <td>To Kill a Mockingbird</td>
-                                    <td>Harper Lee</td>
-                                    <td>54</td>
-                                    <td>$999.00</td>
-                                </tr>
-                                <tr>
-                                    <td>3</td>
-                                    <td>1984</td>
-                                    <td>George Orwell</td>
-                                    <td>49</td>
-                                    <td>$1,078.00</td>
-                                </tr>
-                                <tr>
-                                    <td>4</td>
-                                    <td>Pride and Prejudice</td>
-                                    <td>Jane Austen</td>
-                                    <td>42</td>
-                                    <td>$661.50</td>
-                                </tr>
-                                <tr>
-                                    <td>5</td>
-                                    <td>The Catcher in the Rye</td>
-                                    <td>J.D. Salinger</td>
-                                    <td>38</td>
-                                    <td>$759.62</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+            <div class="card-box">
+                <h2>Top Selling Books</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Book</th>
+                            <th>Author</th>
+                            <th>Sold</th>
+                            <th>Revenue</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <c:forEach var="book" items="${topBooks}" varStatus="status">
+                            <tr>
+                                <td>#${status.index + 1}</td>
+                                <td><strong>${book.name}</strong></td>
+                                <td>${book.author}</td>
+                                <td>${book.sold}</td>
+                                <td>RM <fmt:formatNumber value="${book.revenue}" pattern="#,##0.00"/></td>
+                            </tr>
+                        </c:forEach>
+                        <c:if test="${empty topBooks}">
+                            <tr><td colspan="5" style="text-align:center;">No sales recorded yet.</td></tr>
+                        </c:if>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -505,12 +121,11 @@
             const sidebar = document.getElementById('sidebar');
             const mainContent = document.getElementById('mainContent');
             const toggleBtn = document.getElementById('toggleBtn');
-            
+
             sidebar.classList.toggle('hidden');
             mainContent.classList.toggle('expanded');
             toggleBtn.classList.toggle('shifted');
         }
     </script>
-    <script src="../js/main.js"></script>
 </body>
 </html>

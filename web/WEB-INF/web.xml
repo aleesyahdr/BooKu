@@ -16,6 +16,7 @@
         <servlet-name>EmpHomeServlet</servlet-name>
         <servlet-class>servlet.EmpHomeServlet</servlet-class>
     </servlet>
+    <!-- Customer / General Servlets -->
     <servlet>
         <servlet-name>CartServlet</servlet-name>
         <servlet-class>servlet.CartServlet</servlet-class>
@@ -100,6 +101,31 @@
         <servlet-name>EmpHomeServlet</servlet-name>
         <url-pattern>/EmpHomeServlet</url-pattern>
     </servlet-mapping>
+
+    <!-- ========================================
+         SERVLET MAPPINGS
+         ======================================== -->
+    <!-- Login Mappings -->
+    <servlet>
+        <servlet-name>AdminBookServlet</servlet-name>
+        <servlet-class>servlet.AdminBookServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>addBookServlet</servlet-name>
+        <servlet-class>servlet.addBookServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AdminManageBookServlet</servlet-name>
+        <servlet-class>servlet.AdminManageBookServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AdminAnalyticsServlet</servlet-name>
+        <servlet-class>servlet.AdminAnalyticsServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>EmpAnalyticsServlet</servlet-name>
+        <servlet-class>servlet.EmpAnalyticsServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>AdminLoginServlet</servlet-name>
         <url-pattern>/admin/AdminLoginServlet</url-pattern>
@@ -108,6 +134,11 @@
         <servlet-name>CustLoginServlet</servlet-name>
         <url-pattern>/CustLoginServlet</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>EmpLoginServlet</servlet-name>
+        <url-pattern>/employees/EmpLoginServlet</url-pattern>
+    </servlet-mapping>
+    <!-- Customer / General Mappings -->
     <servlet-mapping>
         <servlet-name>CartServlet</servlet-name>
         <url-pattern>/CartServlet</url-pattern>
@@ -158,38 +189,70 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>EmpBookServlet</servlet-name>
-        <url-pattern>/EmpBookServlet</url-pattern>
+        <url-pattern>/employees/EmpBookServlet</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>EmpAddBookServlet</servlet-name>
-        <url-pattern>/EmpAddBookServlet</url-pattern>
+        <url-pattern>/employees/EmpAddBookServlet</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>ManageBookServlet</servlet-name>
-        <url-pattern>/ManageBookServlet</url-pattern>
+        <url-pattern>/employees/ManageBookServlet</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>EmpOrderServlet</servlet-name>
-        <url-pattern>/EmpOrderServlet</url-pattern>
+        <url-pattern>/employees/EmpOrderServlet</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>OrderDetailServlet</servlet-name>
-        <url-pattern>/OrderDetailServlet</url-pattern>
+        <url-pattern>/employees/OrderDetailServlet</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>AnalyticsServlet</servlet-name>
-        <url-pattern>/AnalyticsServlet</url-pattern>
+        <url-pattern>/employees/AnalyticsServlet</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>EmpProfileServlet</servlet-name>
         <url-pattern>/EmpProfileServlet</url-pattern>
+
+    <!-- ========================================
+         SESSION & WELCOME FILES
+         ======================================== -->
+    <servlet-mapping>
+        <servlet-name>AdminBookServlet</servlet-name>
+        <url-pattern>/AdminBookServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>addBookServlet</servlet-name>
+        <url-pattern>/addBookServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AdminManageBookServlet</servlet-name>
+        <url-pattern>/AdminManageBookServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AdminAnalyticsServlet</servlet-name>
+        <url-pattern>/AdminAnalyticsServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>EmpAnalyticsServlet</servlet-name>
+        <url-pattern>/EmpAnalyticsServlet</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>30</session-timeout>
     </session-config>
+    <!-- Best practice: welcome file is a JSP, not a servlet -->
+    <welcome-file-list>
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>
+
     <welcome-file-list>
         <welcome-file>IndexServlet</welcome-file>
     </welcome-file-list>
+
+    <!-- ========================================
+         DATABASE RESOURCE
+         ======================================== -->
     <resource-ref>
         <description>BooKu Database</description>
         <res-ref-name>jdbc/myDatasource</res-ref-name>

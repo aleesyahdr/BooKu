@@ -22,12 +22,47 @@ import util.DBConnection;
     maxRequestSize = 20971520,   // 20MB
     fileSizeThreshold = 5242880  // 5MB
 )
-public class ManageBookServlet extends HttpServlet 
+public class AdminManageBookServlet extends HttpServlet 
 {
     private Connection getConnection() {
         return DBConnection.createConnection();
     }
     
+    /**
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
+     * methods.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
+        try (PrintWriter out = response.getWriter()) {
+            /* TODO output your page here. You may use following sample code. */
+            out.println("<!DOCTYPE html>");
+            out.println("<html>");
+            out.println("<head>");
+            out.println("<title>Servlet AdminManageBookServlet</title>");            
+            out.println("</head>");
+            out.println("<body>");
+            out.println("<h1>Servlet AdminManageBookServlet at " + request.getContextPath() + "</h1>");
+            out.println("</body>");
+            out.println("</html>");
+        }
+    }
+
+    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    /**
+     * Handles the HTTP <code>GET</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException 
@@ -35,7 +70,7 @@ public class ManageBookServlet extends HttpServlet
         String bookIdParam = request.getParameter("id");
         
         if (bookIdParam == null || bookIdParam.trim().isEmpty()) {
-            response.sendRedirect(request.getContextPath() + "/employees/EmpBookServlet");
+            response.sendRedirect(request.getContextPath() + "/AdminBookServlet");
             return;
         }
         
@@ -45,15 +80,15 @@ public class ManageBookServlet extends HttpServlet
             
             if (book == null) {
                 request.setAttribute("error", "Book not found!");
-                response.sendRedirect(request.getContextPath() + "/employees/EmpBookServlet");
+                response.sendRedirect(request.getContextPath() + "//AdminBookServlet");
                 return;
             }
             
             request.setAttribute("book", book);
-            request.getRequestDispatcher("/employees/manageBook.jsp").forward(request, response);
+            request.getRequestDispatcher("/admin/manageBook.jsp").forward(request, response);
             
         } catch (NumberFormatException e) {
-            response.sendRedirect(request.getContextPath() + "/employees/EmpBookServlet");
+            response.sendRedirect(request.getContextPath() + "//AdminBookServlet");
         }
     }
 
@@ -76,16 +111,16 @@ public class ManageBookServlet extends HttpServlet
                 int bookId = Integer.parseInt(request.getParameter("book_id"));
                 updateBook(request);
                 response.sendRedirect(request.getContextPath() + 
-                    "/employees/ManageBookServlet?id=" + bookId + "&message=Book updated successfully");
+                    "/AdminManageBookServlet?id=" + bookId + "&message=Book updated successfully");
                 
             } else if ("delete".equals(action)) {
                 int bookId = Integer.parseInt(request.getParameter("book_id"));
                 deleteBook(request);
                 response.sendRedirect(request.getContextPath() + 
-                        "/employees/EmpBookServlet?id=" + bookId + "&message=Book deleted successfully");
+                        "/AdminBookServlet?id=" + bookId + "&message=Book deleted successfully");
                 
             } else {
-                response.sendRedirect(request.getContextPath() + "/employees/EmpBookServlet");
+                response.sendRedirect(request.getContextPath() + "/AdminBookServlet");
             }
             
         } catch (Exception e) {
@@ -242,4 +277,15 @@ public class ManageBookServlet extends HttpServlet
             if (conn != null) conn.close();
         }
     }
+    
+    /**
+     * Returns a short description of the servlet.
+     *
+     * @return a String containing servlet description
+     */
+    @Override
+    public String getServletInfo() {
+        return "Short description";
+    }// </editor-fold>
+
 }
