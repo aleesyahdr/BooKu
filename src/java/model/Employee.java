@@ -11,11 +11,11 @@ public class Employee
     private String emp_lastName;
     private String emp_phoneNum;
     private String emp_email;
-    private Date emp_dob;
     private String emp_address;
     private String emp_city;
     private String emp_state;
     private String emp_postcode;
+    private Date emp_dob;
     
     public Employee ()
     {
@@ -26,14 +26,14 @@ public class Employee
         emp_lastName = "";
         emp_phoneNum = "";
         emp_email = "";
-        emp_dob = null;
         emp_address = "";
         emp_city = "";
         emp_state = "";
         emp_postcode = "";
+        emp_dob = null;
     }
 
-    public Employee(int emp_id, String emp_username, String emp_password, String emp_firstName, String emp_lastName, String emp_phoneNum, String emp_email, Date emp_dob, String emp_address, String emp_city, String emp_state, String emp_postcode) 
+    public Employee(int emp_id, String emp_username, String emp_password, String emp_firstName, String emp_lastName, String emp_phoneNum, String emp_email, String emp_address, String emp_city, String emp_state, String emp_postcode, Date emp_dob) 
     {
         this.emp_id = emp_id;
         this.emp_username = emp_username;
@@ -42,11 +42,11 @@ public class Employee
         this.emp_lastName = emp_lastName;
         this.emp_phoneNum = emp_phoneNum;
         this.emp_email = emp_email;
-        this.emp_dob = emp_dob;
         this.emp_address = emp_address;
         this.emp_city = emp_city;
         this.emp_state = emp_state;
         this.emp_postcode = emp_postcode;
+        this.emp_dob = emp_dob;
     }
 
     public int getEmp_id() {
@@ -105,14 +105,6 @@ public class Employee
         this.emp_email = emp_email;
     }
 
-    public Date getEmp_dob() {
-        return emp_dob;
-    }
-
-    public void setEmp_dob(Date emp_dob) {
-        this.emp_dob = emp_dob;
-    }
-
     public String getEmp_address() {
         return emp_address;
     }
@@ -143,5 +135,15 @@ public class Employee
 
     public void setEmp_postcode(String emp_postcode) {
         this.emp_postcode = emp_postcode;
+    }
+    
+    public Date getEmp_dob ()
+    {
+        return emp_dob;
+    }
+    
+    public void setEmp_dob (Date emp_dob)
+    {
+        this.emp_dob = emp_dob;
     }
 }
