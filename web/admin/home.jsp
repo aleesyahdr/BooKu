@@ -1,10 +1,10 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Bookstore</title>
-<link rel="stylesheet" href="../css/styleEmp.css">
-
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styleAdmin.css">
 </head>
 <body>
     
@@ -15,17 +15,18 @@
         <h2>Booku</h2>
 
         <div class="sidebar-nav">
-            <a href="home.jsp"class="active">Dashboard</a>
-            <a href="ManageBookServlet">Manage Book</a>
-            <a href="EmpOrderServlet">Manage Order</a>
-            <a href="AnalyticsServlet">Analytics</a>
+            <a href="${pageContext.request.contextPath}/admin/home.jsp"class="active">Dashboard</a>
+            <a href="${pageContext.request.contextPath}/manageUserServlet">Manage Users</a>
+            <a href="${pageContext.request.contextPath}/admin/books.jsp">Manage Book</a>
+            <a href="${pageContext.request.contextPath}/admin/orders.jsp">Manage Order</a>
+            <a href="${pageContext.request.contextPath}/admin/analytics.jsp">Analytics</a>
         </div>
 
         <div class="sidebar-footer">
-            <div class="profile-section" onclick="window.location.href='profile.jsp'">
+            <div class="profile-section" onclick="window.location.href='${pageContext.request.contextPath}/admin/profile.jsp'">
                 <div class="profile-icon">👤</div>
                 <div class="profile-info">
-                    <div class="profile-name">User</div>
+                    <div class="profile-name">Admin User</div>
                 </div>
             </div>
 

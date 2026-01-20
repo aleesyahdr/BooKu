@@ -10,7 +10,7 @@
 <body>
 
     <!-- Toggle Button -->
-    <button class="toggle-btn" id="toggleBtn" onclick="toggleSidebar()">â˜°</button>
+    <button class="toggle-btn" id="toggleBtn" onclick="toggleSidebar()">â˜</button>
 
     <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
