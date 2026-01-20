@@ -7,35 +7,44 @@ and open the template in the editor.
 <html>
 <head>
     <title>BooKu - Contact Us</title>
-    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
 </head>
 <body>
 
 <header class="top-header">
     <div class="logo"><h1>BooKu</h1></div>
     <div class="header-right">
-            <!-- Menu Links -->
-            <nav class="header-nav">
-                <a href="${pageContext.request.contextPath}/IndexServlet">Home</a>
-                <a href="${pageContext.request.contextPath}/BooksServlet">Books</a>
-                <a href="${pageContext.request.contextPath}/customer/contact.jsp">Contact</a>
-                <a href="${pageContext.request.contextPath}/customer/about.jsp">About</a>
-            </nav>
-
-            <!-- Profile Icon + Dropdown -->
-            <div class="profile-menu">
-                <img src="${pageContext.request.contextPath}/img/profile.jpg" class="profile-icon" alt="Profile">
-                <div class="dropdown">
-                    <a href="${pageContext.request.contextPath}/customer/profile.jsp">Profile</a>
-                    <a href="${pageContext.request.contextPath}/customer/orderHistory.jsp">Order History</a>
-                    <% if (session.getAttribute("username") != null) { %>
-                        <a href="${pageContext.request.contextPath}/customer/CustLoginServlet?action=logout">Logout</a>
-                    <% } else { %>
-                        <a href="${pageContext.request.contextPath}/customer/login.jsp">Login</a>
-                    <% } %>
-                </div>
+        <nav class="header-nav">
+            <a href="${pageContext.request.contextPath}/IndexServlet">Home</a>
+            <a href="${pageContext.request.contextPath}/BooksServlet">Books</a>
+            <a href="${pageContext.request.contextPath}/customer/contact.jsp">Contact</a>
+            <a href="${pageContext.request.contextPath}/customer/about.jsp">About</a>
+        </nav>
+        <div class="profile-menu">
+            <img src="${pageContext.request.contextPath}/img/profile.jpg" class="profile-icon" alt="Profile">
+            <div class="dropdown">
+                <%
+                    // Check if user is logged in
+                    String username = (String) session.getAttribute("username");
+                    Integer custId = (Integer) session.getAttribute("custId");
+                    boolean isLoggedIn = (username != null && custId != null);
+                %>
+                
+                <% if (isLoggedIn) { %>
+                    <!-- User is logged in - show these options -->
+                    <div class="user-info">Welcome, <%= username %>!</div>
+                    <a href="${pageContext.request.contextPath}/ProfileServlet">Profile</a>
+                    <a href="${pageContext.request.contextPath}/OrderHistoryServlet">Order History</a>
+                    <a href="${pageContext.request.contextPath}/CartServlet">My Cart</a>
+                    <a href="${pageContext.request.contextPath}/CustLoginServlet?action=logout">Logout</a>
+                <% } else { %>
+                    <!-- User is NOT logged in - show login option -->
+                    <a href="${pageContext.request.contextPath}/customer/login.jsp">Login</a>
+                    <a href="${pageContext.request.contextPath}/customer/register.jsp">Register</a>
+                <% } %>
             </div>
         </div>
+    </div>
 </header>
 
 <div class="page-container" style="max-width:900px; margin:50px auto; padding:20px;">
@@ -52,19 +61,6 @@ and open the template in the editor.
         <p><strong>Address:</strong> 123 Book Street, Kuala Lumpur, Malaysia</p>
     </div>
 
-    <!-- Contact Form -->
-    <form>
-        <label>Name:</label><br>
-        <input type="text" placeholder="Your name" style="width:100%; padding:10px; margin-bottom:15px; border-radius:5px; border:1px solid #ccc;"><br>
-
-        <label>Email:</label><br>
-        <input type="email" placeholder="Your email" style="width:100%; padding:10px; margin-bottom:15px; border-radius:5px; border:1px solid #ccc;"><br>
-
-        <label>Message:</label><br>
-        <textarea placeholder="Your message" style="width:100%; padding:10px; height:150px; border-radius:5px; border:1px solid #ccc;"></textarea><br>
-
-        <button type="submit" class="cart-btn">Send Message</button>
-    </form>
 </div>
 
 </body>

@@ -9,17 +9,19 @@ public class Order
     private Date order_date;
     private Time order_time;
     private double order_total;
+    private String order_status;
     
     //fk
     private int emp_id;
     private int cust_id;
 
-    public Order(int order_id, Date order_date, Time order_time, double order_total, int emp_id, int cust_id) 
+    public Order(int order_id, Date order_date, Time order_time, double order_total,String order_status, int emp_id, int cust_id) 
     {
         this.order_id = order_id;
         this.order_date = order_date;
         this.order_time = order_time;
         this.order_total = order_total;
+        this.order_status = order_status;
         this.emp_id = emp_id;
         this.cust_id = cust_id;
     }
@@ -70,5 +72,12 @@ public class Order
 
     public void setCust_id(int cust_id) {
         this.cust_id = cust_id;
+    }
+    
+    public String getOrder_status() {
+        return order_status;
+    }
+    public void setOrder_status(String order_status) {
+        this.order_status = order_status;
     }
 }

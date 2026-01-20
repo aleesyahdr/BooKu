@@ -11,9 +11,10 @@ public class Book
     private Date book_publishDate;
     private double book_price;
     private String book_category;
-    private String book_img;  
+    private String book_img;
+    private boolean book_available;
 
-    public Book(int book_id, String book_name, String book_author, String book_description, Date book_publishDate, double book_price,String book_category, String book_img) 
+    public Book(int book_id, String book_name, String book_author, String book_description, Date book_publishDate, double book_price,String book_category, String book_img, boolean book_available) 
     {
         this.book_id = book_id;
         this.book_name = book_name;
@@ -23,6 +24,7 @@ public class Book
         this.book_price = book_price;
         this.book_category = book_category;
         this.book_img = book_img;
+        this.book_available = book_available;
     }
 
     public int getBook_id() {
@@ -87,5 +89,14 @@ public class Book
     
     public void setBook_img(String book_img) {
         this.book_img = book_img;
+    }
+    
+   
+    public boolean getBook_available() {
+        return book_available;
+    }
+    
+    public void setBook_available(boolean book_available) {
+        this.book_available = book_available;
     }
 }

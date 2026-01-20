@@ -1,76 +1,92 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html>
     <head>
         <title>BooKu - Register</title>
         <meta charset="UTF-8">
-        <link rel="stylesheet" href="../css/style.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
+        <style>
+            .error-message {
+                color: #d32f2f;
+                background-color: #ffebee;
+                padding: 12px;
+                border-radius: 5px;
+                margin-bottom: 15px;
+                border-left: 4px solid #d32f2f;
+                font-size: 14px;
+            }
+        </style>
     </head>
     
     <body>
-      
-
         <!-- Register Container -->
         <div class="register-container">
             <div class="register-box">
                 <h1 class="register-title">Create Your BooKu Account</h1>
                 <p class="register-subtitle">Join us and start your reading journey today!</p>
 
-                <form id="register-form">
+                <!-- Display error message if any -->
+                <c:if test="${not empty errorMessage}">
+                    <p class="error-message">${errorMessage}</p>
+                </c:if>
+
+                <form action="${pageContext.request.contextPath}/RegisterServlet" method="POST">
                     <div class="form-row">
                         <div class="form-group">
                             <label class="form-label">First Name</label>
-                            <input type="text" id="firstname" required class="form-input" placeholder="Enter your first name">
+                            <input type="text" name="firstname" required class="form-input" placeholder="Enter your first name">
                         </div>
                         <div class="form-group">
                             <label class="form-label">Last Name</label>
-                            <input type="text" id="lastname" required class="form-input" placeholder="Enter your last name">
+                            <input type="text" name="lastname" required class="form-input" placeholder="Enter your last name">
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label class="form-label">Username</label>
-                        <input type="text" id="username" required class="form-input" placeholder="Choose a username">
+                        <input type="text" name="username" required class="form-input" placeholder="Choose a username">
                     </div>
 
                     <div class="form-group">
                         <label class="form-label">Email</label>
-                        <input type="email" id="email" required class="form-input" placeholder="Enter your email">
+                        <input type="email" name="email" required class="form-input" placeholder="Enter your email">
                     </div>
 
                     <div class="form-group">
                         <label class="form-label">Password</label>
-                        <input type="password" id="password" required class="form-input" placeholder="Create a password">
+                        <input type="password" name="password" id="password" required class="form-input" placeholder="Create a password" minlength="6">
                     </div>
 
                     <div class="form-group">
                         <label class="form-label">Confirm Password</label>
-                        <input type="password" id="confirm-password" required class="form-input" placeholder="Confirm your password">
+                        <input type="password" id="confirm-password" required class="form-input" placeholder="Confirm your password" minlength="6">
                     </div>
 
                     <div class="form-group">
                         <label class="form-label">Phone Number</label>
-                        <input type="tel" id="phone" required class="form-input" placeholder="+60123456789">
+                        <input type="tel" name="phone" required class="form-input" placeholder="+60123456789">
                     </div>
 
                     <div class="form-group">
                         <label class="form-label">Address</label>
-                        <textarea id="address" rows="3" required class="form-input" placeholder="Enter your address"></textarea>
+                        <textarea name="address" rows="3" required class="form-input" placeholder="Enter your address"></textarea>
                     </div>
 
                     <div class="form-row">
                         <div class="form-group">
                             <label class="form-label">City</label>
-                            <input type="text" id="city" required class="form-input" placeholder="City">
+                            <input type="text" name="city" required class="form-input" placeholder="City">
                         </div>
                         <div class="form-group">
                             <label class="form-label">Postcode</label>
-                            <input type="text" id="postcode" required class="form-input" placeholder="Postcode">
+                            <input type="text" name="postcode" required class="form-input" placeholder="Postcode">
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label class="form-label">State</label>
-                        <select id="state" required class="form-input">
+                        <select name="state" required class="form-input">
                             <option value="">Select State</option>
                             <option value="Johor">Johor</option>
                             <option value="Kedah">Kedah</option>
@@ -93,28 +109,36 @@
 
                     <div class="form-group">
                         <label class="form-label">Date of Birth</label>
-                        <input type="date" id="birthday" required class="form-input">
+                        <input type="date" name="birthday" required class="form-input">
                     </div>
 
-                    <button type="button" class="register-btn" onclick="registerAccount()">Create Account</button>
+                    <button type="submit" class="register-btn">Create Account</button>
 
                     <div class="login-link">
-                        <p>Already have an account? <a href="login.html">Login here</a></p>
+                        <p>Already have an account? <a href="login.jsp">Login here</a></p>
                     </div>
                 </form>
             </div>
         </div>
 
-        <!-- Success Modal -->
-        <div id="success-modal" class="modal">
-            <div class="modal-content">
-                <div class="modal-icon success-icon">&#10003;</div>
-                <h2 class="modal-title">Success!</h2>
-                <p class="modal-message">Your account has been created successfully!</p>
-                <button class="modal-btn" onclick="redirectToLogin()">Go to Login</button>
-            </div>
-        </div>
-
-        <script src="../js/register.js"></script>
+        <script>
+            // Client-side password validation
+            document.querySelector('form').addEventListener('submit', function(e) {
+                const password = document.getElementById('password').value;
+                const confirmPassword = document.getElementById('confirm-password').value;
+                
+                if (password !== confirmPassword) {
+                    e.preventDefault();
+                    alert('Passwords do not match!');
+                    return false;
+                }
+                
+                if (password.length < 6) {
+                    e.preventDefault();
+                    alert('Password must be at least 6 characters long!');
+                    return false;
+                }
+            });
+        </script>
     </body>
 </html>
