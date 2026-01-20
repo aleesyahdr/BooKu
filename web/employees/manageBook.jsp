@@ -1,32 +1,33 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="model.Book" %>
+<%
+    Book book = (Book) request.getAttribute("book");
+    String availability = (String) request.getAttribute("availability");
+    if (book == null) {
+        response.sendRedirect("EmpBookServlet");
+        return;
+    }
+%>
 <!DOCTYPE html>
-<!--
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
--->
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Book – Booku</title>
-<link rel="stylesheet" href="../css/styleEmp.css">
-
+    <link rel="stylesheet" href="../css/styleEmp.css">
 </head>
 <body>
-
-     <button class="toggle-btn" id="toggleBtn" onclick="toggleSidebar()">☰</button>
-
+    <button class="toggle-btn" id="toggleBtn" onclick="toggleSidebar()">☰</button>
+    
     <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
         <h2>Booku</h2>
-
         <div class="sidebar-nav">
             <a href="home.html">Dashboard</a>
-            <a href="books.html"class="active">Manage Book</a>
+            <a href="EmpBookServlet" class="active">Manage Book</a>
             <a href="orders.html">Manage Order</a>
             <a href="analytics.html">Analytics</a>
         </div>
-
         <div class="sidebar-footer">
             <div class="profile-section" onclick="window.location.href='profile.html'">
                 <div class="profile-icon">👤</div>
@@ -34,74 +35,129 @@ and open the template in the editor.
                     <div class="profile-name">User</div>
                 </div>
             </div>
-
             <button class="logout-btn" id="logoutBtn">
                 <span>Logout</span>
             </button>
         </div>
     </div>
-
+    
     <!-- Main Content -->
     <div class="main-content" id="mainContent">
-
         <div class="header">
             <h1>Manage Book</h1>
         </div>
-
+        
         <div class="book-container">
             <div class="book-image-section">
-                <img src="https://covers.openlibrary.org/b/id/10523365-L.jpg" alt="Book Cover" class="book-image" id="bookImage">
+                <img src="../images/<%= book.getBook_img() %>" 
+                     alt="Book Cover" 
+                     class="book-image" 
+                     id="bookImage"
+                     onerror="this.src='https://covers.openlibrary.org/b/id/10523365-L.jpg'">
             </div>
-
+            
             <div class="book-form-section">
-                <form id="bookForm">
+                <form action="ManageBookServlet" method="post" id="bookForm">
+                    <input type="hidden" name="bookId" value="<%= book.getBook_id() %>">
+                    <input type="hidden" name="action" id="formAction" value="update">
+                    
                     <div class="form-group">
-                        <label for="bookName">Book Name</label>
-                        <input type="text" id="bookName" placeholder="Enter book name" value="The Silent Observer">
+                        <label for="bookName">Book Name *</label>
+                        <input type="text" id="bookName" name="bookName" 
+                               placeholder="Enter book name" 
+                               value="<%= book.getBook_name() %>" required>
                     </div>
-
+                    
                     <div class="form-group">
-                        <label for="bookDescription">Description</label>
-                        <textarea id="bookDescription" placeholder="Enter book description">A thrilling mystery novel that keeps you on the edge of your seat.</textarea>
+                        <label for="bookAuthor">Author *</label>
+                        <input type="text" id="bookAuthor" name="bookAuthor" 
+                               placeholder="Enter author name" 
+                               value="<%= book.getBook_author() %>" required>
                     </div>
-
+                    
                     <div class="form-group">
-                        <label for="bookPrice">Price (RM)</label>
-                        <input type="text" id="bookPrice" placeholder="Enter price" value="35.90">
+                        <label for="bookDescription">Description *</label>
+                        <textarea id="bookDescription" name="bookDescription" 
+                                  placeholder="Enter book description" required><%= book.getBook_description() %></textarea>
                     </div>
-
+                    
                     <div class="form-group">
-                        <label for="bookAvailability">Availability</label>
-                        <select id="bookAvailability">
-                            <option value="in-stock" selected>In Stock</option>
-                            <option value="out-of-stock">Out of Stock</option>
-                            <option value="pre-order">Pre-Order</option>
+                        <label for="bookCategory">Category *</label>
+                        <select id="bookCategory" name="bookCategory" required>
+                            <option value="">Select category</option>
+                            <option value="Fiction" <%= "Fiction".equals(book.getBook_category()) ? "selected" : "" %>>Fiction</option>
+                            <option value="Classic" <%= "Classic".equals(book.getBook_category()) ? "selected" : "" %>>Classic</option>
+                            <option value="Fantasy" <%= "Fantasy".equals(book.getBook_category()) ? "selected" : "" %>>Fantasy</option>
+                            <option value="Science Fiction" <%= "Science Fiction".equals(book.getBook_category()) ? "selected" : "" %>>Science Fiction</option>
+                            <option value="Romance" <%= "Romance".equals(book.getBook_category()) ? "selected" : "" %>>Romance</option>
+                            <option value="Mystery" <%= "Mystery".equals(book.getBook_category()) ? "selected" : "" %>>Mystery</option>
+                            <option value="Thriller" <%= "Thriller".equals(book.getBook_category()) ? "selected" : "" %>>Thriller</option>
+                            <option value="Horror" <%= "Horror".equals(book.getBook_category()) ? "selected" : "" %>>Horror</option>
+                            <option value="Non-Fiction" <%= "Non-Fiction".equals(book.getBook_category()) ? "selected" : "" %>>Non-Fiction</option>
+                            <option value="Biography" <%= "Biography".equals(book.getBook_category()) ? "selected" : "" %>>Biography</option>
+                            <option value="Self-Help" <%= "Self-Help".equals(book.getBook_category()) ? "selected" : "" %>>Self-Help</option>
+                            <option value="Educational" <%= "Educational".equals(book.getBook_category()) ? "selected" : "" %>>Educational</option>
                         </select>
                     </div>
-
+                    
+                    <div class="form-group">
+                        <label for="bookPrice">Price (RM) *</label>
+                        <input type="number" id="bookPrice" name="bookPrice" 
+                               step="0.01" min="0" placeholder="Enter price" 
+                               value="<%= book.getBook_price() %>" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="bookPublishDate">Publish Date *</label>
+                        <input type="date" id="bookPublishDate" name="bookPublishDate" 
+                               value="<%= book.getBook_publishDate() %>" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="bookAvailability">Availability *</label>
+                        <select id="bookAvailability" name="bookAvailability" required>
+                            <option value="">Select availability</option>
+                            <option value="in-stock" <%= "in-stock".equals(availability) ? "selected" : "" %>>In Stock</option>
+                            <option value="out-of-stock" <%= "out-of-stock".equals(availability) ? "selected" : "" %>>Out of Stock</option>
+                            <option value="pre-order" <%= "pre-order".equals(availability) ? "selected" : "" %>>Pre-Order</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="bookImg">Image Filename *</label>
+                        <input type="text" id="bookImg" name="bookImg" 
+                               placeholder="e.g., book1.jpg" 
+                               value="<%= book.getBook_img() %>" required>
+                    </div>
+                    
                     <div class="button-group">
-                        <button type="button" class="btn btn-update" id="updateBtn">Update Book</button>
-                        <button type="button" class="btn btn-delete" id="deleteBtn">Delete Book</button>
+                        <button type="submit" class="btn btn-update" id="updateBtn">Update Book</button>
+                        <button type="button" class="btn btn-delete" id="deleteBtn" onclick="confirmDelete()">Delete Book</button>
                     </div>
                 </form>
             </div>
         </div>
-
     </div>
-
+    
     <!-- Overlay -->
     <div class="overlay" id="overlay"></div>
-
+    
     <!-- Message Box -->
     <div class="message-box" id="messageBox">
         <h2 id="messageTitle">Success!</h2>
         <p id="messageText">Book updated successfully!</p>
-        <button onclick="closeMessage()">OK</button>
+        <button onclick="window.location.href='EmpBookServlet'">OK</button>
     </div>
-
+    
     <!-- External JS -->
     <script src="../js/main.js"></script>
-    <script src="../js/manageBook.js"></script>
-
+    <script>
+        function confirmDelete() {
+            if (confirm('Are you sure you want to delete this book? This action cannot be undone.')) {
+                document.getElementById('formAction').value = 'delete';
+                document.getElementById('bookForm').submit();
+            }
+        }
+    </script>
 </body>
 </html>

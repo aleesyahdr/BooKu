@@ -1,3 +1,6 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="java.util.List" %>
+<%@ page import="java.util.Map" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,7 +8,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Orders - Bookstore</title>
     <link rel="stylesheet" href="../css/styleEmp.css">
-
 </head>
 <body>
 <button class="toggle-btn" id="toggleBtn" onclick="toggleSidebar()">☰</button>
@@ -16,8 +18,8 @@
 
         <div class="sidebar-nav">
             <a href="home.html">Dashboard</a>
-            <a href="books.html">Manage Book</a>
-            <a href="orders.html"class="active">Manage Order</a>
+            <a href="EmpBookServlet">Manage Book</a>
+            <a href="EmpOrderServlet" class="active">Manage Order</a>
             <a href="analytics.html">Analytics</a>
         </div>
 
@@ -35,82 +37,74 @@
         </div>
     </div>
 
-        <div class="main-content" id="mainContent">
-            <div class="header">
-                <h1>Manage Orders</h1>
-            </div>
+    <div class="main-content" id="mainContent">
+        <div class="header">
+            <h1>Manage Orders</h1>
+        </div>
 
-            <div class="orders-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Order ID</th>
-                            <th>Customer Name</th>
-                            <th>Book Title</th>
-                            <th>Total Price</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>#ORD001</td>
-                            <td>John Smith</td>
-                            <td>The Great Gatsby</td>
-                            <td>$25.99</td>
-                            <td><span class="status-badge status-pending">Pending</span></td>
-                            <td>
-                                <button class="btn btn-view" onclick="viewOrder('ORD001')">View</button>
-                                <button class="btn btn-delete" onclick="deleteOrder('ORD001')">Delete</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>#ORD002</td>
-                            <td>Sarah Johnson</td>
-                            <td>To Kill a Mockingbird</td>
-                            <td>$18.50</td>
-                            <td><span class="status-badge status-progress">In Progress</span></td>
-                            <td>
-                                <button class="btn btn-view" onclick="viewOrder('ORD002')">View</button>
-                                <button class="btn btn-delete" onclick="deleteOrder('ORD002')">Delete</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>#ORD003</td>
-                            <td>Michael Brown</td>
-                            <td>1984</td>
-                            <td>$22.00</td>
-                            <td><span class="status-badge status-completed">Completed</span></td>
-                            <td>
-                                <button class="btn btn-view" onclick="viewOrder('ORD003')">View</button>
-                                <button class="btn btn-delete" onclick="deleteOrder('ORD003')">Delete</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>#ORD004</td>
-                            <td>Emily Davis</td>
-                            <td>Pride and Prejudice</td>
-                            <td>$15.75</td>
-                            <td><span class="status-badge status-pending">Pending</span></td>
-                            <td>
-                                <button class="btn btn-view" onclick="viewOrder('ORD004')">View</button>
-                                <button class="btn btn-delete" onclick="deleteOrder('ORD004')">Delete</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>#ORD005</td>
-                            <td>David Wilson</td>
-                            <td>The Catcher in the Rye</td>
-                            <td>$19.99</td>
-                            <td><span class="status-badge status-progress">In Progress</span></td>
-                            <td>
-                                <button class="btn btn-view" onclick="viewOrder('ORD005')">View</button>
-                                <button class="btn btn-delete" onclick="deleteOrder('ORD005')">Delete</button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+        <!-- Success/Error Message -->
+        <% 
+            String message = (String) session.getAttribute("message");
+            String messageType = (String) session.getAttribute("messageType");
+            if (message != null) {
+        %>
+            <div style="padding: 15px; margin-bottom: 20px; border-radius: 8px; 
+                        background-color: <%= messageType.equals("success") ? "#d4edda" : "#f8d7da" %>; 
+                        color: <%= messageType.equals("success") ? "#155724" : "#721c24" %>; 
+                        border: 1px solid <%= messageType.equals("success") ? "#c3e6cb" : "#f5c6cb" %>;">
+                <%= message %>
             </div>
+        <%
+                session.removeAttribute("message");
+                session.removeAttribute("messageType");
+            }
+        %>
+
+        <div class="orders-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Customer Name</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Total Books</th>
+                        <th>Total Price</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <%
+                        List<Map<String, Object>> orderList = (List<Map<String, Object>>) request.getAttribute("orderList");
+                        if (orderList != null && !orderList.isEmpty()) {
+                            for (Map<String, Object> order : orderList) {
+                    %>
+                    <tr>
+                        <td>#ORD<%= String.format("%03d", order.get("orderId")) %></td>
+                        <td><%= order.get("customerName") %></td>
+                        <td><%= order.get("orderDate") %></td>
+                        <td><%= order.get("orderTime") %></td>
+                        <td><%= order.get("totalBooks") %></td>
+                        <td>RM <%= String.format("%.2f", order.get("orderTotal")) %></td>
+                        <td><span class="status-badge status-pending"><%= order.get("status") %></span></td>
+                        <td>
+                            <button class="btn btn-view" onclick="window.location.href='OrderDetailServlet?id=<%= order.get("orderId") %>'">View</button>
+                            <button class="btn btn-delete" onclick="deleteOrder(<%= order.get("orderId") %>)">Delete</button>
+                        </td>
+                    </tr>
+                    <%
+                            }
+                        } else {
+                    %>
+                    <tr>
+                        <td colspan="8" style="text-align: center; padding: 20px;">No orders found.</td>
+                    </tr>
+                    <%
+                        }
+                    %>
+                </tbody>
+            </table>
         </div>
     </div>
 
@@ -121,29 +115,23 @@
         </div>
     </div>
 
+    <form id="deleteForm" action="EmpOrderServlet" method="post" style="display: none;">
+        <input type="hidden" name="action" value="delete">
+        <input type="hidden" name="orderId" id="deleteOrderId">
+    </form>
+
+    <script src="../js/main.js"></script>
     <script>
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const mainContent = document.getElementById('mainContent');
-            const toggleBtn = document.getElementById('toggleBtn');
-            
-            sidebar.classList.toggle('hidden');
-            mainContent.classList.toggle('expanded');
-            toggleBtn.classList.toggle('shifted');
-        }
-
-        function viewOrder(orderId) {
-            window.location.href = 'orderDetails.html?id=' + orderId;
-        }
-
         function deleteOrder(orderId) {
-            document.getElementById('deleteModal').style.display = 'flex';
+            if (confirm('Are you sure you want to delete this order? This action cannot be undone.')) {
+                document.getElementById('deleteOrderId').value = orderId;
+                document.getElementById('deleteForm').submit();
+            }
         }
 
         function closeModal() {
             document.getElementById('deleteModal').style.display = 'none';
         }
     </script>
-    <script src="../js/main.js"></script>
 </body>
 </html>
