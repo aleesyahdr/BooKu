@@ -1,193 +1,199 @@
-<!DOCTYPE html>
-<!--
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
--->
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page import="java.util.*, model.Book"%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Books – Booku</title>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styleAdmin.css">
+</head>
+<body>
+
+    <!-- Toggle Button -->
+    <button class="toggle-btn" id="toggleBtn" onclick="toggleSidebar()">☰</button>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <h2>Booku Admin</h2>
+
+        <div class="sidebar-nav">
+            <a href="${pageContext.request.contextPath}/admin/home.jsp">Dashboard</a>
+            <a href="${pageContext.request.contextPath}/manageUserServlet">Manage Users</a>
+            <a href="${pageContext.request.contextPath}/AdminBookServlet" class="active">Manage Books</a>
+            <a href="${pageContext.request.contextPath}/admin/orders.jsp">Manage Orders</a>
+            <a href="${pageContext.request.contextPath}/admin/analytics.jsp">Analytics</a>
+        </div>
+
+        <div class="sidebar-footer">
+            <div class="profile-section" onclick="window.location.href='${pageContext.request.contextPath}/admin/profile.jsp'">
+                <div class="profile-icon">A</div>
+                <div class="profile-info">
+                    <div class="profile-name">Admin User</div>
+                </div>
+            </div>
+
+            <button class="logout-btn" onclick="location.href='${pageContext.request.contextPath}/admin/logout.jsp'">
+                <span>🚪</span> Logout
+            </button>
+        </div>
+    </div>
+
+    <div class="main-content" id="mainContent">
+
+        <div class="header">
+            <h1>Manage Books</h1>
+            <p>View and manage your book inventory</p>
+        </div>
+
+        <%
+            String message = (String) request.getAttribute("message");
+            String error = (String) request.getAttribute("error");
+            String selectedCategory = request.getParameter("category");
+            if (selectedCategory == null) selectedCategory = "all";
+            
+            List<Book> books = (List<Book>) request.getAttribute("books");
+            List<String> categories = (List<String>) request.getAttribute("categories");
+            
+            if (books == null) books = new ArrayList<Book>();
+            if (categories == null) categories = new ArrayList<String>();
+        %>
+        
+        <% if (message != null) { %>
+            <div class="alert alert-success"><%= message %></div>
+        <% } %>
+        
+        <% if (error != null) { %>
+            <div class="alert alert-danger"><%= error %></div>
+        <% } %>
+
+        <!-- Search Bar -->
+        <div class="search-container">
+            <input type="text" class="search-bar" id="searchBar" 
+                   placeholder="Search books by title, author, or category..."
+                   onkeyup="searchBooks()">
+        </div>
+
+        <div class="top-bar">
+            <select id="categoryFilter" onchange="filterByCategory()">
+                <option value="all" <%= selectedCategory.equals("all") ? "selected" : "" %>>All Categories</option>
+                <% for (String cat : categories) { %>
+                    <option value="<%= cat %>" <%= selectedCategory.equals(cat) ? "selected" : "" %>>
+                        <%= cat %>
+                    </option>
+                <% } %>
+            </select>
+
+            <button class="add-btn" onclick="window.location.href='${pageContext.request.contextPath}/admin/addBook.jsp'">
+                + Add Book
+            </button>
+        </div>
+
+        <!-- BOOK GRID - Dynamic from Database -->
+        <div class="book-grid">
+            <% if (books.isEmpty()) { %>
+                <div style="grid-column: 1/-1; text-align: center; padding: 50px;">
+                    <h3>No books found</h3>
+                    <p>Start by adding your first book!</p>
+                </div>
+            <% } else { %>
+                <% for (Book book : books) { %>
+                    <div class="book-card" onclick="viewBook(<%= book.getBook_id() %>)">
+                        <% 
+                            String bookImg = book.getBook_img();
+                            // Use default image if book_img is null or empty
+                            if (bookImg == null || bookImg.trim().isEmpty()) {
+                                bookImg = "https://via.placeholder.com/300x400/004d40/ffffff?text=No+Image";
+                            }
+                        %>
+                        <img src="<%= bookImg.startsWith("http") 
+                                ? bookImg 
+                                : request.getContextPath() + "/img/books/" + bookImg %>"
+                             alt="Book Image">
+                        <h3><%= book.getBook_name() %></h3>
+                        <p class="author">by <%= book.getBook_author() %></p>
+                        <p class="category" style="font-size: 12px; color: #999; margin: 3px 0;">
+                            <%= book.getBook_category() %>
+                        </p>
+                        <p class="price">RM <%= String.format("%.2f", book.getBook_price()) %></p>
+                    </div>
+                <% } %>
+            <% } %>
+        </div>
+
+    </div>
+
+    <script>
+        // Sidebar toggle
+        function toggleSidebar() {
+            var sidebar = document.getElementById('sidebar');
+            var mainContent = document.getElementById('mainContent');
+            var toggleBtn = document.getElementById('toggleBtn');
+            
+            sidebar.classList.toggle('hidden');
+            mainContent.classList.toggle('expanded');
+            toggleBtn.classList.toggle('shifted');
+        }
+        
+        // View book details
+        function viewBook(bookId) {
+            window.location.href = '${pageContext.request.contextPath}/AdminManageBookServlet?id=' + bookId;
+        }
+        s
+        // Filter by category
+        function filterByCategory() {
+            var category = document.getElementById('categoryFilter').value;
+            window.location.href = '${pageContext.request.contextPath}/AdminBookServlet?category=' + category;
+        }
+        
+        // Search books (client-side filtering for better UX)
+        function searchBooks() {
+            var input = document.getElementById('searchBar');
+            var filter = input.value.toUpperCase();
+            var cards = document.getElementsByClassName('book-card');
+            
+            for (var i = 0; i < cards.length; i++) {
+                var title = cards[i].getElementsByTagName('h3')[0];
+                var author = cards[i].getElementsByClassName('author')[0];
+                var category = cards[i].getElementsByClassName('category')[0];
+                
+                var titleText = title.textContent || title.innerText;
+                var authorText = author.textContent || author.innerText;
+                var categoryText = category ? (category.textContent || category.innerText) : '';
+                
+                if (titleText.toUpperCase().indexOf(filter) > -1 || 
+                    authorText.toUpperCase().indexOf(filter) > -1 ||
+                    categoryText.toUpperCase().indexOf(filter) > -1) {
+                    cards[i].style.display = "";
+                } else {
+                    cards[i].style.display = "none";
+                }
+            }
+        }
+    </script>
 
     <style>
-        body {
-        margin: 0;
-        font-family: Arial, sans-serif;
-        background-color: #ffffff;
-    }
-
-    /* Sidebar same theme */
-    .sidebar {
-        width: 250px;
-        background-color: black;
-        color: #ffffff;
-        padding: 20px 20px 0 20px;
-        position: fixed;
-        height: 100vh;
-        top: 0;
-        left: 0;
-        transition: transform 0.3s ease;
-        z-index: 1000;
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-    }
-
-    .sidebar.hidden {
-        transform: translateX(-100%);
-    }
-
-    .sidebar h2 {
-        margin-bottom: 30px;
-        color:#4caf50;
-    }
-
-    /* Sidebar Navigation */
-    .sidebar-nav {
-        flex: 1;
-        overflow-y: auto;
-        margin-bottom: 15px;
-    }
-
-    .sidebar-nav::-webkit-scrollbar {
-        width: 5px;
-    }
-
-    .sidebar-nav::-webkit-scrollbar-thumb {
-        background: rgba(255, 255, 255, 0.3);
-        border-radius: 10px;
-    }
-
-    .sidebar a {
-        color: white;
-        text-decoration: none;
-        padding: 12px;
-        display: block;
-        border-radius: 5px;
-        margin-bottom: 10px;
-        font-weight: bold;
-    }
-
-    .sidebar a:hover,
-    .sidebar a.active {
-        background-color: #004d40;
-    }
-
-    /* Sidebar Footer */
-    .sidebar-footer {
-        padding: 15px 0 15px 0;
-        border-top: 1px solid rgba(255, 255, 255, 0.2);
-    }
-
-    .profile-section {
-        display: flex;
-        align-items: center;
-        padding: 10px;
-        margin-bottom: 10px;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background-color 0.3s;
-    }
-
-    .profile-section:hover {
-        background-color: rgba(0, 0, 0, 0.3);
-    }
-
-    .profile-icon {
-        width: 35px;
-        height: 35px;
-        border-radius: 50%;
-        background-color: #ffffff;
-        color: #004d40;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 18px;
-        font-weight: bold;
-        margin-right: 12px;
-    }
-
-    .profile-info {
-        flex: 1;
-    }
-
-    .profile-name {
-        font-size: 14px;
-        font-weight: bold;
-    }
-
-    .logout-btn {
-        background-color: #d32f2f;
-        color: white;
-        border: none;
-        padding: 10px;
-        width: 100%;
-        border-radius: 5px;
-        font-size: 14px;
-        font-weight: bold;
-        cursor: pointer;
-        transition: background-color 0.3s;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        margin-bottom: 20px;
-    }
-
-    .logout-btn:hover {
-        background-color: #b71c1c;
-    }
-
-    /* Main Content */
-    .main-content {
-        margin-left: 290px;
-        padding: 30px 40px;
-        flex: 1;
-        transition: margin-left 0.3s ease;
-    }
-
-    .main-content.expanded {
-        margin-left: 80px;
-    }
-
-    /* Toggle Button */
-    .toggle-btn {
-        position: fixed;
-        top: 20px;
-        left: 270px;
-        background-color: black;
-        color: white;
-        border: none;
-        padding: 10px 15px;
-        font-size: 22px;
-        cursor: pointer;
-        border-radius: 5px;
-        z-index: 2001;
-        transition: left 0.3s ease;
-    }
-
-    .toggle-btn.shifted {
-        left: 20px;
-    }
-
-    /* Page Header */
-    .header {
-        background: white;
-        padding: 20px 30px;
-        border-radius: 10px;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        margin-bottom: 25px;
-    }
-
-    .header h1 {
-        color: #004d40;
-        margin: 0;
-        font-size: 28px;
-    }
-
-        /* Search Bar */
+        /* Alert styles */
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+        
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        /* Search and filter styles */
         .search-container {
             margin-bottom: 25px;
         }
@@ -206,7 +212,6 @@ and open the template in the editor.
             border-color: #004d40;
         }
 
-        /* Category + Add Button */
         .top-bar {
             display: flex;
             justify-content: space-between;
@@ -230,13 +235,14 @@ and open the template in the editor.
             border-radius: 5px;
             font-size: 16px;
             cursor: pointer;
+            transition: 0.3s;
         }
 
         .add-btn:hover {
             background-color: #00352d;
         }
 
-        /* Book Grid - 4 columns */
+        /* Book Grid */
         .book-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -266,6 +272,7 @@ and open the template in the editor.
 
         .book-card:hover {
             transform: translateY(-4px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
         }
 
         .book-card img {
@@ -294,103 +301,5 @@ and open the template in the editor.
             color: #0b3f34;
         }
     </style>
-</head>
-<body>
-
-    <!-- Toggle Button -->
-<button class="toggle-btn" id="toggleBtn" onclick="toggleSidebar()">☰</button>
-
-    <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
-        <h2>Booku</h2>
-
-        <div class="sidebar-nav">
-            <a href="${pageContext.request.contextPath}/admin/home.jsp">Dashboard</a>
-            <a href="${pageContext.request.contextPath}/manageUserServlet">Manage Users</a>
-            <a href="${pageContext.request.contextPath}/admin/books.jsp" class="active">Manage Book</a>
-            <a href="${pageContext.request.contextPath}/admin/orders.jsp">Manage Order</a>
-            <a href="${pageContext.request.contextPath}/admin/analytics.jsp">Analytics</a>
-        </div>
-
-        <div class="sidebar-footer">
-            <div class="profile-section" onclick="window.location.href='${pageContext.request.contextPath}/admin/profile.jsp'">
-                <div class="profile-icon">👤</div>
-                <div class="profile-info">
-                    <div class="profile-name">Admin User</div>
-                </div>
-            </div>
-
-            <button class="logout-btn" id="logoutBtn">
-                <span>Logout</span>
-            </button>
-        </div>
-    </div>
-
-   <div class="main-content" id="mainContent">
-
-        <div class="header">
-            <h1>Books</h1>
-        </div>
-
-        <!-- Search Bar -->
-        <div class="search-container">
-            <input type="text" class="search-bar" id="searchBar" placeholder="Search books by title, author, or category...">
-        </div>
-
-        <div class="top-bar">
-            <select id="categoryFilter">
-                <option value="all">All Categories</option>
-                <option value="malay">Malay</option>
-                <option value="english">English</option>
-                <option value="novel">Novel</option>
-                <option value="comic">Comic</option>
-            </select>
-
-            <button class="add-btn" onclick="window.location.href='addBook.html'">+ Add Book</button>
-        </div>
-
-        <!-- BOOK GRID -->
-        <div class="book-grid">
-            <div class="book-card" onclick="window.location.href='manageBook.html'">
-                <img src="https://covers.openlibrary.org/b/id/10523365-L.jpg" alt="Book">
-                <h3>The Silent Observer</h3>
-                <p class="author">by John Michael</p>
-                <p class="price">RM 35.90</p>
-            </div>
-
-            <div class="book-card" onclick="window.location.href='manageBook.html'">
-                <img src="https://covers.openlibrary.org/b/id/11153262-L.jpg" alt="Book">
-                <h3>Midnight Library</h3>
-                <p class="author">by Matt Haig</p>
-                <p class="price">RM 29.90</p>
-            </div>
-
-            <div class="book-card" onclick="window.location.href='manageBook.html'">
-                <img src="https://covers.openlibrary.org/b/id/12625165-L.jpg" alt="Book">
-                <h3>The Lost City</h3>
-                <p class="author">by A. Zahir</p>
-                <p class="price">RM 24.50</p>
-            </div>
-
-            <div class="book-card" onclick="window.location.href='manageBook.html'">
-                <img src="https://covers.openlibrary.org/b/id/9876543-L.jpg" alt="Book">
-                <h3>Dream Walker</h3>
-                <p class="author">by Sarah Ann</p>
-                <p class="price">RM 32.00</p>
-            </div>
-
-            <div class="book-card" onclick="window.location.href='manageBook.html'">
-                <img src="https://covers.openlibrary.org/b/id/12876532-L.jpg" alt="Book">
-                <h3>Echoes of Yesterday</h3>
-                <p class="author">by Amir Rahman</p>
-                <p class="price">RM 27.90</p>
-            </div>
-        </div>
-
-    </div>
-
-    <!-- External JS -->
-    <script src="../js/main.js"></script>
-    <script src="../js/books.js"></script>
 </body>
 </html>

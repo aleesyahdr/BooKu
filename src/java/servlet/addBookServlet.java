@@ -30,19 +30,62 @@ import java.nio.file.Paths;
     maxRequestSize = 20971520,   // 20MB
     fileSizeThreshold = 5242880  // 5MB
 )
-public class EmpAddBookServlet extends HttpServlet 
+public class addBookServlet extends HttpServlet 
 {
     private Connection getConnection() {
         return DBConnection.createConnection();
     }
     
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    /**
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
+     * methods.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-        response.sendRedirect(request.getContextPath() + "/employees/addBook.jsp");
+        response.setContentType("text/html;charset=UTF-8");
+        try (PrintWriter out = response.getWriter()) {
+            /* TODO output your page here. You may use following sample code. */
+            out.println("<!DOCTYPE html>");
+            out.println("<html>");
+            out.println("<head>");
+            out.println("<title>Servlet addBookServlet</title>");            
+            out.println("</head>");
+            out.println("<body>");
+            out.println("<h1>Servlet addBookServlet at " + request.getContextPath() + "</h1>");
+            out.println("</body>");
+            out.println("</html>");
+        }
     }
 
+    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    /**
+     * Handles the HTTP <code>GET</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException 
+    {
+        response.sendRedirect(request.getContextPath() + "/admin/addBook.jsp");
+    }
+
+    /**
+     * Handles the HTTP <code>POST</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException 
@@ -100,7 +143,7 @@ public class EmpAddBookServlet extends HttpServlet
                 isNullOrEmpty(bookPriceStr) || isNullOrEmpty(bookCategory)) {
                 
                 response.sendRedirect(request.getContextPath() + 
-                    "/employees/addBook.jsp?status=error&message=All fields are required");
+                    "/admin/addBook.jsp?status=error&message=All fields are required");
                 return;
             }
             
@@ -113,7 +156,7 @@ public class EmpAddBookServlet extends HttpServlet
                 }
             } catch (NumberFormatException e) {
                 response.sendRedirect(request.getContextPath() + 
-                    "/employees/addBook.jsp?status=error&message=Invalid price format");
+                    "/admin/addBook.jsp?status=error&message=Invalid price format");
                 return;
             }
             
@@ -123,7 +166,7 @@ public class EmpAddBookServlet extends HttpServlet
                 bookPublishDate = Date.valueOf(bookPublishDateStr);
             } catch (IllegalArgumentException e) {
                 response.sendRedirect(request.getContextPath() + 
-                    "/employees/addBook.jsp?status=error&message=Invalid date format");
+                    "/admin/addBook.jsp?status=error&message=Invalid date format");
                 return;
             }
             
@@ -132,7 +175,7 @@ public class EmpAddBookServlet extends HttpServlet
             
             if (conn == null) {
                 response.sendRedirect(request.getContextPath() + 
-                    "/employees/addBook.jsp?status=error&message=Database connection failed");
+                    "/admin/addBook.jsp?status=error&message=Database connection failed");
                 return;
             }
             
@@ -169,10 +212,10 @@ public class EmpAddBookServlet extends HttpServlet
             if (rowsAffected > 0) {
                 // Success - redirect to manage books page
                 response.sendRedirect(request.getContextPath() + 
-                    "/employees/EmpBookServlet?status=success&message=Book added successfully");
+                    "/AdminBookServlet?status=success&message=Book added successfully");
             } else {
                 response.sendRedirect(request.getContextPath() + 
-                    "/employees/addBook.jsp?status=error&message=Failed to add book");
+                    "/admin/addBook.jsp?status=error&message=Failed to add book");
             }
             
         } catch (SQLException e) {
@@ -187,13 +230,13 @@ public class EmpAddBookServlet extends HttpServlet
             }
             
             response.sendRedirect(request.getContextPath() + 
-                "/employees/addBook.jsp?status=error&message=" + 
+                "/admin/addBook.jsp?status=error&message=" + 
                 java.net.URLEncoder.encode(errorMsg, "UTF-8"));
             
         } catch (Exception e) {
             e.printStackTrace();
             response.sendRedirect(request.getContextPath() + 
-                "/employees/addBook.jsp?status=error&message=" + 
+                "/admin/addBook.jsp?status=error&message=" + 
                 java.net.URLEncoder.encode("Error: " + e.getMessage(), "UTF-8"));
             
         } finally {
