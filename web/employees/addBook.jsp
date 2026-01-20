@@ -1,42 +1,38 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
-<!--
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
--->
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Book – Booku</title>
-<link rel="stylesheet" href="../css/styleEmp.css">
-
+    <link rel="stylesheet" href="../css/styleEmp.css">
 </head>
 <body>
 
     <!-- Toggle Button -->
-<button class="toggle-btn" id="toggleBtn" onclick="toggleSidebar()">☰</button>
+    <button class="toggle-btn" id="toggleBtn" onclick="toggleSidebar()">☰</button>
 
     <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
         <h2>Booku</h2>
 
         <div class="sidebar-nav">
-            <a href="home.html">Dashboard</a>
-            <a href="books.html"class="active">Manage Book</a>
-            <a href="orders.html">Manage Order</a>
-            <a href="analytics.html">Analytics</a>
+            <!-- kalau ada HomeServlet nanti tukar sini -->
+            <a href="home.jsp">Dashboard</a>
+            <a href="EmpBookServlet" class="active">Manage Book</a>
+            <a href="EmpOrderServlet">Manage Order</a>
+            <a href="AnalyticsServlet">Analytics</a>
         </div>
 
         <div class="sidebar-footer">
-            <div class="profile-section" onclick="window.location.href='profile.html'">
+            <div class="profile-section" onclick="window.location.href='profile.jsp'">
                 <div class="profile-icon">👤</div>
                 <div class="profile-info">
                     <div class="profile-name">User</div>
                 </div>
             </div>
 
-            <button class="logout-btn" id="logoutBtn">
+            <button class="logout-btn" id="logoutBtn" type="button">
                 <span>Logout</span>
             </button>
         </div>
@@ -50,38 +46,76 @@ and open the template in the editor.
         </div>
 
         <div class="add-book-container">
-            <div class="image-upload-section">
-                <div class="image-preview-container" id="imagePreviewContainer">
-                    <img src="" alt="Book Cover Preview" class="image-preview" id="imagePreview">
-                    <div class="upload-placeholder" id="uploadPlaceholder">
-                        <div style="font-size: 48px;">📚</div>
-                        <p>Upload Book Cover</p>
+
+            <!-- ✅ START FORM (bookImg sekarang memang akan submit) -->
+            <form action="EmpAddBookServlet" method="post" id="addBookForm" class="add-book-form">
+
+                <div class="image-upload-section">
+                    <div class="image-preview-container" id="imagePreviewContainer">
+                        <img src="" alt="Book Cover Preview" class="image-preview" id="imagePreview">
+                        <div class="upload-placeholder" id="uploadPlaceholder">
+                            <div style="font-size: 48px;">📚</div>
+                            <p>Upload Book Cover</p>
+                        </div>
                     </div>
+
+                    <!-- ✅ ini sekarang DALAM form -->
+                    <input type="text" id="bookImg" name="bookImg"
+                           placeholder="e.g., book1.jpg"
+                           style="margin-top: 10px; width: 100%; padding: 8px;" required>
+                    <small style="color: #666;">Enter image filename (e.g., book1.jpg)</small>
                 </div>
-                <input type="file" class="file-input" id="fileInput" accept="image/*">
-                <button type="button" class="upload-btn" onclick="document.getElementById('fileInput').click()">Choose Image</button>
-            </div>
 
-            <div class="book-form-section">
-                <form id="addBookForm">
+                <div class="book-form-section">
+
                     <div class="form-group">
-                        <label for="bookName">Book Name</label>
-                        <input type="text" id="bookName" placeholder="Enter book name" required>
+                        <label for="bookName">Book Name *</label>
+                        <input type="text" id="bookName" name="bookName" placeholder="Enter book name" required>
                     </div>
 
                     <div class="form-group">
-                        <label for="bookDescription">Description</label>
-                        <textarea id="bookDescription" placeholder="Enter book description" required></textarea>
+                        <label for="bookAuthor">Author *</label>
+                        <input type="text" id="bookAuthor" name="bookAuthor" placeholder="Enter author name" required>
                     </div>
 
                     <div class="form-group">
-                        <label for="bookPrice">Price (RM)</label>
-                        <input type="text" id="bookPrice" placeholder="Enter price" required>
+                        <label for="bookDescription">Description *</label>
+                        <textarea id="bookDescription" name="bookDescription" placeholder="Enter book description" required></textarea>
                     </div>
 
                     <div class="form-group">
-                        <label for="bookAvailability">Availability</label>
-                        <select id="bookAvailability" required>
+                        <label for="bookCategory">Category *</label>
+                        <select id="bookCategory" name="bookCategory" required>
+                            <option value="">Select category</option>
+                            <option value="Fiction">Fiction</option>
+                            <option value="Classic">Classic</option>
+                            <option value="Fantasy">Fantasy</option>
+                            <option value="Science Fiction">Science Fiction</option>
+                            <option value="Romance">Romance</option>
+                            <option value="Mystery">Mystery</option>
+                            <option value="Thriller">Thriller</option>
+                            <option value="Horror">Horror</option>
+                            <option value="Non-Fiction">Non-Fiction</option>
+                            <option value="Biography">Biography</option>
+                            <option value="Self-Help">Self-Help</option>
+                            <option value="Educational">Educational</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="bookPrice">Price (RM) *</label>
+                        <input type="number" id="bookPrice" name="bookPrice" step="0.01" min="0"
+                               placeholder="Enter price" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="bookPublishDate">Publish Date *</label>
+                        <input type="date" id="bookPublishDate" name="bookPublishDate" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="bookAvailability">Availability *</label>
+                        <select id="bookAvailability" name="bookAvailability" required>
                             <option value="">Select availability</option>
                             <option value="in-stock">In Stock</option>
                             <option value="out-of-stock">Out of Stock</option>
@@ -89,26 +123,14 @@ and open the template in the editor.
                         </select>
                     </div>
 
-                    <button type="button" class="btn-add" id="addBtn">Add Book</button>
-                </form>
-            </div>
+                    <button type="submit" class="btn-add" id="addBtn">Add Book</button>
+
+                </div>
+            </form>
+            <!-- ✅ END FORM -->
+
         </div>
 
     </div>
 
-    <!-- Overlay -->
-    <div class="overlay" id="overlay"></div>
-
-    <!-- Message Box -->
-    <div class="message-box" id="messageBox">
-        <h2>Success!</h2>
-        <p>Book added successfully!</p>
-        <button onclick="window.location.href='books.html'">OK</button>
-    </div>
-
-    <!-- External JS -->
-    <script src="../js/main.js"></script>
-    <script src="../js/addBook.js"></script>
-
-</body>
-</html>
+    <script src="../js/main

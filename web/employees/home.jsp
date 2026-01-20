@@ -1,9 +1,3 @@
-<!DOCTYPE html>
-<!--
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
--->
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -21,14 +15,14 @@ and open the template in the editor.
         <h2>Booku</h2>
 
         <div class="sidebar-nav">
-            <a href="home.html"class="active">Dashboard</a>
-            <a href="books.html">Manage Book</a>
-            <a href="orders.html">Manage Order</a>
-            <a href="analytics.html">Analytics</a>
+            <a href="home.jsp"class="active">Dashboard</a>
+            <a href="ManageBookServlet">Manage Book</a>
+            <a href="EmpOrderServlet">Manage Order</a>
+            <a href="AnalyticsServlet">Analytics</a>
         </div>
 
         <div class="sidebar-footer">
-            <div class="profile-section" onclick="window.location.href='profile.html'">
+            <div class="profile-section" onclick="window.location.href='profile.jsp'">
                 <div class="profile-icon">👤</div>
                 <div class="profile-info">
                     <div class="profile-name">User</div>
