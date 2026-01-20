@@ -221,9 +221,9 @@
                 <input type="file" 
                        id="proofOfPayment" 
                        name="proofOfPayment" 
-                       accept="image/*,.pdf" 
+                       accept="image/*" 
                        required>
-                <p class="upload-note">Accepted formats: JPG, PNG, PDF (Max 5MB)</p>
+                <p class="upload-note">Accepted formats: JPG, PNG (Max 5MB)</p>
             </div>
             
             <div class="form-group">

@@ -1,132 +1,162 @@
 package servlet;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.sql.*;
+import java.util.*;
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.*;
 import util.DBConnection;
 
 public class OrderDetailServlet extends HttpServlet {
-    
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
-        String orderId = request.getParameter("id");
+        System.out.println("=== OrderDetailServlet.doGet() CALLED ===");
         
-        if (orderId == null || orderId.isEmpty()) {
+        String orderId = request.getParameter("id");
+        System.out.println("Order ID parameter: " + orderId);
+        
+        if (orderId == null) {
+            System.out.println("⚠️ Order ID is NULL - Redirecting to EmpOrderServlet");
             response.sendRedirect("EmpOrderServlet");
             return;
         }
-        
-        Connection conn = null;
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
-        
-        try {
-            conn = DBConnection.createConnection();
+
+        try (Connection conn = DBConnection.createConnection()) {
+            System.out.println("✓ Database connection established");
             
-            // Get order and customer info
-            String sql = "SELECT o.ORDER_ID, o.ORDER_DATE, o.ORDER_TIME, o.ORDER_TOTAL, " +
-                        "c.CUST_FIRSTNAME, c.CUST_LASTNAME, c.CUST_EMAIL, c.CUST_PHONENUM, " +
-                        "c.CUST_ADDRESS, c.CUST_CITY, c.CUST_STATE, c.CUST_POSTCODE " +
-                        "FROM ORDERS o " +
-                        "JOIN CUSTOMER c ON o.CUST_ID = c.CUST_ID " +
-                        "WHERE o.ORDER_ID = ?";
+
+            // Removed double quotes and ensured table names are correct
+             String sql = "SELECT o.*,o.ORDER_RECEIPT, c.CUST_FIRSTNAME, c.CUST_LASTNAME, c.CUST_EMAIL, c.CUST_PHONENUM, " +
+             "c.CUST_ADDRESS, c.CUST_CITY, c.CUST_STATE, c.CUST_POSTCODE, e.EMP_FNAME, e.EMP_LNAME " +
+             "FROM ORDERS o " + 
+             "JOIN CUSTOMER c ON o.CUST_ID = c.CUST_ID " +
+             "LEFT JOIN EMPLOYEES e ON o.EMP_ID = e.EMP_ID " +
+             "WHERE o.ORDER_ID = ?";
             
-            pstmt = conn.prepareStatement(sql);
+            PreparedStatement pstmt = conn.prepareStatement(sql);
             pstmt.setInt(1, Integer.parseInt(orderId));
-            rs = pstmt.executeQuery();
-            
-            Map<String, Object> orderInfo = new HashMap<>();
+            ResultSet rs = pstmt.executeQuery();
+
             if (rs.next()) {
+                System.out.println("✓ Order found in database");
+                Map<String, Object> orderInfo = new HashMap<>();
                 orderInfo.put("orderId", rs.getInt("ORDER_ID"));
+                orderInfo.put("paymentProof", rs.getString("ORDER_RECEIPT"));
                 orderInfo.put("orderDate", rs.getDate("ORDER_DATE"));
                 orderInfo.put("orderTime", rs.getTime("ORDER_TIME"));
                 orderInfo.put("orderTotal", rs.getDouble("ORDER_TOTAL"));
+                orderInfo.put("orderStatus", rs.getString("ORDER_STATUS"));
                 orderInfo.put("customerName", rs.getString("CUST_FIRSTNAME") + " " + rs.getString("CUST_LASTNAME"));
                 orderInfo.put("customerEmail", rs.getString("CUST_EMAIL"));
                 orderInfo.put("customerPhone", rs.getString("CUST_PHONENUM"));
                 
-                String address = rs.getString("CUST_ADDRESS") + ", " + 
-                               rs.getString("CUST_CITY") + ", " + 
-                               rs.getString("CUST_STATE") + " " + 
-                               rs.getString("CUST_POSTCODE");
+                // Get employee name who last updated (if exists)
+                String empFirstName = rs.getString("EMP_FNAME");
+                String empLastName = rs.getString("EMP_LNAME");
+                if (empFirstName != null && empLastName != null) {
+                    orderInfo.put("lastUpdatedBy", empFirstName + " " + empLastName);
+                    System.out.println("✓ Last updated by: " + empFirstName + " " + empLastName);
+                } else {
+                    orderInfo.put("lastUpdatedBy", null);
+                    System.out.println("ℹ️ No employee has updated this order yet");
+                }
+                
+                String address = rs.getString("CUST_ADDRESS") + ", " + rs.getString("CUST_CITY");
                 orderInfo.put("customerAddress", address);
+                request.setAttribute("orderInfo", orderInfo);
+                System.out.println("✓ Order info set in request");
             } else {
-                response.sendRedirect("EmpOrderServlet");
-                return;
+                System.out.println("⚠️ No order found with ID: " + orderId);
             }
-            
-            rs.close();
-            pstmt.close();
-            
-            // Get order items
-            String sql2 = "SELECT od.ORDER_QUANTITY, " +
-                         "b.BOOK_NAME, b.BOOK_AUTHOR, b.BOOK_PRICE, b.BOOK_DESCRIPTION " +
-                         "FROM ORDERDETAILS od " +
-                         "JOIN BOOK b ON od.BOOK_ID = b.BOOK_ID " +
-                         "WHERE od.ORDER_ID = ?";
-            
-            pstmt = conn.prepareStatement(sql2);
-            pstmt.setInt(1, Integer.parseInt(orderId));
-            rs = pstmt.executeQuery();
+
+            // Get the books in this order
+            String sql2 = "SELECT od.ORDER_QUANTITY, b.BOOK_NAME, b.BOOK_PRICE, b.BOOK_AUTHOR, b.BOOK_DESCRIPTION " +
+                          "FROM ORDERDETAILS od JOIN BOOK b ON od.BOOK_ID = b.BOOK_ID " +
+                          "WHERE od.ORDER_ID = ?";
+            PreparedStatement pstmt2 = conn.prepareStatement(sql2);
+            pstmt2.setInt(1, Integer.parseInt(orderId));
+            ResultSet rs2 = pstmt2.executeQuery();
             
             List<Map<String, Object>> orderItems = new ArrayList<>();
-            while (rs.next()) {
+            while (rs2.next()) {
                 Map<String, Object> item = new HashMap<>();
-                item.put("bookName", rs.getString("BOOK_NAME"));
-                item.put("bookAuthor", rs.getString("BOOK_AUTHOR"));
-                item.put("bookPrice", rs.getDouble("BOOK_PRICE"));
-                item.put("bookDescription", rs.getString("BOOK_DESCRIPTION"));
-                item.put("quantity", rs.getInt("ORDER_QUANTITY"));
-                item.put("subtotal", rs.getDouble("BOOK_PRICE") * rs.getInt("ORDER_QUANTITY"));
+                item.put("bookName", rs2.getString("BOOK_NAME"));
+                item.put("bookAuthor", rs2.getString("BOOK_AUTHOR"));
+                item.put("bookDescription", rs2.getString("BOOK_DESCRIPTION"));
+                item.put("bookPrice", rs2.getDouble("BOOK_PRICE"));
+                item.put("quantity", rs2.getInt("ORDER_QUANTITY"));
+                item.put("subtotal", rs2.getDouble("BOOK_PRICE") * rs2.getInt("ORDER_QUANTITY"));
                 orderItems.add(item);
             }
-            
-            request.setAttribute("orderInfo", orderInfo);
             request.setAttribute("orderItems", orderItems);
-            
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (rs != null) rs.close();
-                if (pstmt != null) pstmt.close();
-                if (conn != null) conn.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            System.out.println("✓ Found " + orderItems.size() + " books in order");
+
+        } catch (Exception e) { 
+            System.err.println("❌ ERROR in OrderDetailServlet:");
+            e.printStackTrace(); 
+            request.setAttribute("errorMessage", "Error loading order details: " + e.getMessage());
         }
         
-        request.getRequestDispatcher("employee/orderDetails.jsp").forward(request, response);
+        System.out.println("✓ Forwarding to /employees/orderDetails.jsp");
+        request.getRequestDispatcher("/employees/orderDetails.jsp").forward(request, response);
+        System.out.println("✓ Forward complete");
     }
-    
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        
+        System.out.println("=== OrderDetailServlet.doPost() CALLED ===");
         
         HttpSession session = request.getSession();
         String orderId = request.getParameter("orderId");
         String orderStatus = request.getParameter("orderStatus");
         
-        // Note: You need to add ORDER_STATUS column to database to implement this
-        // For now, just show success message
+        System.out.println("Order ID: " + orderId);
+        System.out.println("New Status: " + orderStatus);
         
-        session.setAttribute("message", "Order status updated to: " + orderStatus);
-        session.setAttribute("messageType", "success");
-        
+        // GET THE EMPLOYEE ID FROM SESSION
+        Integer empId = (Integer) session.getAttribute("empId");
+        System.out.println("Employee ID from session: " + empId);
+
+        if (empId == null) {
+            System.out.println("⚠️ Employee ID is NULL");
+            session.setAttribute("message", "Error: Employee not logged in properly.");
+            session.setAttribute("messageType", "error");
+            response.sendRedirect("EmpOrderServlet");
+            return;
+        }
+
+        try (Connection conn = DBConnection.createConnection()) {
+            // UPDATE Status AND EMP_ID (auto-insert the employee who updated)
+            String sql = "UPDATE \"ORDERS\" SET ORDER_STATUS = ?, EMP_ID = ? WHERE ORDER_ID = ?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, orderStatus);
+            ps.setInt(2, empId);
+            ps.setInt(3, Integer.parseInt(orderId));
+            
+            int updated = ps.executeUpdate();
+            System.out.println("✓ Rows updated: " + updated);
+            
+            if (updated > 0) {
+                session.setAttribute("message", "Order status updated successfully!");
+                session.setAttribute("messageType", "success");
+            } else {
+                session.setAttribute("message", "Failed to update order status.");
+                session.setAttribute("messageType", "error");
+            }
+            
+        } catch (Exception e) { 
+            System.err.println("❌ ERROR updating order:");
+            e.printStackTrace(); 
+            session.setAttribute("message", "Error updating order: " + e.getMessage());
+            session.setAttribute("messageType", "error");
+        }
+
+        System.out.println("✓ Redirecting to EmpOrderServlet");
         response.sendRedirect("EmpOrderServlet");
     }
 }

@@ -25,7 +25,7 @@ import util.DBConnection;
 )
 public class PaymentServlet extends HttpServlet {
     
-    private static final String UPLOAD_DIR = "payment-receipts";
+    private static final String UPLOAD_DIR = "img";
     
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -88,7 +88,9 @@ public class PaymentServlet extends HttpServlet {
                     uploadDir.mkdirs();
                 }
                 
-                String uniqueFileName = System.currentTimeMillis() + "_" + fileName;
+                // This removes spaces and replaces them with underscores
+                String cleanedFileName = fileName.replaceAll("\\s", "_"); 
+                String uniqueFileName = System.currentTimeMillis() + "_" + cleanedFileName;
                 String filePath = uploadPath + File.separator + uniqueFileName;
                 
                 try (InputStream input = filePart.getInputStream()) {
@@ -117,11 +119,12 @@ public class PaymentServlet extends HttpServlet {
                 
                 // Insert order with STATUS = "Pending"
                 // Employee will later update to "In Progress" → "Completed"
-                String orderQuery = "INSERT INTO ORDERS (ORDER_DATE, ORDER_TIME, ORDER_TOTAL, ORDER_STATUS, CUST_ID) VALUES (CURRENT_DATE, CURRENT_TIME, ?, 'Pending', ?)";
+                String orderQuery = "INSERT INTO ORDERS (ORDER_DATE, ORDER_TIME, ORDER_TOTAL, ORDER_STATUS, CUST_ID, ORDER_RECEIPT) VALUES (CURRENT_DATE, CURRENT_TIME, ?, 'Pending', ?, ?)";
                 PreparedStatement orderStmt = conn.prepareStatement(orderQuery, Statement.RETURN_GENERATED_KEYS);
                 orderStmt.setDouble(1, amount);
                 orderStmt.setInt(2, custId);
-                
+                orderStmt.setString(3, fileName); // This saves the filename (e.g., 170582412_receipt.jpg) to the DB
+
                 int orderResult = orderStmt.executeUpdate();
                 System.out.println("Order inserted with STATUS = 'Pending': " + (orderResult > 0 ? "SUCCESS" : "FAILED"));
                 
