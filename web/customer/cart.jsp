@@ -1,9 +1,6 @@
-<!DOCTYPE html>
-<!--
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
--->
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -18,18 +15,26 @@ and open the template in the editor.
 
         <div class="header-right">
             <nav class="header-nav">
-                <a href="../index.html">Home</a>
-                <a href="books.html">Books</a>
-                <a href="contact.html">Contact</a>
-                <a href="about.html">About</a>
+                <a href="../index.jsp">Home</a>
+                <a href="books.jsp">Books</a>
+                <a href="cart.jsp">Cart</a>
+                <a href="contact.jsp">Contact</a>
+                <a href="about.jsp">About</a>
             </nav>
 
             <div class="profile-menu">
                 <img src="../img/profile.jpg" class="profile-icon" alt="Profile">
                 <div class="dropdown">
-                    <a href="profile.html">Profile</a>
-                    <a href="orderHistory.html">Order History</a>
-                    <a href="login.html">Login</a>
+                    <a href="profile.jsp">Profile</a>
+                    <a href="orderHistory.jsp">Order History</a>
+                    <c:choose>
+                        <c:when test="${not empty sessionScope.username}">
+                            <a href="logout.jsp">Logout</a>
+                        </c:when>
+                        <c:otherwise>
+                            <a href="login.jsp">Login</a>
+                        </c:otherwise>
+                    </c:choose>
                 </div>
             </div>
         </div>
@@ -39,77 +44,83 @@ and open the template in the editor.
         <div class="cart-container">
             <h1 class="page-title">Shopping Cart</h1>
             
-            <div class="cart-content">
-                
-                <!-- Cart Items Section -->
-                <div class="cart-items">
-                    
-                    <!-- Item 1 -->
-                    <div class="cart-item">
-                        <img src="../img/book1.jpg" alt="Book 1" class="item-image">
-                        <div class="item-details">
-                            <h3>Book 1</h3>
-                            <p class="item-author">by Author 1</p>
-                            <p class="item-price">RM XX.XX</p>
-                        </div>
-                        <div class="item-actions">
-                            <div class="quantity-control">
-                                <button class="qty-btn" onclick="updateQuantity(1, -1)">-</button>
-                                <span class="qty-display" id="qty-1">1</span>
-                                <button class="qty-btn" onclick="updateQuantity(1, 1)">+</button>
+            <c:choose>
+                <c:when test="${empty cartItems}">
+                    <div class="empty-cart">
+                        <h2>Your cart is empty</h2>
+                        <p>Add some books to get started!</p>
+                        <button class="continue-shopping" onclick="location.href='books.jsp'">Browse Books</button>
+                    </div>
+                </c:when>
+                <c:otherwise>
+                    <div class="cart-content">
+                        
+                        <!-- Cart Items Section -->
+                        <div class="cart-items">
+                            <c:set var="subtotal" value="0" />
+                            <c:set var="itemCount" value="0" />
+                            
+                            <c:forEach var="item" items="${cartItems}">
+                                <c:set var="subtotal" value="${subtotal + item.subtotal}" />
+                                <c:set var="itemCount" value="${itemCount + item.quantity}" />
+                                
+                                <div class="cart-item">
+                                    <img src="../img/book${item.bookId}.jpg" alt="${item.bookName}" class="item-image" 
+                                         onerror="this.src='../img/default-book.jpg'">
+                                    <div class="item-details">
+                                        <h3>${item.bookName}</h3>
+                                        <p class="item-author">by ${item.bookAuthor}</p>
+                                        <p class="item-price">RM <fmt:formatNumber value="${item.bookPrice}" pattern="#,##0.00"/></p>
+                                    </div>
+                                    <div class="item-actions">
+                                        <div class="quantity-control">
+                                            <button class="qty-btn" onclick="updateQuantity(${item.bookId}, ${item.quantity - 1})">-</button>
+                                            <span class="qty-display" id="qty-${item.bookId}">${item.quantity}</span>
+                                            <button class="qty-btn" onclick="updateQuantity(${item.bookId}, ${item.quantity + 1})">+</button>
+                                        </div>
+                                        <button class="remove-btn" onclick="removeItem(${item.bookId})">Remove</button>
+                                    </div>
+                                </div>
+                            </c:forEach>
+                        </div>  
+                        
+                        <!-- Cart Summary Section -->
+                        <div class="cart-summary">
+                            <h2 class="summary-title">Order Summary</h2>
+                        
+                            <c:set var="shipping" value="10.00" />
+                            <c:set var="taxRate" value="0.06" />
+                            <c:set var="tax" value="${subtotal * taxRate}" />
+                            <c:set var="total" value="${subtotal + shipping + tax}" />
+                            
+                            <div class="summary-row">
+                                <span>Subtotal (${itemCount} items):</span>
+                                <span id="subtotal">RM <fmt:formatNumber value="${subtotal}" pattern="#,##0.00"/></span>
                             </div>
-                            <button class="remove-btn" onclick="removeItem(1)">Remove</button>
-                        </div>
-                    </div>
-                    
-                    <!-- Item 2 -->
-                    <div class="cart-item">
-                        <img src="../img/book2.jpg" alt="Book 2" class="item-image">
-                        <div class="item-details">
-                            <h3>Book 2</h3>
-                            <p class="item-author">by Author 2</p>
-                            <p class="item-price">RM XX.XX</p>
-                        </div>
-                        <div class="item-actions">
-                            <div class="quantity-control">
-                                <button class="qty-btn" onclick="updateQuantity(2, -1)">-</button>
-                                <span class="qty-display" id="qty-1">2</span>
-                                <button class="qty-btn" onclick="updateQuantity(2, 1)">+</button>
+
+                            <div class="summary-row">
+                                <span>Shipping:</span>
+                                <span id="shipping">RM <fmt:formatNumber value="${shipping}" pattern="#,##0.00"/></span>
                             </div>
-                            <button class="remove-btn" onclick="removeItem(2)">Remove</button>
+
+                            <div class="summary-row">
+                                <span>Tax (6%):</span>
+                                <span id="tax">RM <fmt:formatNumber value="${tax}" pattern="#,##0.00"/></span>
+                            </div>
+
+                            <div class="summary-row total">
+                                <span>Total:</span>
+                                <span id="total">RM <fmt:formatNumber value="${total}" pattern="#,##0.00"/></span>
+                            </div>
+
+                            <button class="checkout-btn" onclick="location.href='checkout.jsp'">Proceed to Checkout</button>
+                            <button class="continue-shopping" onclick="location.href='books.jsp'">Continue Shopping</button>
                         </div>
-                    </div>  
-                </div>  
-                
-                <!-- Cart Summary Section -->
-                <div class="cart-summary">
-                    <h2 class="summary-title">Order Summary</h2>
-                
-                    <div class="summary-row">
-                        <span>Subtotal (3 items):</span>
-                        <span id="subtotal">RM 119.70</span>
                     </div>
-
-                    <div class="summary-row">
-                        <span>Shipping:</span>
-                        <span id="shipping">RM 10.00</span>
-                    </div>
-
-                    <div class="summary-row">
-                        <span>Tax (6%):</span>
-                        <span id="tax">RM 7.18</span>
-                    </div>
-
-                    <div class="summary-row total">
-                        <span>Total:</span>
-                        <span id="total">RM 136.88</span>
-                    </div>
-
-                    <button class="checkout-btn" onclick="location.href='checkout.html'">Proceed to Checkout</button>
-                    <button class="continue-shopping" onclick="location.href='books.html'">Continue Shopping</button>
-                </div>
-            </div>
+                </c:otherwise>
+            </c:choose>
         </div>
+        
+        <script src="js/cart.js"></script>
     </body>
 </html>
-

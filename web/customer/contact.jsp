@@ -14,21 +14,28 @@ and open the template in the editor.
 <header class="top-header">
     <div class="logo"><h1>BooKu</h1></div>
     <div class="header-right">
-        <nav class="header-nav">
-            <a href="../index.html">Home</a>
-            <a href="books.html">Books</a>
-            <a href="contact.html">Contact</a>
-            <a href="about.html">About</a>
-        </nav>
-        <div class="profile-menu">
-            <img src="../img/profile.jpg" class="profile-icon" alt="Profile">
-            <div class="dropdown">
-                <a href="profile.html">Profile</a>
-                <a href="orderHistory.html">Order History</a>
-                <a href="login.html">Login</a>
+            <!-- Menu Links -->
+            <nav class="header-nav">
+                <a href="${pageContext.request.contextPath}/IndexServlet">Home</a>
+                <a href="${pageContext.request.contextPath}/BooksServlet">Books</a>
+                <a href="${pageContext.request.contextPath}/customer/contact.jsp">Contact</a>
+                <a href="${pageContext.request.contextPath}/customer/about.jsp">About</a>
+            </nav>
+
+            <!-- Profile Icon + Dropdown -->
+            <div class="profile-menu">
+                <img src="${pageContext.request.contextPath}/img/profile.jpg" class="profile-icon" alt="Profile">
+                <div class="dropdown">
+                    <a href="${pageContext.request.contextPath}/customer/profile.jsp">Profile</a>
+                    <a href="${pageContext.request.contextPath}/customer/orderHistory.jsp">Order History</a>
+                    <% if (session.getAttribute("username") != null) { %>
+                        <a href="${pageContext.request.contextPath}/customer/CustLoginServlet?action=logout">Logout</a>
+                    <% } else { %>
+                        <a href="${pageContext.request.contextPath}/customer/login.jsp">Login</a>
+                    <% } %>
+                </div>
             </div>
         </div>
-    </div>
 </header>
 
 <div class="page-container" style="max-width:900px; margin:50px auto; padding:20px;">
