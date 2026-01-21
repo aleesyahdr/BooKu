@@ -19,6 +19,40 @@
         <a href="${pageContext.request.contextPath}/EmpAnalyticsServlet">Analytics</a>
     </div>
 
+        <div class="sidebar-nav">
+            <a href="${pageContext.request.contextPath}/EmpHomeServlet" class="active">Dashboard</a>
+            <a href="${pageContext.request.contextPath}/ManageBookServlet">Manage Book</a>
+            <a href="${pageContext.request.contextPath}/EmpOrderServlet">Manage Order</a>
+            <a href="${pageContext.request.contextPath}/AnalyticsServlet">Analytics</a>
+        </div>
+
+        <div class="sidebar-footer">
+            <div class="profile-section" onclick="window.location.href='${pageContext.request.contextPath}/EmpProfileServlet'">
+                <div class="profile-icon">👤</div>
+                <div class="profile-info">
+                    <div class="profile-name">
+                        <%= session.getAttribute("empFirstName") != null ? session.getAttribute("empFirstName") : "Employee" %>
+                    </div>
+                </div>
+            </div>
+
+            <a href="${pageContext.request.contextPath}/EmpLoginServlet?action=logout" class="logout-btn" style="text-decoration: none; text-align: center; display: block;">
+                <span>Logout</span>
+            </a>
+        </div>
+    </div>
+
+            <button class="logout-btn" id="logoutBtn">
+                <span>Logout</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="main-content" id="mainContent">
+        <div class="content-wrapper">
+            <div class="header">
+                <h1>Analytics Overview</h1>
+                <button class="btn-print" onclick="window.print()">Print</button>
     <div class="main-content" id="mainContent">
         <div class="header">
             <h1>Analytics Overview</h1>
@@ -86,18 +120,7 @@
         </div>
     </div>
 
-    <script>
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const mainContent = document.getElementById('mainContent');
-            const toggleBtn = document.getElementById('toggleBtn');
-
-            sidebar.classList.toggle('hidden');
-            mainContent.classList.toggle('expanded');
-            toggleBtn.classList.toggle('shifted');
-        }
-    </script>
-    
+    <script src="${pageContext.request.contextPath}/js/main.js"></script>
     <style>
         body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background-color: #f8f9fa; }
         .sidebar { width: 250px; background-color: #000; color: #fff; padding: 20px; position: fixed; height: 100vh; transition: 0.3s; z-index: 1000; }

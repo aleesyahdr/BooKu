@@ -18,23 +18,25 @@
         <h2>Booku</h2>
 
         <div class="sidebar-nav">
-            <a href="${pageContext.request.contextPath}/employees/home.jsp">Dashboard</a>
-            <a href="${pageContext.request.contextPath}/employees/EmpBookServlet" class="active">Manage Books</a>
-            <a href="${pageContext.request.contextPath}/employees/orders.jsp">Manage Orders</a>
-            <a href="${pageContext.request.contextPath}/employees/analytics.jsp">Analytics</a>
+            <a href="${pageContext.request.contextPath}/EmpHomeServlet" class="active">Dashboard</a>
+            <a href="${pageContext.request.contextPath}/ManageBookServlet">Manage Book</a>
+            <a href="${pageContext.request.contextPath}/EmpOrderServlet">Manage Order</a>
+            <a href="${pageContext.request.contextPath}/AnalyticsServlet">Analytics</a>
         </div>
 
         <div class="sidebar-footer">
-            <div class="profile-section" onclick="window.location.href='${pageContext.request.contextPath}/employees/profile.jsp'">
-                <div class="profile-icon">A</div>
+            <div class="profile-section" onclick="window.location.href='${pageContext.request.contextPath}/EmpProfileServlet'">
+                <div class="profile-icon">👤</div>
                 <div class="profile-info">
-                    <div class="profile-name">Employee User</div>
+                    <div class="profile-name">
+                        <%= session.getAttribute("empFirstName") != null ? session.getAttribute("empFirstName") : "Employee" %>
+                    </div>
                 </div>
             </div>
 
-            <button class="logout-btn" onclick="location.href='${pageContext.request.contextPath}/employees/logout.jsp'">
-                <span>🚪</span> Logout
-            </button>
+            <a href="${pageContext.request.contextPath}/EmpLoginServlet?action=logout" class="logout-btn" style="text-decoration: none; text-align: center; display: block;">
+                <span>Logout</span>
+            </a>
         </div>
     </div>
 
@@ -186,6 +188,9 @@
             <button onclick="closeMessage()">Cancel</button>
         </div>
     </div>
+    
+    <!-- External JS -->
+    <script src="${pageContext.request.contextPath}/js/main.js"></script>
 
     <script>
         function toggleSidebar() {

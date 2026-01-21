@@ -1,157 +1,134 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="model.Employee" %>
+<%
+    // Get the employee object. If null, create a blank one so the page doesn't crash.
+    Employee emp = (Employee) request.getAttribute("employee");
+    if (emp == null) {
+        emp = new Employee();
+    }
+%>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile – Booku</title>
-<link rel="stylesheet" href="../css/styleEmp.css">
-
+    <title>Employee Profile – Booku</title>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styleEmp.css">
+    <style>
+        .msg { padding: 10px; margin-bottom: 20px; border-radius: 4px; text-align: center; }
+        .success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+    </style>
 </head>
 <body>
 
-    <!-- Toggle Button -->
-    <button class="toggle-btn" id="toggleBtn" onclick="toggleSidebar()">�</button>
+    <button class="toggle-btn" onclick="toggleSidebar()">☰</button>
 
-    <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
         <h2>Booku</h2>
-        
         <div class="sidebar-nav">
-            <a href="home.html">Dashboard</a>
-            <a href="books.html">Manage Book</a>
-            <a href="orders.html">Manage Order</a>
-            <a href="analytics.html">Analytics</a>
+            <a href="${pageContext.request.contextPath}/EmpHomeServlet">Dashboard</a>
+            <a href="${pageContext.request.contextPath}/ManageBookServlet">Manage Book</a>
+            <a href="${pageContext.request.contextPath}/EmpOrderServlet">Manage Order</a>
+            <a href="${pageContext.request.contextPath}/AnalyticsServlet">Analytics</a>
         </div>
-        
         <div class="sidebar-footer">
-            <div class="profile-section" onclick="window.location.href='profile.html'">
+            <div class="profile-section" onclick="window.location.href='${pageContext.request.contextPath}/EmpProfileServlet'">
                 <div class="profile-icon-sidebar">👤</div>
                 <div class="profile-info">
-                    <div class="profile-name">User</div>
+                    <div class="profile-name">
+                        <%-- Using session for the sidebar name --%>
+                        <%= session.getAttribute("empFirstName") != null ? session.getAttribute("empFirstName") : emp.getEmp_firstName() %>
+                    </div>
                 </div>
             </div>
-            
-            <button class="logout-btn" id="logoutBtn">
-                <span>Logout</span>
-            </button>
+            <button class="logout-btn" onclick="location.href='${pageContext.request.contextPath}/LogoutServlet'">Logout</button>
         </div>
     </div>
 
-    <!-- Main Content -->
     <div class="main-content" id="mainContent">
+        <div class="header"><h1>My Profile</h1></div>
 
-        <div class="header">
-            <h1>My Profile</h1>
-        </div>
+        <% if (request.getAttribute("successMessage") != null) { %>
+            <div class="msg success"><%= request.getAttribute("successMessage") %></div>
+        <% } %>
+        <% if (request.getAttribute("errorMessage") != null) { %>
+            <div class="msg error"><%= request.getAttribute("errorMessage") %></div>
+        <% } %>
 
         <div class="profile-container">
-            <!-- Profile Picture Section -->
             <div class="profile-picture-section">
-                <img src="../img/profile.jpg" alt="Profile Picture" class="profile-picture" id="profilePicture">
-                <button class="change-picture-btn" id="changePictureBtn">Change Picture</button>
+                <img src="${pageContext.request.contextPath}/img/profile.jpg" alt="Profile" class="profile-picture">
+             
             </div>
 
-            <!-- Profile Form -->
             <div class="profile-form-section">
-                <form id="profile-form">
+                <form action="${pageContext.request.contextPath}/EmpProfileServlet" method="POST">
                     <div class="form-row">
                         <div class="form-group">
-                            <label class="form-label">First Name</label>
-                            <input type="text" id="firstname" value="Ahmad" class="form-input">
+                            <label>First Name</label>
+                            <input type="text" name="firstName" value="<%= emp.getEmp_firstName() %>" class="form-input">
                         </div>
-                        
                         <div class="form-group">
-                            <label class="form-label">Last Name</label>
-                            <input type="text" id="lastname" value="Bin Abu" class="form-input">
+                            <label>Last Name</label>
+                            <input type="text" name="lastName" value="<%= emp.getEmp_lastName() %>" class="form-input">
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">Username</label>
-                        <input type="text" id="username" value="ahmad.abu" class="form-input">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Password</label>
-                        <input type="password" id="password" value="12345@abcd" class="form-input">
+                        <label>Email</label>
+                        <input type="email" name="email" value="<%= emp.getEmp_email() %>" class="form-input">
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">Email</label>
-                        <input type="email" id="email" value="ahmad.abu@example.com" class="form-input">
+                        <label>Phone Number</label>
+                        <input type="text" name="phoneNum" value="<%= emp.getEmp_phoneNum() %>" class="form-input">
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">Phone Number</label>
-                        <input type="tel" id="phone" value="+60123456789" class="form-input">
+                        <label>Date of Birth</label>
+                        <input type="date" name="dob" value="<%= emp.getEmp_dob() != null ? emp.getEmp_dob() : "" %>" class="form-input">
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">Date of Birth</label>
-                        <input type="date" id="dob" value="1995-06-15" class="form-input">
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">Address</label>
-                        <textarea id="address" rows="3" class="form-input">No. 123, Jalan Makmur, Taman Sejahtera, 47000 Petaling Jaya, Selangor</textarea>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">City</label>
-                        <input type="text" id="city" value="Petaling Jaya" class="form-input">
+                        <label>Address</label>
+                        <textarea name="address" rows="3" class="form-input"><%= emp.getEmp_address() %></textarea>
                     </div>
 
                     <div class="form-row">
                         <div class="form-group">
-                            <label class="form-label">State</label>
-                            <select id="state" class="form-input">
-                                <option value="Johor">Johor</option>
-                                <option value="Kedah">Kedah</option>
-                                <option value="Kelantan">Kelantan</option>
-                                <option value="Melaka">Melaka</option>
-                                <option value="Negeri Sembilan">Negeri Sembilan</option>
-                                <option value="Pahang">Pahang</option>
-                                <option value="Penang">Penang</option>
-                                <option value="Perak">Perak</option>
-                                <option value="Perlis">Perlis</option>
-                                <option value="Sabah">Sabah</option>
-                                <option value="Sarawak">Sarawak</option>
-                                <option value="Selangor" selected>Selangor</option>
-                                <option value="Terengganu">Terengganu</option>
-                                <option value="Kuala Lumpur">Kuala Lumpur</option>
-                                <option value="Labuan">Labuan</option>
-                                <option value="Putrajaya">Putrajaya</option>
+                            <label>City</label>
+                            <input type="text" name="city" value="<%= emp.getEmp_city() %>" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label>State</label>
+                            <select name="state" class="form-input">
+                                <% String currentS = emp.getEmp_state(); %>
+                                <option value="Selangor" <%= "Selangor".equals(currentS) ? "selected" : "" %>>Selangor</option>
+                                <option value="Johor" <%= "Johor".equals(currentS) ? "selected" : "" %>>Johor</option>
+                                <option value="Kuala Lumpur" <%= "Kuala Lumpur".equals(currentS) ? "selected" : "" %>>Kuala Lumpur</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label class="form-label">Postcode</label>
-                            <input type="text" id="postcode" value="47000" class="form-input">
+                            <label>Postcode</label>
+                            <input type="text" name="postcode" value="<%= emp.getEmp_postcode() %>" class="form-input">
                         </div>
                     </div>
 
                     <div class="profile-actions">
-                        <button type="button" class="update-btn" id="updateBtn">Update Profile</button>
-                        <button type="button" class="cancel-btn" id="cancelBtn">Cancel</button>
+                        <button type="submit" class="update-btn">Update Profile</button>
+                        <button type="button" class="cancel-btn" onclick="window.history.back()">Cancel</button>
                     </div>
                 </form>
             </div>
         </div>
-
     </div>
 
-    <!-- Success Modal -->
-    <div id="success-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-icon success-icon">✓</div>
-            <h2 class="modal-title">Success!</h2>
-            <p class="modal-message">Profile updated successfully!</p>
-            <button class="modal-btn" id="modalOkBtn">OK</button>
-        </div>
-    </div>
-
-    <!-- External JS -->
-    <script src="../js/main.js"></script>
-    <script src="../js/profile.js"></script>
-
+    <script>
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+            document.getElementById('mainContent').classList.toggle('active');
+        }
+    </script>
 </body>
 </html>

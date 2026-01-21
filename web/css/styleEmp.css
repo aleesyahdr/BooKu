@@ -98,7 +98,7 @@ and open the template in the editor.
 body {
     margin: 0;
     font-family: Arial, sans-serif;
-    background-color: #ffffff;
+    background-color: white;
 }
 
 /* ============================================
@@ -184,10 +184,19 @@ body.login-page {
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background-color: white;
     min-height: 100vh;
     padding: 20px;
 }
+
+body.login-page {
+    background-color: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
 
 .container {
     max-width: 1400px;

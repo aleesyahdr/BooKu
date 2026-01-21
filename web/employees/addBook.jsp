@@ -4,36 +4,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Book – Booku</title>
+    <title>Add Book â Booku</title>
     <link rel="stylesheet" href="../css/styleEmp.css">
 </head>
 <body>
 
     <!-- Toggle Button -->
-    <button class="toggle-btn" id="toggleBtn" onclick="toggleSidebar()">☰</button>
+    <button class="toggle-btn" id="toggleBtn" onclick="toggleSidebar()">â°</button>
 
     <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
         <h2>Booku</h2>
 
         <div class="sidebar-nav">
-            <a href="${pageContext.request.contextPath}/employees/home.jsp">Dashboard</a>
-            <a href="${pageContext.request.contextPath}/employees/EmpBookServlet" class="active">Manage Book</a>
-            <a href="${pageContext.request.contextPath}/employees/orders.jsp">Manage Order</a>
-            <a href="${pageContext.request.contextPath}/employees/analytics.jsp">Analytics</a>
+            <a href="${pageContext.request.contextPath}/EmpHomeServlet" class="active">Dashboard</a>
+            <a href="${pageContext.request.contextPath}/ManageBookServlet">Manage Book</a>
+            <a href="${pageContext.request.contextPath}/EmpOrderServlet">Manage Order</a>
+            <a href="${pageContext.request.contextPath}/AnalyticsServlet">Analytics</a>
         </div>
 
         <div class="sidebar-footer">
-            <div class="profile-section" onclick="window.location.href='${pageContext.request.contextPath}/employees/profile.jsp'">
+            <div class="profile-section" onclick="window.location.href='${pageContext.request.contextPath}/EmpProfileServlet'">
                 <div class="profile-icon">👤</div>
                 <div class="profile-info">
-                    <div class="profile-name">Employee User</div>
+                    <div class="profile-name">
+                        <%= session.getAttribute("empFirstName") != null ? session.getAttribute("empFirstName") : "Employee" %>
+                    </div>
                 </div>
             </div>
 
-            <button class="logout-btn" id="logoutBtn">
+            <a href="${pageContext.request.contextPath}/EmpLoginServlet?action=logout" class="logout-btn" style="text-decoration: none; text-align: center; display: block;">
                 <span>Logout</span>
-            </button>
+            </a>
         </div>
     </div>
 
@@ -149,6 +151,9 @@
     <!-- Overlay -->
     <div class="overlay" id="overlay"></div>
 
+                </div>
+            </form>
+            <!-- â END FORM -->
     <!-- Message Box -->
     <div class="message-box" id="messageBox">
         <h2 id="messageTitle">Success!</h2>
@@ -670,6 +675,7 @@
                 flex: 0 0 auto;
             }
 
+    <script src="${pageContext.request.contextPath}/js/main.js"></script>
             .form-row {
                 grid-template-columns: 1fr;
             }
@@ -677,3 +683,4 @@
     </style>
 </body>
 </html>
+<script src="${pageContext.request.contextPath}/js/main.js"></script>
