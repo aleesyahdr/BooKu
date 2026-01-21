@@ -119,7 +119,8 @@ public class ManageBookServlet extends HttpServlet
                         rs.getDate("book_publishDate"),
                         rs.getDouble("book_price"),
                         rs.getString("book_category"),
-                        rs.getString("book_img")
+                        rs.getString("book_img"),
+                        rs.getBoolean("book_available")
                     );
                 }
             }
