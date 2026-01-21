@@ -1,203 +1,239 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app version="3.1"
-         xmlns="http://xmlns.jcp.org/xml/ns/javaee"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
-                             http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
-
-    <!-- ========================================
-         SERVLET DEFINITIONS
-         ======================================== -->
-
-    <!-- Login Servlets -->
+<web-app version="3.1" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
+    
     <servlet>
         <servlet-name>AdminLoginServlet</servlet-name>
         <servlet-class>servlet.AdminLoginServlet</servlet-class>
     </servlet>
-
     <servlet>
         <servlet-name>CustLoginServlet</servlet-name>
         <servlet-class>servlet.CustLoginServlet</servlet-class>
     </servlet>
-
     <servlet>
         <servlet-name>EmpLoginServlet</servlet-name>
         <servlet-class>servlet.EmpLoginServlet</servlet-class>
     </servlet>
-
-    <!-- Customer / General Servlets -->
+    <servlet>
+        <servlet-name>EmpHomeServlet</servlet-name>
+        <servlet-class>servlet.EmpHomeServlet</servlet-class>
+    </servlet>
     <servlet>
         <servlet-name>CartServlet</servlet-name>
         <servlet-class>servlet.CartServlet</servlet-class>
     </servlet>
-
     <servlet>
         <servlet-name>manageUserServlet</servlet-name>
         <servlet-class>servlet.manageUserServlet</servlet-class>
     </servlet>
-
     <servlet>
         <servlet-name>IndexServlet</servlet-name>
         <servlet-class>servlet.IndexServlet</servlet-class>
     </servlet>
-
     <servlet>
         <servlet-name>BooksServlet</servlet-name>
         <servlet-class>servlet.BooksServlet</servlet-class>
     </servlet>
-
     <servlet>
         <servlet-name>BookDetailsServlet</servlet-name>
         <servlet-class>servlet.BookDetailsServlet</servlet-class>
     </servlet>
-
+    <servlet>
+        <servlet-name>ShoppingCartServlet</servlet-name>
+        <servlet-class>servlet.ShoppingCartServlet</servlet-class>
+    </servlet>
     <servlet>
         <servlet-name>PaymentServlet</servlet-name>
         <servlet-class>servlet.PaymentServlet</servlet-class>
     </servlet>
-
     <servlet>
         <servlet-name>CheckBookServlet</servlet-name>
         <servlet-class>servlet.CheckBookServlet</servlet-class>
     </servlet>
-
-    <!-- Employee Servlets -->
+    <servlet>
+        <servlet-name>RegisterServlet</servlet-name>
+        <servlet-class>servlet.RegisterServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>OrderHistoryServlet</servlet-name>
+        <servlet-class>servlet.OrderHistoryServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>CheckoutServlet</servlet-name>
+        <servlet-class>servlet.CheckoutServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ProfileServlet</servlet-name>
+        <servlet-class>servlet.ProfileServlet</servlet-class>
+    </servlet>
     <servlet>
         <servlet-name>EmpBookServlet</servlet-name>
         <servlet-class>servlet.EmpBookServlet</servlet-class>
     </servlet>
-
     <servlet>
         <servlet-name>EmpAddBookServlet</servlet-name>
         <servlet-class>servlet.EmpAddBookServlet</servlet-class>
     </servlet>
-
     <servlet>
         <servlet-name>ManageBookServlet</servlet-name>
         <servlet-class>servlet.ManageBookServlet</servlet-class>
     </servlet>
-
     <servlet>
         <servlet-name>EmpOrderServlet</servlet-name>
         <servlet-class>servlet.EmpOrderServlet</servlet-class>
     </servlet>
-
     <servlet>
         <servlet-name>OrderDetailServlet</servlet-name>
         <servlet-class>servlet.OrderDetailServlet</servlet-class>
     </servlet>
-
     <servlet>
         <servlet-name>AnalyticsServlet</servlet-name>
         <servlet-class>servlet.AnalyticsServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>EmpProfileServlet</servlet-name>
+        <servlet-class>servlet.EmpProfileServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AdminBookServlet</servlet-name>
+        <servlet-class>servlet.AdminBookServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>addBookServlet</servlet-name>
+        <servlet-class>servlet.addBookServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AdminManageBookServlet</servlet-name>
+        <servlet-class>servlet.AdminManageBookServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AdminAnalyticsServlet</servlet-name>
+        <servlet-class>servlet.AdminAnalyticsServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>EmpAnalyticsServlet</servlet-name>
+        <servlet-class>servlet.EmpAnalyticsServlet</servlet-class>
+    </servlet>
 
-
-    <!-- ========================================
-         SERVLET MAPPINGS
-         ======================================== -->
-
-    <!-- Login Mappings -->
     <servlet-mapping>
         <servlet-name>AdminLoginServlet</servlet-name>
         <url-pattern>/admin/AdminLoginServlet</url-pattern>
     </servlet-mapping>
-
     <servlet-mapping>
         <servlet-name>CustLoginServlet</servlet-name>
-        <url-pattern>/customer/CustLoginServlet</url-pattern>
+        <url-pattern>/CustLoginServlet</url-pattern>
     </servlet-mapping>
-
     <servlet-mapping>
         <servlet-name>EmpLoginServlet</servlet-name>
-        <url-pattern>/employees/EmpLoginServlet</url-pattern>
+        <url-pattern>/EmpLoginServlet</url-pattern>
     </servlet-mapping>
-
-    <!-- Customer / General Mappings -->
+    <servlet-mapping>
+        <servlet-name>EmpHomeServlet</servlet-name>
+        <url-pattern>/EmpHomeServlet</url-pattern>
+    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>CartServlet</servlet-name>
         <url-pattern>/CartServlet</url-pattern>
     </servlet-mapping>
-
     <servlet-mapping>
         <servlet-name>manageUserServlet</servlet-name>
         <url-pattern>/manageUserServlet</url-pattern>
     </servlet-mapping>
-
     <servlet-mapping>
         <servlet-name>IndexServlet</servlet-name>
         <url-pattern>/IndexServlet</url-pattern>
     </servlet-mapping>
-
     <servlet-mapping>
         <servlet-name>BooksServlet</servlet-name>
         <url-pattern>/BooksServlet</url-pattern>
     </servlet-mapping>
-
     <servlet-mapping>
         <servlet-name>BookDetailsServlet</servlet-name>
         <url-pattern>/BookDetailsServlet</url-pattern>
     </servlet-mapping>
-
+    <servlet-mapping>
+        <servlet-name>ShoppingCartServlet</servlet-name>
+        <url-pattern>/ShoppingCartServlet</url-pattern>
+    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>PaymentServlet</servlet-name>
         <url-pattern>/PaymentServlet</url-pattern>
     </servlet-mapping>
-
     <servlet-mapping>
         <servlet-name>CheckBookServlet</servlet-name>
         <url-pattern>/CheckBookServlet</url-pattern>
     </servlet-mapping>
-
-    <!-- Employee Mappings -->
+    <servlet-mapping>
+        <servlet-name>RegisterServlet</servlet-name>
+        <url-pattern>/RegisterServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>OrderHistoryServlet</servlet-name>
+        <url-pattern>/OrderHistoryServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CheckoutServlet</servlet-name>
+        <url-pattern>/CheckoutServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ProfileServlet</servlet-name>
+        <url-pattern>/ProfileServlet</url-pattern>
+    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>EmpBookServlet</servlet-name>
         <url-pattern>/EmpBookServlet</url-pattern>
     </servlet-mapping>
-
     <servlet-mapping>
         <servlet-name>EmpAddBookServlet</servlet-name>
         <url-pattern>/EmpAddBookServlet</url-pattern>
     </servlet-mapping>
-
     <servlet-mapping>
         <servlet-name>ManageBookServlet</servlet-name>
         <url-pattern>/ManageBookServlet</url-pattern>
     </servlet-mapping>
-
     <servlet-mapping>
         <servlet-name>EmpOrderServlet</servlet-name>
         <url-pattern>/EmpOrderServlet</url-pattern>
     </servlet-mapping>
-
     <servlet-mapping>
         <servlet-name>OrderDetailServlet</servlet-name>
         <url-pattern>/OrderDetailServlet</url-pattern>
     </servlet-mapping>
-
     <servlet-mapping>
         <servlet-name>AnalyticsServlet</servlet-name>
         <url-pattern>/AnalyticsServlet</url-pattern>
     </servlet-mapping>
-
-
-    <!-- ========================================
-         SESSION & WELCOME FILES
-         ======================================== -->
+    <servlet-mapping>
+        <servlet-name>EmpProfileServlet</servlet-name>
+        <url-pattern>/EmpProfileServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AdminBookServlet</servlet-name>
+        <url-pattern>/AdminBookServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>addBookServlet</servlet-name>
+        <url-pattern>/addBookServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AdminManageBookServlet</servlet-name>
+        <url-pattern>/AdminManageBookServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AdminAnalyticsServlet</servlet-name>
+        <url-pattern>/AdminAnalyticsServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>EmpAnalyticsServlet</servlet-name>
+        <url-pattern>/EmpAnalyticsServlet</url-pattern>
+    </servlet-mapping>
 
     <session-config>
         <session-timeout>30</session-timeout>
     </session-config>
-
-    <!-- Best practice: welcome file is a JSP, not a servlet -->
+    
     <welcome-file-list>
-        <welcome-file>index.jsp</welcome-file>
+        <welcome-file>IndexServlet</welcome-file>
     </welcome-file-list>
-
-
-    <!-- ========================================
-         DATABASE RESOURCE
-         ======================================== -->
 
     <resource-ref>
         <description>BooKu Database</description>

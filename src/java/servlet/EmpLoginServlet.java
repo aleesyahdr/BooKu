@@ -1,69 +1,19 @@
 package servlet;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.*;
 import model.Employee;
 import dao.EmpLoginDao;
 
-public class EmpLoginServlet extends HttpServlet 
-{
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet EmpLoginServlet</title>");            
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet EmpLoginServlet at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
+@WebServlet(name = "EmpLoginServlet", urlPatterns = {"/EmpLoginServlet"})
+public class EmpLoginServlet extends HttpServlet {
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
-    }
-
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException 
-    {
+            throws ServletException, IOException {
+        
         String username = request.getParameter("username");
         String password = request.getParameter("password");
         
@@ -72,24 +22,44 @@ public class EmpLoginServlet extends HttpServlet
         emp.setEmp_password(password);
         
         EmpLoginDao empLoginDao = new EmpLoginDao();
+        int empId = empLoginDao.authenticateUserAndGetId(emp);
         
-        String userValidate = empLoginDao.authenticateUser(emp);
+        if (empId != -1) {
+            HttpSession session = request.getSession();
+            session.setAttribute("empId", empId);
+            session.setAttribute("empUsername", username);
+
+            // CHANGED: Table name changed to EMPLOYEES to match your DAO
+            try (java.sql.Connection conn = util.DBConnection.createConnection()) {
+                String query = "SELECT EMP_FNAME FROM EMPLOYEES WHERE EMP_ID = ?"; 
+                java.sql.PreparedStatement pstmt = conn.prepareStatement(query);
+                pstmt.setInt(1, empId);
+                java.sql.ResultSet rs = pstmt.executeQuery();
+                if (rs.next()) {
+                    // This sets the name that your sidebar is looking for
+                    session.setAttribute("empFirstName", rs.getString("EMP_FNAME"));
+                }
+            } catch (java.sql.SQLException e) {
+                e.printStackTrace();
+            }
+
+            response.sendRedirect(request.getContextPath() + "/EmpHomeServlet");
         
-        if(userValidate.equals("SUCCESS"))
-        {
-            request.setAttribute ("username", username);
-            request.getRequestDispatcher("employees/index.jsp").forward(request, response);
+
+        } else {
+            request.setAttribute("errorMessage", "Invalid username or password");
+            request.getRequestDispatcher("/employees/index.jsp").forward(request, response);
         }
     }
 
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
     @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String action = request.getParameter("action");
+        if ("logout".equals(action)) {
+            HttpSession session = request.getSession(false);
+            if (session != null) session.invalidate();
+            response.sendRedirect(request.getContextPath() + "/employees/index.jsp");
+        }
+    }
 }

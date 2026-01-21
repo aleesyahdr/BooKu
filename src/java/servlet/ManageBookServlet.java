@@ -1,78 +1,131 @@
 package servlet;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Date;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.nio.file.Paths;
+import java.sql.*;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import util.DBConnection;
+import javax.servlet.http.Part;
 import model.Book;
+import util.DBConnection;
 
-
-public class ManageBookServlet extends HttpServlet {
+@MultipartConfig(
+    maxFileSize = 16177215,      // 15MB
+    maxRequestSize = 20971520,   // 20MB
+    fileSizeThreshold = 5242880  // 5MB
+)
+public class ManageBookServlet extends HttpServlet 
+{
+    private Connection getConnection() {
+        return DBConnection.createConnection();
+    }
     
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException 
+    {
+        String bookIdParam = request.getParameter("id");
         
-        String bookId = request.getParameter("id");
-        
-        if (bookId == null || bookId.isEmpty()) {
-            response.sendRedirect("EmpBookServlet");
+        if (bookIdParam == null || bookIdParam.trim().isEmpty()) {
+            response.sendRedirect(request.getContextPath() + "/employees/EmpBookServlet");
             return;
         }
         
-        Connection conn = null;
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
-        
         try {
-            conn = DBConnection.createConnection();
+            int bookId = Integer.parseInt(bookIdParam);
+            Book book = getBookById(bookId);
             
-            String sql = "SELECT * FROM BOOK WHERE BOOK_ID = ?";
-            pstmt = conn.prepareStatement(sql);
-            pstmt.setInt(1, Integer.parseInt(bookId));
-            rs = pstmt.executeQuery();
-            
-            if (rs.next()) {
-                Book book = new Book(
-                    rs.getInt("BOOK_ID"),
-                    rs.getString("BOOK_NAME"),
-                    rs.getString("BOOK_AUTHOR"),
-                    rs.getString("BOOK_DESCRIPTION"),
-                    rs.getDate("BOOK_PUBLISHDATE"),
-                    rs.getDouble("BOOK_PRICE"),
-                    rs.getString("BOOK_CATEGORY"),
-                    rs.getString("BOOK_IMG")
-                );
-                
-                // Determine availability based on quantity
-                int quantity = rs.getInt("BOOK_QUANTITY");
-                String availability;
-                if (quantity > 0) {
-                    availability = "in-stock";
-                } else if (quantity == 0) {
-                    availability = "out-of-stock";
-                } else {
-                    availability = "pre-order";
-                }
-                
-                request.setAttribute("book", book);
-                request.setAttribute("availability", availability);
-                request.setAttribute("quantity", quantity);
-            } else {
-                response.sendRedirect("EmpBookServlet");
+            if (book == null) {
+                request.setAttribute("error", "Book not found!");
+                response.sendRedirect(request.getContextPath() + "/employees/EmpBookServlet");
                 return;
             }
             
+            request.setAttribute("book", book);
+            request.getRequestDispatcher("/employees/manageBook.jsp").forward(request, response);
+            
+        } catch (NumberFormatException e) {
+            response.sendRedirect(request.getContextPath() + "/employees/EmpBookServlet");
+        }
+    }
+
+    /**
+     * Handles the HTTP <code>POST</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException 
+    {
+        String action = request.getParameter("action");
+        
+        try {
+            if ("update".equals(action)) {
+                int bookId = Integer.parseInt(request.getParameter("book_id"));
+                updateBook(request);
+                response.sendRedirect(request.getContextPath() + 
+                    "/employees/ManageBookServlet?id=" + bookId + "&message=Book updated successfully");
+                
+            } else if ("delete".equals(action)) {
+                int bookId = Integer.parseInt(request.getParameter("book_id"));
+                deleteBook(request);
+                response.sendRedirect(request.getContextPath() + 
+                        "/employees/EmpBookServlet?id=" + bookId + "&message=Book deleted successfully");
+                
+            } else {
+                response.sendRedirect(request.getContextPath() + "/employees/EmpBookServlet");
+            }
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.setAttribute("error", "Error: " + e.getMessage());
+            doGet(request, response);
+        }
+    }
+
+    // Get single book by ID
+    private Book getBookById(int bookId) {
+        String sql = "SELECT * FROM BOOK WHERE book_id = ?";
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        Book book = null;
+        
+        try {
+            conn = getConnection();
+            if (conn != null) {
+                pstmt = conn.prepareStatement(sql);
+                pstmt.setInt(1, bookId);
+                rs = pstmt.executeQuery();
+                
+                if (rs.next()) {
+                    book = new Book(
+                        rs.getInt("book_id"),
+                        rs.getString("book_name"),
+                        rs.getString("book_author"),
+                        rs.getString("book_description"),
+                        rs.getDate("book_publishDate"),
+                        rs.getDouble("book_price"),
+                        rs.getString("book_category"),
+                        rs.getString("book_img"),
+                        rs.getBoolean("book_available")
+                    );
+                }
+            }
         } catch (SQLException e) {
+            System.out.println("Error getting book: " + e.getMessage());
             e.printStackTrace();
         } finally {
             try {
@@ -84,126 +137,110 @@ public class ManageBookServlet extends HttpServlet {
             }
         }
         
-        request.getRequestDispatcher("employee/manageBook.jsp").forward(request, response);
+        return book;
     }
     
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    // Update book
+    private void updateBook(HttpServletRequest request) throws SQLException, IOException, ServletException {
+        int bookId = Integer.parseInt(request.getParameter("book_id"));
+        String name = request.getParameter("book_name");
+        String author = request.getParameter("book_author");
+        String description = request.getParameter("book_description");
+        Date publishDate = Date.valueOf(request.getParameter("book_publishDate"));
+        double price = Double.parseDouble(request.getParameter("book_price"));
+        String category = request.getParameter("book_category");
         
-        HttpSession session = request.getSession();
-        String action = request.getParameter("action");
-        String bookId = request.getParameter("bookId");
+        // Handle file upload for book image
+        String bookImage = null;
+        Part filePart = request.getPart("bookImage");
         
-        if ("delete".equals(action)) {
-            deleteBook(bookId, session);
-        } else if ("update".equals(action)) {
-            updateBook(request, session);
-        }
-        
-        response.sendRedirect("EmpBookServlet");
-    }
-    
-    private void deleteBook(String bookId, HttpSession session) {
-        Connection conn = null;
-        PreparedStatement pstmt = null;
-        
-        try {
-            conn = DBConnection.createConnection();
-            String sql = "DELETE FROM BOOK WHERE BOOK_ID = ?";
-            pstmt = conn.prepareStatement(sql);
-            pstmt.setInt(1, Integer.parseInt(bookId));
-            
-            int rowsDeleted = pstmt.executeUpdate();
-            
-            if (rowsDeleted > 0) {
-                session.setAttribute("message", "Book deleted successfully!");
-                session.setAttribute("messageType", "success");
-            } else {
-                session.setAttribute("message", "Failed to delete book!");
-                session.setAttribute("messageType", "error");
+        if (filePart != null && filePart.getSize() > 0) {
+            // New image uploaded
+            String uploadPath = "C:\\Users\\USER\\OneDrive\\Documents\\NetBeansProjects\\BooKu\\web\\img\\books";
+
+            File uploadDir = new File(uploadPath);
+            if (!uploadDir.exists()) {
+                uploadDir.mkdirs();
             }
-            
-        } catch (SQLException e) {
-            e.printStackTrace();
-            session.setAttribute("message", "Database error: " + e.getMessage());
-            session.setAttribute("messageType", "error");
-        } finally {
-            try {
-                if (pstmt != null) pstmt.close();
-                if (conn != null) conn.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
+
+            String fileName = Paths.get(filePart.getSubmittedFileName())
+                                   .getFileName().toString();
+
+            File file = new File(uploadPath + File.separator + fileName);
+
+            try (InputStream input = filePart.getInputStream();
+                 FileOutputStream output = new FileOutputStream(file)) {
+
+                byte[] buffer = new byte[1024];
+                int bytesRead;
+                while ((bytesRead = input.read(buffer)) != -1) {
+                    output.write(buffer, 0, bytesRead);
+                }
+            }
+
+            bookImage = fileName;
+        } else {
+            // No new image uploaded, keep the existing one
+            Book existingBook = getBookById(bookId);
+            if (existingBook != null) {
+                bookImage = existingBook.getBook_img();
             }
         }
-    }
-    
-    private void updateBook(HttpServletRequest request, HttpSession session) {
-        String bookId = request.getParameter("bookId");
-        String bookName = request.getParameter("bookName");
-        String bookAuthor = request.getParameter("bookAuthor");
-        String bookDescription = request.getParameter("bookDescription");
-        String bookPrice = request.getParameter("bookPrice");
-        String bookCategory = request.getParameter("bookCategory");
-        String bookPublishDate = request.getParameter("bookPublishDate");
-        String availability = request.getParameter("bookAvailability");
-        String bookImg = request.getParameter("bookImg");
         
-        // Set quantity based on availability
-        int quantity = 0;
-        if ("in-stock".equals(availability)) {
-            quantity = 10;
-        } else if ("out-of-stock".equals(availability)) {
-            quantity = 0;
-        } else if ("pre-order".equals(availability)) {
-            quantity = -1;
-        }
+        String sql = "UPDATE BOOK SET book_name = ?, book_author = ?, " +
+                     "book_description = ?, book_publishDate = ?, book_price = ?, " +
+                     "book_category = ?, book_img = ? WHERE book_id = ?";
         
         Connection conn = null;
         PreparedStatement pstmt = null;
         
         try {
-            conn = DBConnection.createConnection();
-            
-            String sql = "UPDATE BOOK SET BOOK_NAME = ?, BOOK_AUTHOR = ?, BOOK_DESCRIPTION = ?, " +
-                        "BOOK_PUBLISHDATE = ?, BOOK_PRICE = ?, BOOK_QUANTITY = ?, " +
-                        "BOOK_CATEGORY = ?, BOOK_IMG = ? WHERE BOOK_ID = ?";
-            
-            pstmt = conn.prepareStatement(sql);
-            pstmt.setString(1, bookName);
-            pstmt.setString(2, bookAuthor);
-            pstmt.setString(3, bookDescription);
-            pstmt.setDate(4, Date.valueOf(bookPublishDate));
-            pstmt.setDouble(5, Double.parseDouble(bookPrice));
-            pstmt.setInt(6, quantity);
-            pstmt.setString(7, bookCategory);
-            pstmt.setString(8, bookImg);
-            pstmt.setInt(9, Integer.parseInt(bookId));
-            
-            int rowsUpdated = pstmt.executeUpdate();
-            
-            if (rowsUpdated > 0) {
-                session.setAttribute("message", "Book updated successfully!");
-                session.setAttribute("messageType", "success");
-            } else {
-                session.setAttribute("message", "Failed to update book!");
-                session.setAttribute("messageType", "error");
+            conn = getConnection();
+            if (conn != null) {
+                pstmt = conn.prepareStatement(sql);
+                pstmt.setString(1, name);
+                pstmt.setString(2, author);
+                pstmt.setString(3, description);
+                pstmt.setDate(4, publishDate);
+                pstmt.setDouble(5, price);
+                pstmt.setString(6, category);
+                
+                // Set the image
+                if (bookImage != null && !bookImage.trim().isEmpty()) {
+                    pstmt.setString(7, bookImage);
+                } else {
+                    pstmt.setNull(7, java.sql.Types.VARCHAR);
+                }
+                
+                pstmt.setInt(8, bookId);
+                
+                pstmt.executeUpdate();
             }
-            
-        } catch (SQLException e) {
-            e.printStackTrace();
-            session.setAttribute("message", "Database error: " + e.getMessage());
-            session.setAttribute("messageType", "error");
-        } catch (NumberFormatException e) {
-            session.setAttribute("message", "Invalid price format!");
-            session.setAttribute("messageType", "error");
         } finally {
-            try {
-                if (pstmt != null) pstmt.close();
-                if (conn != null) conn.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
+            if (pstmt != null) pstmt.close();
+            if (conn != null) conn.close();
+        }
+    }
+    
+    // Delete book
+    private void deleteBook(HttpServletRequest request) throws SQLException {
+        int bookId = Integer.parseInt(request.getParameter("book_id"));
+        
+        String sql = "DELETE FROM BOOK WHERE book_id = ?";
+        
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        
+        try {
+            conn = getConnection();
+            if (conn != null) {
+                pstmt = conn.prepareStatement(sql);
+                pstmt.setInt(1, bookId);
+                pstmt.executeUpdate();
             }
+        } finally {
+            if (pstmt != null) pstmt.close();
+            if (conn != null) conn.close();
         }
     }
 }

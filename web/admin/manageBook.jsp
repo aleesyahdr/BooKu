@@ -1,192 +1,258 @@
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page import="model.Book"%>
 <!DOCTYPE html>
-<!--
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
--->
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Book – Booku</title>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styleAdmin.css">
+</head>
+<body>
+
+    <button class="toggle-btn" id="toggleBtn" onclick="toggleSidebar()">☰</button>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <h2>Booku Admin</h2>
+
+        <div class="sidebar-nav">
+            <a href="${pageContext.request.contextPath}/admin/home.jsp">Dashboard</a>
+            <a href="${pageContext.request.contextPath}/manageUserServlet">Manage Users</a>
+            <a href="${pageContext.request.contextPath}/AdminBookServlet" class="active">Manage Books</a>
+            <a href="${pageContext.request.contextPath}/admin/orders.jsp">Manage Orders</a>
+            <a href="${pageContext.request.contextPath}/admin/analytics.jsp">Analytics</a>
+        </div>
+
+        <div class="sidebar-footer">
+            <div class="profile-section" onclick="window.location.href='${pageContext.request.contextPath}/admin/profile.jsp'">
+                <div class="profile-icon">A</div>
+                <div class="profile-info">
+                    <div class="profile-name">Admin User</div>
+                </div>
+            </div>
+
+            <button class="logout-btn" onclick="location.href='${pageContext.request.contextPath}/admin/logout.jsp'">
+                <span>🚪</span> Logout
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+
+        <%
+            Book book = (Book) request.getAttribute("book");
+            String error = (String) request.getAttribute("error");
+            
+            if (book == null) {
+        %>
+                <div class="header">
+                    <h1>Book Not Found</h1>
+                </div>
+                <div style="text-align: center; padding: 50px;">
+                    <h3>The requested book was not found.</h3>
+                    <button class="btn btn-update" onclick="window.location.href='${pageContext.request.contextPath}/AdminBookServlet'">
+                        Back to Books
+                    </button>
+                </div>
+        <%
+            } else {
+                String bookImg = book.getBook_img();
+                // Handle both URL and local file paths
+                String displayImg;
+                if (bookImg == null || bookImg.trim().isEmpty()) {
+                    displayImg = "https://via.placeholder.com/300x400/004d40/ffffff?text=" + book.getBook_name().replace(" ", "+");
+                } else if (bookImg.startsWith("http")) {
+                    displayImg = bookImg;
+                } else {
+                    displayImg = request.getContextPath() + "/img/books/" + bookImg;
+                }
+        %>
+
+        <div class="header">
+            <h1>Manage Book</h1>
+            <p>Edit or delete book details</p>
+        </div>
+
+        <%
+            String message = request.getParameter("message");
+            String status = request.getParameter("status");
+        %>
+
+        <% if (message != null) { %>
+            <div class="alert alert-success">
+                <%= message %>
+            </div>
+        <% } %>
+
+        <% if (error != null) { %>
+            <div class="alert alert-danger"><%= error %></div>
+        <% } %>
+
+        <div class="book-container">
+            <div class="book-image-section">
+                <img src="<%= displayImg %>" 
+                     alt="<%= book.getBook_name() %>" 
+                     class="book-image" 
+                     id="bookImage"
+                     onerror="this.src='https://via.placeholder.com/300x400/004d40/ffffff?text=No+Image'">
+                <div class="current-image-name">
+                    Current: <%= bookImg != null && !bookImg.trim().isEmpty() ? bookImg : "No image" %>
+                </div>
+            </div>
+
+            <div class="book-form-section">
+                <form id="bookForm" method="post" action="${pageContext.request.contextPath}/AdminManageBookServlet" enctype="multipart/form-data">
+                    <input type="hidden" name="book_id" value="<%= book.getBook_id() %>">
+                    <input type="hidden" name="action" id="formAction" value="update">
+                    
+                    <div class="form-group">
+                        <label for="book_name">Book Name *</label>
+                        <input type="text" id="book_name" name="book_name" 
+                               value="<%= book.getBook_name() %>" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="book_author">Author *</label>
+                        <input type="text" id="book_author" name="book_author" 
+                               value="<%= book.getBook_author() %>" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="book_description">Description *</label>
+                        <textarea id="book_description" name="book_description" required><%= book.getBook_description() != null ? book.getBook_description() : "" %></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="book_price">Price (RM) *</label>
+                            <input type="number" step="0.01" id="book_price" name="book_price" 
+                                   value="<%= book.getBook_price() %>" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="book_publishDate">Publish Date *</label>
+                            <input type="date" id="book_publishDate" name="book_publishDate" 
+                                   value="<%= book.getBook_publishDate() %>" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="book_category">Category *</label>
+                        <input type="text" id="book_category" name="book_category" 
+                               value="<%= book.getBook_category() %>" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="bookImage">Upload New Book Image (Optional)</label>
+                        <input type="file" id="bookImage" name="bookImage" 
+                               accept="image/*"
+                               onchange="previewImage(event)">
+                        <small style="color: #666; display: block; margin-top: 5px;">
+                            Leave empty to keep current image. Supported formats: JPG, PNG, GIF
+                        </small>
+                    </div>
+
+                    <div class="button-group">
+                        <button type="submit" class="btn btn-update" onclick="setAction('update')">
+                            Update Book
+                        </button>
+                        <button type="button" class="btn btn-delete" onclick="confirmDelete()">
+                            Delete Book
+                        </button>
+                        <button type="button" class="btn" style="background: #999;" 
+                                onclick="window.location.href='${pageContext.request.contextPath}/AdminBookServlet'">
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <% } %>
+
+    </div>
+
+    <!-- Overlay -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Message Box -->
+    <div class="message-box" id="messageBox">
+        <h2 id="messageTitle">Confirm Delete</h2>
+        <p id="messageText">Are you sure you want to delete this book? This action cannot be undone.</p>
+        <div style="display: flex; gap: 10px; justify-content: center;">
+            <button onclick="deleteBook()" style="background-color: #d32f2f;">Yes, Delete</button>
+            <button onclick="closeMessage()">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        function toggleSidebar() {
+            var sidebar = document.getElementById('sidebar');
+            var mainContent = document.getElementById('mainContent');
+            var toggleBtn = document.getElementById('toggleBtn');
+            
+            sidebar.classList.toggle('hidden');
+            mainContent.classList.toggle('expanded');
+            toggleBtn.classList.toggle('shifted');
+        }
+        
+        function setAction(action) {
+            document.getElementById('formAction').value = action;
+        }
+        
+        function previewImage(event) {
+            var input = event.target;
+            var imgElement = document.getElementById('bookImage');
+            
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    imgElement.src = e.target.result;
+                }
+                
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+        
+        function confirmDelete() {
+            document.getElementById('overlay').classList.add('show');
+            document.getElementById('messageBox').classList.add('show');
+        }
+        
+        function deleteBook() {
+            document.getElementById('formAction').value = 'delete';
+            document.getElementById('bookForm').submit();
+        }
+        
+        function closeMessage() {
+            document.getElementById('overlay').classList.remove('show');
+            document.getElementById('messageBox').classList.remove('show');
+        }
+    </script>
 
     <style>
-        body {
-        margin: 0;
-        font-family: Arial, sans-serif;
-        background-color: #ffffff;
-    }
-
-    /* Sidebar same theme */
-    .sidebar {
-        width: 250px;
-        background-color: black;
-        color: #ffffff;
-        padding: 20px 20px 0 20px;
-        position: fixed;
-        height: 100vh;
-        top: 0;
-        left: 0;
-        transition: transform 0.3s ease;
-        z-index: 1000;
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-    }
-
-    .sidebar.hidden {
-        transform: translateX(-100%);
-    }
-
-    .sidebar h2 {
-        margin-bottom: 30px;
-        color:#4caf50;
-    }
-
-    /* Sidebar Navigation */
-    .sidebar-nav {
-        flex: 1;
-        overflow-y: auto;
-        margin-bottom: 15px;
-    }
-
-    .sidebar-nav::-webkit-scrollbar {
-        width: 5px;
-    }
-
-    .sidebar-nav::-webkit-scrollbar-thumb {
-        background: rgba(255, 255, 255, 0.3);
-        border-radius: 10px;
-    }
-
-    .sidebar a {
-        color: white;
-        text-decoration: none;
-        padding: 12px;
-        display: block;
-        border-radius: 5px;
-        margin-bottom: 10px;
-        font-weight: bold;
-    }
-
-    .sidebar a:hover,
-    .sidebar a.active {
-        background-color: #004d40;
-    }
-
-    /* Sidebar Footer */
-    .sidebar-footer {
-        padding: 15px 0 15px 0;
-        border-top: 1px solid rgba(255, 255, 255, 0.2);
-    }
-
-    .profile-section {
-        display: flex;
-        align-items: center;
-        padding: 10px;
-        margin-bottom: 10px;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background-color 0.3s;
-    }
-
-    .profile-section:hover {
-        background-color: rgba(0, 0, 0, 0.3);
-    }
-
-    .profile-icon {
-        width: 35px;
-        height: 35px;
-        border-radius: 50%;
-        background-color: #ffffff;
-        color: #004d40;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 18px;
-        font-weight: bold;
-        margin-right: 12px;
-    }
-
-    .profile-info {
-        flex: 1;
-    }
-
-    .profile-name {
-        font-size: 14px;
-        font-weight: bold;
-    }
-
-    .logout-btn {
-        background-color: #d32f2f;
-        color: white;
-        border: none;
-        padding: 10px;
-        width: 100%;
-        border-radius: 5px;
-        font-size: 14px;
-        font-weight: bold;
-        cursor: pointer;
-        transition: background-color 0.3s;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        margin-bottom: 20px;
-    }
-
-    .logout-btn:hover {
-        background-color: #b71c1c;
-    }
-
-    /* Main Content */
-    .main-content {
-        margin-left: 290px;
-        padding: 30px 40px;
-        flex: 1;
-        transition: margin-left 0.3s ease;
-    }
-
-    .main-content.expanded {
-        margin-left: 80px;
-    }
-
-    /* Toggle Button */
-    .toggle-btn {
-        position: fixed;
-        top: 20px;
-        left: 270px;
-        background-color: black;
-        color: white;
-        border: none;
-        padding: 10px 15px;
-        font-size: 22px;
-        cursor: pointer;
-        border-radius: 5px;
-        z-index: 2001;
-        transition: left 0.3s ease;
-    }
-
-    .toggle-btn.shifted {
-        left: 20px;
-    }
-
-    /* Page Header */
-    .header {
-        background: white;
-        padding: 20px 30px;
-        border-radius: 10px;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        margin-bottom: 25px;
-    }
-
-    .header h1 {
-        color: #004d40;
-        margin: 0;
-        font-size: 28px;
-    }
-
-        /* Book Details Container */
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+        
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
         .book-container {
             display: flex;
             gap: 30px;
@@ -208,8 +274,25 @@ and open the template in the editor.
             box-shadow: 0 4px 8px rgba(0,0,0,0.15);
         }
 
+        .current-image-name {
+            margin-top: 10px;
+            padding: 8px;
+            background: #f5f5f5;
+            border-radius: 5px;
+            font-size: 12px;
+            color: #666;
+            text-align: center;
+            word-break: break-all;
+        }
+
         .book-form-section {
             flex: 1;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
         }
 
         .form-group {
@@ -224,6 +307,9 @@ and open the template in the editor.
         }
 
         .form-group input[type="text"],
+        .form-group input[type="number"],
+        .form-group input[type="date"],
+        .form-group input[type="file"],
         .form-group textarea,
         .form-group select {
             width: 100%;
@@ -234,9 +320,14 @@ and open the template in the editor.
             box-sizing: border-box;
         }
 
+        .form-group input[type="file"] {
+            padding: 8px;
+        }
+
         .form-group textarea {
             resize: vertical;
             min-height: 120px;
+            font-family: Arial, sans-serif;
         }
 
         .form-group input:focus,
@@ -260,12 +351,12 @@ and open the template in the editor.
             font-weight: bold;
             cursor: pointer;
             transition: 0.2s;
+            flex: 1;
         }
 
         .btn-update {
             background-color: #004d40;
             color: white;
-            flex: 1;
         }
 
         .btn-update:hover {
@@ -275,14 +366,12 @@ and open the template in the editor.
         .btn-delete {
             background-color: #d32f2f;
             color: white;
-            flex: 1;
         }
 
         .btn-delete:hover {
             background-color: #b71c1c;
         }
 
-        /* Message Box */
         .message-box {
             display: none;
             position: fixed;
@@ -340,98 +429,5 @@ and open the template in the editor.
             display: block;
         }
     </style>
-</head>
-<body>
-
-    <button class="toggle-btn" id="toggleBtn" onclick="toggleSidebar()">☰</button>
-
-    <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
-        <h2>Booku</h2>
-
-        <div class="sidebar-nav">
-            <a href="home.html">Dashboard</a>
-            <a href="books.html"class="active">Manage Book</a>
-            <a href="orders.html">Manage Order</a>
-            <a href="analytics.html">Analytics</a>
-            <a href="accounts.html">Accounts</a>
-        </div>
-
-        <div class="sidebar-footer">
-            <div class="profile-section" onclick="window.location.href='profile.html'">
-                <div class="profile-icon">👤</div>
-                <div class="profile-info">
-                    <div class="profile-name">Admin User</div>
-                </div>
-            </div>
-
-            <button class="logout-btn" id="logoutBtn">
-                <span>Logout</span>
-            </button>
-        </div>
-    </div>
-
-    <!-- Main Content -->
-    <div class="main-content" id="mainContent">
-
-        <div class="header">
-            <h1>Manage Book</h1>
-        </div>
-
-        <div class="book-container">
-            <div class="book-image-section">
-                <img src="https://covers.openlibrary.org/b/id/10523365-L.jpg" alt="Book Cover" class="book-image" id="bookImage">
-            </div>
-
-            <div class="book-form-section">
-                <form id="bookForm">
-                    <div class="form-group">
-                        <label for="bookName">Book Name</label>
-                        <input type="text" id="bookName" placeholder="Enter book name" value="The Silent Observer">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="bookDescription">Description</label>
-                        <textarea id="bookDescription" placeholder="Enter book description">A thrilling mystery novel that keeps you on the edge of your seat.</textarea>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="bookPrice">Price (RM)</label>
-                        <input type="text" id="bookPrice" placeholder="Enter price" value="35.90">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="bookAvailability">Availability</label>
-                        <select id="bookAvailability">
-                            <option value="in-stock" selected>In Stock</option>
-                            <option value="out-of-stock">Out of Stock</option>
-                            <option value="pre-order">Pre-Order</option>
-                        </select>
-                    </div>
-
-                    <div class="button-group">
-                        <button type="button" class="btn btn-update" id="updateBtn">Update Book</button>
-                        <button type="button" class="btn btn-delete" id="deleteBtn">Delete Book</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-    </div>
-
-    <!-- Overlay -->
-    <div class="overlay" id="overlay"></div>
-
-    <!-- Message Box -->
-    <div class="message-box" id="messageBox">
-        <h2 id="messageTitle">Success!</h2>
-        <p id="messageText">Book updated successfully!</p>
-        <button onclick="closeMessage()">OK</button>
-    </div>
-
-    <!-- External JS -->
-    <script src="../js/main.js"></script>
-    <script src="../js/manageBook.js"></script>
-
 </body>
 </html>

@@ -1,42 +1,56 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.Map" %>
+<%
+    // Get orderList from request (set by servlet)
+    List<Map<String, Object>> orderList = (List<Map<String, Object>>) request.getAttribute("orderList");
+    
+    // Get the session, but don't create a new one if it doesn't exist
+    HttpSession userSession = request.getSession(false);
+    String empUsername = "Guest"; // Default value
+    
+    if (userSession != null && userSession.getAttribute("empUsername") != null) {
+        empUsername = (String) userSession.getAttribute("empUsername");
+    }
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Orders - Bookstore</title>
-    <link rel="stylesheet" href="../css/styleEmp.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styleEmp.css">
 </head>
 <body>
 <button class="toggle-btn" id="toggleBtn" onclick="toggleSidebar()">☰</button>
 
     <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
+     <div class="sidebar" id="sidebar">
         <h2>Booku</h2>
 
         <div class="sidebar-nav">
-            <a href="home.html">Dashboard</a>
-            <a href="EmpBookServlet">Manage Book</a>
-            <a href="EmpOrderServlet" class="active">Manage Order</a>
-            <a href="analytics.html">Analytics</a>
+            <a href="${pageContext.request.contextPath}/EmpHomeServlet" class="active">Dashboard</a>
+            <a href="${pageContext.request.contextPath}/ManageBookServlet">Manage Book</a>
+            <a href="${pageContext.request.contextPath}/EmpOrderServlet">Manage Order</a>
+            <a href="${pageContext.request.contextPath}/AnalyticsServlet">Analytics</a>
         </div>
 
         <div class="sidebar-footer">
-            <div class="profile-section" onclick="window.location.href='profile.html'">
+            <div class="profile-section" onclick="window.location.href='${pageContext.request.contextPath}/EmpProfileServlet'">
                 <div class="profile-icon">👤</div>
                 <div class="profile-info">
-                    <div class="profile-name">User</div>
+                    <div class="profile-name">
+                        <%= session.getAttribute("empFirstName") != null ? session.getAttribute("empFirstName") : "Employee" %>
+                    </div>
                 </div>
             </div>
 
-            <button class="logout-btn" id="logoutBtn">
+            <a href="${pageContext.request.contextPath}/EmpLoginServlet?action=logout" class="logout-btn" style="text-decoration: none; text-align: center; display: block;">
                 <span>Logout</span>
-            </button>
+            </a>
         </div>
     </div>
-
+    
     <div class="main-content" id="mainContent">
         <div class="header">
             <h1>Manage Orders</h1>
@@ -60,15 +74,26 @@
             }
         %>
 
+        <!-- Error Message from Servlet -->
+        <% 
+            String errorMessage = (String) request.getAttribute("errorMessage");
+            if (errorMessage != null) {
+        %>
+            <div style="padding: 15px; margin-bottom: 20px; border-radius: 8px; 
+                        background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb;">
+                <%= errorMessage %>
+            </div>
+        <%
+            }
+        %>
+
         <div class="orders-container">
             <table>
                 <thead>
                     <tr>
                         <th>Order ID</th>
                         <th>Customer Name</th>
-                        <th>Date</th>
-                        <th>Time</th>
-                        <th>Total Books</th>
+                        <th>Book Title</th>
                         <th>Total Price</th>
                         <th>Status</th>
                         <th>Actions</th>
@@ -76,20 +101,17 @@
                 </thead>
                 <tbody>
                     <%
-                        List<Map<String, Object>> orderList = (List<Map<String, Object>>) request.getAttribute("orderList");
                         if (orderList != null && !orderList.isEmpty()) {
                             for (Map<String, Object> order : orderList) {
                     %>
                     <tr>
                         <td>#ORD<%= String.format("%03d", order.get("orderId")) %></td>
                         <td><%= order.get("customerName") %></td>
-                        <td><%= order.get("orderDate") %></td>
-                        <td><%= order.get("orderTime") %></td>
-                        <td><%= order.get("totalBooks") %></td>
+                        <td><%= order.get("bookTitle") %></td>
                         <td>RM <%= String.format("%.2f", order.get("orderTotal")) %></td>
                         <td><span class="status-badge status-pending"><%= order.get("status") %></span></td>
                         <td>
-                            <button class="btn btn-view" onclick="window.location.href='OrderDetailServlet?id=<%= order.get("orderId") %>'">View</button>
+                            <button class="btn btn-view" onclick="window.location.href='${pageContext.request.contextPath}/OrderDetailServlet?id=<%= order.get("orderId") %>'">View</button>
                             <button class="btn btn-delete" onclick="deleteOrder(<%= order.get("orderId") %>)">Delete</button>
                         </td>
                     </tr>
@@ -98,7 +120,7 @@
                         } else {
                     %>
                     <tr>
-                        <td colspan="8" style="text-align: center; padding: 20px;">No orders found.</td>
+                        <td colspan="6" style="text-align: center; padding: 20px;">No orders found.</td>
                     </tr>
                     <%
                         }
@@ -120,7 +142,7 @@
         <input type="hidden" name="orderId" id="deleteOrderId">
     </form>
 
-    <script src="../js/main.js"></script>
+    <script src="${pageContext.request.contextPath}/js/main.js"></script>
     <script>
         function deleteOrder(orderId) {
             if (confirm('Are you sure you want to delete this order? This action cannot be undone.')) {

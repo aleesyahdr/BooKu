@@ -1,145 +1,151 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="model.Customer" %>
+<%
+    Integer custId = (Integer) session.getAttribute("custId");
+    String username = (String) session.getAttribute("username");
+    
+    if (custId == null || username == null) {
+        response.sendRedirect(request.getContextPath() + "/customer/login.jsp");
+        return;
+    }
+    
+    Customer customer = (Customer) request.getAttribute("customer");
+    String successMessage = (String) request.getAttribute("successMessage");
+    String errorMessage = (String) request.getAttribute("errorMessage");
+%>
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <title>BooKu - Profile</title>
-        <link rel="stylesheet" href="../css/style.css">
-    </head>
-    
-    <body>
-       <!-- Top Header -->
-        <header class="top-header">
-            <!-- Left side: Shop name -->
-            <div class="logo">
-                <h1>BooKu</h1>
-            </div>
-            <!-- Right side: Menu + Profile -->
-            <div class="header-right">
-                <!-- Menu Links -->
-                <nav class="header-nav">
-                    <a href="../index.html">Home</a>
-                    <a href="books.html">Books</a>
-                    <a href="contact.html">Contact</a>
-                    <a href="about.html">About</a>
-                </nav>
-                <!-- Profile Icon + Dropdown -->
-                <div class="profile-menu">
-                    <img src="../img/profile.jpg" class="profile-icon" alt="Profile">
-                    <div class="dropdown">
-                        <a href="profile.html">Profile</a>
-                        <a href="orderHistory.html">Order History</a>
-                        <a href="login.html">Login</a>
-                    </div>
+<head>
+    <title>BooKu - My Profile</title>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
+</head>
+<body>
+    <!-- Top Header -->
+    <header class="top-header">
+        <div class="logo"><h1>BooKu</h1></div>
+        <div class="header-right">
+            <nav class="header-nav">
+                <a href="${pageContext.request.contextPath}/IndexServlet">Home</a>
+                <a href="${pageContext.request.contextPath}/BooksServlet">Books</a>
+                <a href="${pageContext.request.contextPath}/customer/contact.jsp">Contact</a>
+                <a href="${pageContext.request.contextPath}/customer/about.jsp">About</a>
+            </nav>
+            <div class="profile-menu">
+                <img src="${pageContext.request.contextPath}/img/profile.jpg" class="profile-icon" alt="Profile">
+                <div class="dropdown">
+                    <div class="user-info">Welcome, <%= username %>!</div>
+                    <a href="${pageContext.request.contextPath}/ProfileServlet">Profile</a>
+                    <a href="${pageContext.request.contextPath}/OrderHistoryServlet">Order History</a>
+                    <a href="${pageContext.request.contextPath}/ShoppingCartServlet">My Cart</a>
+                    <a href="${pageContext.request.contextPath}/CustLoginServlet?action=logout">Logout</a>
                 </div>
             </div>
-        </header>
+        </div>
+    </header>
+
+    <!-- Profile Content -->
+    <div class="profile-container">
+        <h1 class="page-title">My Profile</h1>
         
-        <!-- Profile Container -->
-        <div class="profile-container">
-            <h1 class="page-title">My Profile</h1>
-            
-            <div class="profile-content">
-                <!-- Profile Picture Section -->
-                <div class="profile-picture-section">
-                    <img src="../img/profile.jpg" alt="Profile Picture" class="profile-picture">
-                    <button class="change-picture-btn">Change Picture</button>
-                </div>
+        <!-- Success/Error Messages -->
+        <% if (successMessage != null) { %>
+            <div class="alert alert-success"><%= successMessage %></div>
+        <% } %>
+        <% if (errorMessage != null) { %>
+            <div class="alert alert-error"><%= errorMessage %></div>
+        <% } %>
+        
+        <div class="profile-content">
+            <!-- Left: Profile Picture -->
+            <div class="profile-picture-section">
+                <img src="${pageContext.request.contextPath}/img/profile.jpg" alt="Profile Picture" class="profile-picture">
+<!--                <button class="change-picture-btn">Change Picture</button>-->
                 
-                <!-- Profile Form -->
-                <div class="profile-form-section">
-                    <form id="profile-form">
-                        <div class="form-group">
-                            <label class="form-label">Username</label>
-                            <input type="text" id="username" value="ahmad.abu" class="form-input">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label">Password</label>
-                            <input type="password" id="password" value="12345@abcd" class="form-input">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label">First Name</label>
-                            <input type="text" id="firstname" value="Ahmad" class="form-input">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label">Last Name</label>
-                            <input type="text" id="lastname" value="Bin Abu" class="form-input">
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">Email</label>
-                            <input type="email" id="email" value="ahmad.abu@example.com" class="form-input">
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">Phone Number</label>
-                            <input type="tel" id="phone" value="+60123456789" class="form-input">
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">Date of Birth</label>
-                            <input type="date" id="dob" value="1995-06-15" class="form-input">
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">Address</label>
-                            <textarea id="address" rows="3" class="form-input">No. 123, Jalan Makmur, Taman Sejahtera, 47000 Petaling Jaya, Selangor</textarea>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">City</label>
-                            <input type="text" id="city" value="Petaling Jaya" class="form-input">
-                        </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label class="form-label">State</label>
-                                <select id="state" class="form-input">
-                                    <option value="Johor">Johor</option>
-                                    <option value="Kedah">Kedah</option>
-                                    <option value="Kelantan">Kelantan</option>
-                                    <option value="Melaka">Melaka</option>
-                                    <option value="Negeri Sembilan">Negeri Sembilan</option>
-                                    <option value="Pahang">Pahang</option>
-                                    <option value="Penang">Penang</option>
-                                    <option value="Perak">Perak</option>
-                                    <option value="Perlis">Perlis</option>
-                                    <option value="Sabah">Sabah</option>
-                                    <option value="Sarawak">Sarawak</option>
-                                    <option value="Selangor" selected>Selangor</option>
-                                    <option value="Terengganu">Terengganu</option>
-                                    <option value="Kuala Lumpur">Kuala Lumpur</option>
-                                    <option value="Labuan">Labuan</option>
-                                    <option value="Putrajaya">Putrajaya</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Postcode</label>
-                                <input type="text" id="postcode" value="47000" class="form-input">
-                            </div>
-                        </div>
-
-                        <div class="profile-actions">
-                            <button type="button" class="update-btn" onclick="updateProfile()">Update Profile</button>
-                            <button type="button" class="cancel-btn" onclick="cancelUpdate()">Cancel</button>
-                        </div>
-                    </form>
+                <!-- Account Info (Read Only) -->
+                <div class="account-info">
+                    <p><strong>Username:</strong> <%= username %></p>
                 </div>
             </div>
-        </div>
+            
+            <!-- Right: Profile Form -->
+            <div class="profile-form-section">
+                <form class="profile-form" action="${pageContext.request.contextPath}/ProfileServlet" method="post">
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>First Name</label>
+                            <input type="text" name="firstName" value="<%= customer != null && customer.getCust_firstName() != null ? customer.getCust_firstName() : "" %>" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Last Name</label>
+                            <input type="text" name="lastName" value="<%= customer != null && customer.getCust_lastName() != null ? customer.getCust_lastName() : "" %>" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" name="email" value="<%= customer != null && customer.getCust_email() != null ? customer.getCust_email() : "" %>" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Phone Number</label>
+                            <input type="text" name="phoneNum" value="<%= customer != null && customer.getCust_phoneNum() != null ? customer.getCust_phoneNum() : "" %>">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Date of Birth</label>
+                        <input type="date" name="dob" value="<%= customer != null && customer.getCust_dob() != null ? customer.getCust_dob() : "" %>">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Address</label>
+                        <input type="text" name="address" value="<%= customer != null && customer.getCust_address() != null ? customer.getCust_address() : "" %>">
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>City</label>
+                            <input type="text" name="city" value="<%= customer != null && customer.getCust_city() != null ? customer.getCust_city() : "" %>">
+                        </div>
+                        <div class="form-group">
+    <label>State</label>
+    <select name="state" required class="form-input">
+        <option value="">Select State</option>
 
-        <!-- Success Popup Modal -->
-        <div id="success-modal" class="modal">
-            <div class="modal-content">
-                <div class="modal-icon success-icon">✓</div>
-                <h2 class="modal-title">Success!</h2>
-                <p class="modal-message">Successfully updated the profile</p>
-                <button class="modal-btn" onclick="closeModal()">OK</button>
+        <option value="Johor" <%= (customer != null && "Johor".equals(customer.getCust_state())) ? "selected" : "" %>>Johor</option>
+        <option value="Kedah" <%= (customer != null && "Kedah".equals(customer.getCust_state())) ? "selected" : "" %>>Kedah</option>
+        <option value="Kelantan" <%= (customer != null && "Kelantan".equals(customer.getCust_state())) ? "selected" : "" %>>Kelantan</option>
+        <option value="Melaka" <%= (customer != null && "Melaka".equals(customer.getCust_state())) ? "selected" : "" %>>Melaka</option>
+        <option value="Negeri Sembilan" <%= (customer != null && "Negeri Sembilan".equals(customer.getCust_state())) ? "selected" : "" %>>Negeri Sembilan</option>
+        <option value="Pahang" <%= (customer != null && "Pahang".equals(customer.getCust_state())) ? "selected" : "" %>>Pahang</option>
+        <option value="Penang" <%= (customer != null && "Penang".equals(customer.getCust_state())) ? "selected" : "" %>>Penang</option>
+        <option value="Perak" <%= (customer != null && "Perak".equals(customer.getCust_state())) ? "selected" : "" %>>Perak</option>
+        <option value="Perlis" <%= (customer != null && "Perlis".equals(customer.getCust_state())) ? "selected" : "" %>>Perlis</option>
+        <option value="Sabah" <%= (customer != null && "Sabah".equals(customer.getCust_state())) ? "selected" : "" %>>Sabah</option>
+        <option value="Sarawak" <%= (customer != null && "Sarawak".equals(customer.getCust_state())) ? "selected" : "" %>>Sarawak</option>
+        <option value="Selangor" <%= (customer != null && "Selangor".equals(customer.getCust_state())) ? "selected" : "" %>>Selangor</option>
+        <option value="Terengganu" <%= (customer != null && "Terengganu".equals(customer.getCust_state())) ? "selected" : "" %>>Terengganu</option>
+        <option value="Kuala Lumpur" <%= (customer != null && "Kuala Lumpur".equals(customer.getCust_state())) ? "selected" : "" %>>Kuala Lumpur</option>
+        <option value="Labuan" <%= (customer != null && "Labuan".equals(customer.getCust_state())) ? "selected" : "" %>>Labuan</option>
+        <option value="Putrajaya" <%= (customer != null && "Putrajaya".equals(customer.getCust_state())) ? "selected" : "" %>>Putrajaya</option>
+
+    </select>
+</div>
+
+                        <div class="form-group">
+                            <label>Postcode</label>
+                            <input type="text" name="postcode" value="<%= customer != null && customer.getCust_postcode() != null ? customer.getCust_postcode() : "" %>">
+                        </div>
+                    </div>
+                    
+                    <div class="profile-actions">
+                        <button type="submit" class="update-btn">Update Profile</button>
+                        <button type="button" class="cancel-btn" onclick="location.href='${pageContext.request.contextPath}/IndexServlet'">Cancel</button>
+                    </div>
+                </form>
             </div>
         </div>
-
-        <script src="../js/profile.js"></script>
-    </body>
+    </div>
+</body>
 </html>

@@ -1,12 +1,25 @@
+<%
+    // Get the session, but don't create a new one if it doesn't exist
+    HttpSession userSession = request.getSession(false);
+    String empUsername = "Guest"; // Default value
+    
+    if (userSession != null && userSession.getAttribute("empUsername") != null) {
+        empUsername = (String) userSession.getAttribute("empUsername");
+    }
+%>
+
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.Map" %>
 <%
     Map<String, Object> orderInfo = (Map<String, Object>) request.getAttribute("orderInfo");
     List<Map<String, Object>> orderItems = (List<Map<String, Object>>) request.getAttribute("orderItems");
+    
+    // DEBUG: Print to console what we received
     if (orderInfo == null) {
-        response.sendRedirect("EmpOrderServlet");
-        return;
+        System.out.println("⚠️ WARNING: orderInfo is NULL in orderDetails.jsp");
+    } else {
+        System.out.println("✓ orderInfo loaded successfully");
     }
 %>
 <!DOCTYPE html>
@@ -15,33 +28,40 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Order Details - Bookstore</title>
-    <link rel="stylesheet" href="../css/styleEmp.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styleEmp.css">
 </head>
 <body>
+<%
+    // Get status info if orderInfo exists
+    String currentStatus = orderInfo != null ? (String) orderInfo.get("orderStatus") : "pending";
+    String lastUpdatedBy = orderInfo != null ? (String) orderInfo.get("lastUpdatedBy") : null;
+%>
     <button class="toggle-btn" id="toggleBtn" onclick="toggleSidebar()">☰</button>
 
     <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
+     <div class="sidebar" id="sidebar">
         <h2>Booku</h2>
 
         <div class="sidebar-nav">
-            <a href="home.html">Dashboard</a>
-            <a href="EmpBookServlet">Manage Book</a>
-            <a href="EmpOrderServlet" class="active">Manage Order</a>
-            <a href="analytics.html">Analytics</a>
+            <a href="${pageContext.request.contextPath}/EmpHomeServlet" class="active">Dashboard</a>
+            <a href="${pageContext.request.contextPath}/ManageBookServlet">Manage Book</a>
+            <a href="${pageContext.request.contextPath}/EmpOrderServlet">Manage Order</a>
+            <a href="${pageContext.request.contextPath}/AnalyticsServlet">Analytics</a>
         </div>
 
         <div class="sidebar-footer">
-            <div class="profile-section" onclick="window.location.href='profile.html'">
+            <div class="profile-section" onclick="window.location.href='${pageContext.request.contextPath}/EmpProfileServlet'">
                 <div class="profile-icon">👤</div>
                 <div class="profile-info">
-                    <div class="profile-name">User</div>
+                    <div class="profile-name">
+                        <%= session.getAttribute("empFirstName") != null ? session.getAttribute("empFirstName") : "Employee" %>
+                    </div>
                 </div>
             </div>
 
-            <button class="logout-btn" id="logoutBtn">
+            <a href="${pageContext.request.contextPath}/EmpLoginServlet?action=logout" class="logout-btn" style="text-decoration: none; text-align: center; display: block;">
                 <span>Logout</span>
-            </button>
+            </a>
         </div>
     </div>
 
@@ -49,6 +69,36 @@
         <div class="header">
             <h1>Order Details</h1>
         </div>
+
+        <% if (orderInfo == null) { %>
+            <div style="padding: 30px; text-align: center;">
+                <h2 style="color: #d32f2f;">⚠️ Order Not Found</h2>
+                <p>The order you're looking for could not be loaded.</p>
+                <p style="color: #666; font-size: 14px;">This might be due to a database error or the order doesn't exist.</p>
+                <button onclick="window.location.href='${pageContext.request.contextPath}/EmpOrderServlet'" 
+                        style="margin-top: 20px; padding: 10px 20px; background: #004d40; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                    ← Back to Orders
+                </button>
+            </div>
+        <% } else { %>
+
+        <!-- Success/Error Message -->
+        <% 
+            String message = (String) session.getAttribute("message");
+            String messageType = (String) session.getAttribute("messageType");
+            if (message != null) {
+        %>
+            <div style="padding: 15px; margin-bottom: 20px; border-radius: 8px; 
+                        background-color: <%= messageType.equals("success") ? "#d4edda" : "#f8d7da" %>; 
+                        color: <%= messageType.equals("success") ? "#155724" : "#721c24" %>; 
+                        border: 1px solid <%= messageType.equals("success") ? "#c3e6cb" : "#f5c6cb" %>;">
+                <%= message %>
+            </div>
+        <%
+                session.removeAttribute("message");
+                session.removeAttribute("messageType");
+            }
+        %>
 
         <div class="details-container">
             <div class="section">
@@ -123,11 +173,22 @@
                 </div>
             </div>
 
-            <div class="section">
+           <div class="section">
                 <h2>Proof of Payment</h2>
                 <div class="payment-proof">
-                    <img src="https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=600" alt="Payment Proof">
-                    <p style="margin-top: 10px; color: #6b7280;">Payment receipt uploaded by customer</p>
+                    <% 
+                        String proof = (String) orderInfo.get("paymentProof");
+                        if (proof != null && !proof.isEmpty()) { 
+                    %>
+                        <img src="${pageContext.request.contextPath}/img/<%= orderInfo.get("paymentProof") %>" 
+                            alt="Payment Receipt" 
+                            style="max-width: 400px; border: 2px solid #004d40;">
+                    <% } else { %>
+                        <div style="background: #f3f4f6; padding: 40px; border-radius: 8px; text-align: center; border: 2px dashed #d1d5db;">
+                            <span style="font-size: 40px;">📄</span>
+                            <p style="color: #6b7280; margin-top: 10px;">No receipt uploaded yet.</p>
+                        </div>
+                    <% } %>
                 </div>
             </div>
 
@@ -138,24 +199,34 @@
                     <div class="form-group">
                         <label for="orderStatus">Status Selection:</label>
                         <select id="orderStatus" name="orderStatus">
-                            <option value="pending">Pending</option>
-                            <option value="progress">In Progress</option>
-                            <option value="completed">Completed</option>
+                            <option value="pending" <%= "pending".equals(currentStatus) ? "selected" : "" %>>Pending</option>
+                            <option value="In progress" <%= "In progress".equals(currentStatus) ? "selected" : "" %>>In Progress</option>
+                            <option value="completed" <%= "completed".equals(currentStatus) ? "selected" : "" %>>Completed</option>
                         </select>
                     </div>
-                    <button type="submit" class="btn-update">Update</button>
+                    
+                    <!-- Display Last Updated By -->
+                    <% if (lastUpdatedBy != null) { %>
+                    <div style="margin-top: 15px; padding: 10px; background-color: #f0f0f0; border-radius: 5px;">
+                        <small style="color: #666;">
+                            <strong>Last Updated By:</strong> <%= lastUpdatedBy %>
+                        </small>
+                    </div>
+                    <% } else { %>
+                    <div style="margin-top: 15px; padding: 10px; background-color: #fff3cd; border-radius: 5px;">
+                        <small style="color: #856404;">
+                            <strong>Note:</strong> No employee has updated this order yet
+                        </small>
+                    </div>
+                    <% } %>
+                    
+                    <button type="submit" class="btn-update" style="margin-top: 15px;">Update</button>
                 </form>
             </div>
         </div>
+        <% } // End of orderInfo null check %>
     </div>
 
-    <div id="updateModal" class="modal">
-        <div class="modal-content">
-            <h3>Updated Successfully</h3>
-            <button onclick="window.location.href='EmpOrderServlet'">OK</button>
-        </div>
-    </div>
-
-    <script src="../js/main.js"></script>
+    <script src="${pageContext.request.contextPath}/js/main.js"></script>
 </body>
 </html>
